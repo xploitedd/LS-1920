@@ -15,3 +15,104 @@ dependencies {
     compile fileTree(dir: 'vendor/main', include: '*.jar')
     testCompile fileTree(dir: 'vendor/test', include: '*.jar')
 }
+
+/******************************************************************************
+ * Helper tasks to run postgres via docker
+ */
+task pgPrms {
+    def url = System.getenv('JDBC_DATABASE_URL')
+    if (url == null || url.allWhitespace) {
+        url = 'jdbc:postgresql://localhost:5432/school?user=postgres&password=changeit'
+        println('no JDBC_DATABASE_URL environment variable found, using default value')
+    }
+    def uri = new URI(url.substring(5))
+    ext.host = uri.host
+    ext.port = uri.port
+    ext.db = uri.path.substring(1)
+    def queryMap = uri.query.tokenize('&')*.tokenize('=').collectEntries()
+    ext.user = queryMap.user
+    ext.password = queryMap.password
+}
+
+task startPostgres(type: Exec) {
+    dependsOn pgPrms
+    commandLine 'docker', 'run',
+            '--name', 'ls-postgres',
+            '-e', "POSTGRES_PASSWORD=$pgPrms.ext.password",
+            '-p', '5432:5432/tcp',
+            '-d', 'postgres'
+}
+
+task stopPostgres(type: Exec) {
+    commandLine 'docker', 'rm', '--force', 'ls-postgres'
+}
+
+task startPgAdmin(type: Exec) {
+    commandLine 'docker', 'run',
+            '-p', '8080:8080',
+            '-e', 'PGADMIN_LISTEN_PORT=8080',
+            '-e', 'PGADMIN_DEFAULT_EMAIL=admin@example.org',
+            '-e', 'PGADMIN_DEFAULT_PASSWORD=changeit',
+            '--name', 'ls-pgadmin',
+            '-d', 'dpage/pgadmin4'
+}
+
+task stopPgAdmin(type: Exec) {
+    commandLine 'docker', 'rm', '--force', 'ls-pgadmin'
+}
+
+String db = 'school'
+
+task dropDb(type: Exec) {
+    dependsOn pgPrms
+    commandLine 'dropdb',
+            '--if-exists',
+            '-h', pgPrms.ext.host,
+            '-U', pgPrms.ext.user,
+            '-w', pgPrms.ext.db
+
+    ext.output = {
+        return standardOutput.toString()
+    }
+    environment PGPASSWORD: pgPrms.ext.password
+}
+
+task createDb(type: Exec) {
+    dependsOn pgPrms, dropDb
+    commandLine 'createdb',
+            '-h', pgPrms.ext.host,
+            '-U', pgPrms.ext.user,
+            '-w', db
+    ext.output = {
+        return standardOutput.toString()
+    }
+    environment PGPASSWORD: pgPrms.ext.password
+}
+
+task initSchema(type: Exec) {
+    dependsOn pgPrms, createDb
+    commandLine 'psql',
+            '-h', pgPrms.ext.host,
+            '-U', pgPrms.ext.user,
+            '-d', pgPrms.ext.db,
+            '-w',
+            '-f', 'src/test/sql/createSchema.sql'
+    ext.output = {
+        return standardOutput.toString()
+    }
+    environment PGPASSWORD: pgPrms.ext.password
+}
+
+task addData(type: Exec) {
+    dependsOn pgPrms, initSchema
+    commandLine 'psql',
+            '-h', pgPrms.ext.host,
+            '-U', pgPrms.ext.user,
+            '-d', pgPrms.ext.db,
+            '-w',
+            '-f', 'src/test/sql/addData.sql'
+    ext.output = {
+        return standardOutput.toString()
+    }
+    environment PGPASSWORD: pgPrms.ext.password
+}
