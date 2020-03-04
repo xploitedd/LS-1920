@@ -1,4 +1,5 @@
-# 1920-2-common
-Software Laboratory, 2019/2020, Spring semester
+# Group 01 Student list:
 
-See [wiki](https://github.com/isel-leic-ls/1920-2-common/wiki) for further information, namely [calendar](https://github.com/isel-leic-ls/1920-2-common/wiki/calendar).
+- Hugo Dias - 46022 *AKA* [GenericDrugs](http://www.github.com/GenericDrugs)
+- João Martins - 46055 *AKA* [BinaryEnigma01](http://www.github.com/BinaryEnigma01)
+- Ricardo Margalhau - 46074 *AKA* [xploitedd](http://www.github.com/xploitedd)
