@@ -1,11 +1,12 @@
 package pt.isel.ls;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class ExampleTest {
 
@@ -22,9 +23,11 @@ public class ExampleTest {
         assertEquals(3, result);
     }
 
-    @Test(expected = FileNotFoundException.class)
+    @Test
     public void do_not_ignore_unexpected_exceptions_on_tests() throws FileNotFoundException {
         // test methods can have a non-empty `throws` exception list.
-        new FileInputStream("does-not-exist");
+        assertThrows(FileNotFoundException.class, () -> {
+            new FileInputStream("does-not-exist");
+        });
     }
 }

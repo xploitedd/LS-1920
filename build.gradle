@@ -12,13 +12,22 @@ repositories {
 }
 
 dependencies {
-    compile fileTree(dir: 'vendor/main', include: '*.jar')
-    testCompile fileTree(dir: 'vendor/test', include: '*.jar')
+    testCompile "org.junit.jupiter:junit-jupiter-api:5.5.2"
+}
+
+jar {
+    configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
+    manifest {
+        attributes(
+                'Main-Class': 'pt.isel.ls.App'
+        )
+    }
 }
 
 /******************************************************************************
  * Helper tasks to run postgres via docker
  */
+/*
 task pgPrms {
     def url = System.getenv('JDBC_DATABASE_URL')
     if (url == null || url.allWhitespace) {
@@ -116,3 +125,4 @@ task addData(type: Exec) {
     }
     environment PGPASSWORD: pgPrms.ext.password
 }
+*/

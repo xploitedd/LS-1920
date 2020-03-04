@@ -1,9 +1,10 @@
 package pt.isel.ls.utils;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class IntsTests {
 
@@ -27,16 +28,18 @@ public class IntsTests {
         assertTrue(ix < 0);
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void indexOfBinary_throws_IllegalArgumentException_if_indexes_are_not_valid() {
-        // Arrange
-        int[] v = {1, 2, 3};
+        assertThrows(IllegalArgumentException.class, () -> {
+            // Arrange
+            int[] v = {1, 2, 3};
 
-        // Act
-        int ix = Ints.indexOfBinary(v, 2, 1, 4);
+            // Act
+            int ix = Ints.indexOfBinary(v, 2, 1, 4);
 
-        // Assert
-        assertTrue(ix < 0);
+            // Assert
+            assertTrue(ix < 0);
+        });
     }
 
     @Test
