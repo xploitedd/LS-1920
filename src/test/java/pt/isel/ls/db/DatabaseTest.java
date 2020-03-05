@@ -31,7 +31,7 @@ public class DatabaseTest {
     }
 
     @Test
-    public void databaseTests_insert() throws SQLException, IOException {
+    public void databaseTests_insert() throws SQLException {
         Connection conn = Database.getInstance().getConnection();
         assertEquals(1,conn.prepareStatement("INSERT INTO courses(name) VALUES ('LEIM');").executeUpdate());
         conn.close();
