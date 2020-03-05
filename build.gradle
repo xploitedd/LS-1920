@@ -12,7 +12,8 @@ repositories {
 }
 
 dependencies {
-    testImplementation "org.junit.jupiter:junit-jupiter:5.6.0"
+    compile fileTree(dir: 'vendor/main', include: '*.jar')
+    testCompile fileTree(dir: 'vendor/test', include: '*.jar')
 }
 
 jar {
@@ -22,10 +23,6 @@ jar {
                 'Main-Class': 'pt.isel.ls.App'
         )
     }
-}
-
-test {
-    useJUnitPlatform()
 }
 
 /******************************************************************************

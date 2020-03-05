@@ -35,10 +35,15 @@ public class Ints {
 
         while (low <= high) {
             mid = (high + low) / 2;
-            if (n > a[mid]) low = mid + 1;
-            else if (n < a[mid]) high = mid - 1;
-            else return mid;
+            if (n > a[mid]) {
+                low = mid + 1;
+            } else if (n < a[mid]) {
+                high = mid - 1;
+            } else {
+                return mid;
+            }
         }
+
         return -1;
     }
 }
