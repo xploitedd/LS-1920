@@ -31,17 +31,11 @@ public class Ints {
 
         int low = fromIndex;
         int high = toIndex - 1;
-        int mid;
-
-        while (low < high) {
-            mid = (high + low) / 2 + 1;
-            if (n > a[mid]) {
-                low = mid + 1;
-            } else if (n < a[mid]) {
-                high = mid - 1;
-            } else {
-                return mid;
-            }
+        int mid = (high + low) / 2 + 1;
+        while (mid >= low && mid <= high) {
+            if (n > a[mid]) ++mid;
+            else if (n < a[mid]) --mid;
+            else return mid;
         }
         return -1;
     }
