@@ -3,13 +3,17 @@ package pt.isel.ls.db;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import javax.xml.crypto.Data;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class DatabaseTest {
 
@@ -44,4 +48,21 @@ public class DatabaseTest {
         conn.close();
     }
 
+    @Test
+    public void databaseTests_select() throws SQLException{
+        Connection conn = Database.getInstance().getConnection();
+        PreparedStatement stmt = conn.prepareStatement("SELECT * FROM students");
+        ResultSet rst = stmt.executeQuery();
+        assertTrue(rst != null);
+        conn.close();
+    }
+
+    @Test
+    public void databaseTests_update() throws SQLException{
+        Connection conn = Database.getInstance().getConnection();
+        PreparedStatement stmt = conn.prepareStatement("UPDATE students SET name = ? WHERE number = ?");
+        stmt.setString(1,"Joana");
+        stmt.setInt(2,12345);
+        assertEquals(0,stmt.executeUpdate());
+    }
 }
