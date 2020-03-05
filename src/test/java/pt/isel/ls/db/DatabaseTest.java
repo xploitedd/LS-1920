@@ -11,16 +11,8 @@ import java.sql.SQLException;
 
 public class DatabaseTest {
 
-    private static Database getDatabase() {
-        return new Database(System.getenv("POSTGRES_HOST"),
-                System.getenv("POSTGRES_PORT"),
-                System.getenv("POSTGRES_USERNAME"),
-                System.getenv("POSTGRES_PASSWORD"),
-                System.getenv("POSTGRES_DATABASE"));
-    }
-
     private static void executeFile(String filePath) throws SQLException, IOException {
-        Connection conn = getDatabase().getNewConnection();
+        Connection conn = new Database().getConnection();
         BufferedReader br = new BufferedReader(new FileReader(filePath));
         String line;
         while ((line = br.readLine()) != null) {
@@ -32,12 +24,12 @@ public class DatabaseTest {
 
     @BeforeClass
     public static void databaseTests_createSchema() throws IOException, SQLException {
-        executeFile("test/sql/createSchema.sql");
+        executeFile("src/test/sql/createSchema.sql");
     }
 
     @Test
     public void databaseTests_insert() throws SQLException, IOException {
-        executeFile("test/sql/addData.sql");
+        executeFile("src/test/sql/addData.sql");
     }
 
 }
