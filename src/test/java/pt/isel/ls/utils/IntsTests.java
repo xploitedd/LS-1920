@@ -52,6 +52,6 @@ public class IntsTests {
     @Test
     public void indexOfBinary_in_left_most_spot() {
         int[] v = {1,2,3,5,10};
-        assertEquals(4,Ints.indexOfBinary(v,0,4,10));
+        assertEquals(4,Ints.indexOfBinary(v,0,5,10));
     }
 }
