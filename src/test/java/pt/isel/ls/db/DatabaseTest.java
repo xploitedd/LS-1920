@@ -12,7 +12,7 @@ import java.sql.SQLException;
 public class DatabaseTest {
 
     private static void executeFile(String filePath) throws SQLException, IOException {
-        Connection conn = new Database().getConnection();
+        Connection conn = Database.getInstance().getConnection();
         BufferedReader br = new BufferedReader(new FileReader(filePath));
         String line;
         while ((line = br.readLine()) != null) {
