@@ -1,8 +1,9 @@
-package pt.isel.ls.db;
+package pt.isel.ls;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import javax.sql.DataSource;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
@@ -16,8 +17,11 @@ import static org.junit.Assert.assertTrue;
 
 public class DatabaseTest {
 
+    private static final String DATABASE_CONNECTION_ENV = "JDBC_DATABASE_URL";
+    private static final DataSource dataSource = App.getDataSource(System.getenv(DATABASE_CONNECTION_ENV));
+
     private static void executeFile(String filePath) throws SQLException, IOException {
-        Connection conn = Database.getInstance().getConnection();
+        Connection conn = dataSource.getConnection();
         BufferedReader br = new BufferedReader(new FileReader(filePath));
         String line;
         while ((line = br.readLine()) != null) {
@@ -35,21 +39,21 @@ public class DatabaseTest {
 
     @Test
     public void databaseTests_insert() throws SQLException {
-        Connection conn = Database.getInstance().getConnection();
+        Connection conn = dataSource.getConnection();
         assertEquals(1, conn.prepareStatement("INSERT INTO courses(name) VALUES ('LEIM');").executeUpdate());
         conn.close();
     }
 
     @Test
     public void databaseTests_delete() throws SQLException {
-        Connection conn = Database.getInstance().getConnection();
+        Connection conn = dataSource.getConnection();
         assertEquals(1, conn.prepareStatement("DELETE FROM students WHERE name LIKE 'A%'").executeUpdate());
         conn.close();
     }
 
     @Test
     public void databaseTests_select() throws SQLException {
-        Connection conn = Database.getInstance().getConnection();
+        Connection conn = dataSource.getConnection();
         PreparedStatement stmt = conn.prepareStatement("SELECT * FROM students");
         ResultSet rst = stmt.executeQuery();
 
@@ -64,7 +68,7 @@ public class DatabaseTest {
 
     @Test
     public void databaseTests_update() throws SQLException {
-        Connection conn = Database.getInstance().getConnection();
+        Connection conn = dataSource.getConnection();
         PreparedStatement stmt = conn.prepareStatement("UPDATE students SET name = ? WHERE number = ?");
         stmt.setString(1, "Joana");
         stmt.setInt(2, 12346);

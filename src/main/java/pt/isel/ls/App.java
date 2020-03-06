@@ -13,7 +13,7 @@ public class App {
         System.out.println("Hello LS");
     }
 
-    private static DataSource getDataSource(String connectionUrl) {
+    static DataSource getDataSource(String connectionUrl) {
         PGSimpleDataSource dataSource = new PGSimpleDataSource();
         dataSource.setUrl(connectionUrl);
         return dataSource;
