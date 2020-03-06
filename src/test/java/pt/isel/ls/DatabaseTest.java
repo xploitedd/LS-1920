@@ -72,9 +72,10 @@ public class DatabaseTest {
         stmt.setString(1, "Joana");
         stmt.setInt(2, 12346);
         assertEquals(1, stmt.executeUpdate());
-        PreparedStatement stmtcheck = conn.prepareStatement("SELECT name FROM students WHERE number = 12346");
-        ResultSet rst = stmtcheck.executeQuery();
+
+        PreparedStatement stmtCheck = conn.prepareStatement("SELECT name FROM students WHERE number = 12346");
+        ResultSet rst = stmtCheck.executeQuery();
         assertTrue(rst.next());
-        assertEquals("Joana",rst.getString(1));
+        assertEquals("Joana", rst.getString(1));
     }
 }
