@@ -56,7 +56,7 @@ public class DatabaseTest {
         // check if there's 3 columns
         assertEquals(3, rst.getMetaData().getColumnCount());
 
-        // check there is at least one student
+        // check there is at least one student (there should be 2 or 1 depending on order of tests)
         assertTrue(rst.next());
 
         conn.close();
@@ -67,7 +67,7 @@ public class DatabaseTest {
         Connection conn = Database.getInstance().getConnection();
         PreparedStatement stmt = conn.prepareStatement("UPDATE students SET name = ? WHERE number = ?");
         stmt.setString(1, "Joana");
-        stmt.setInt(2, 12345);
-        assertEquals(0, stmt.executeUpdate());
+        stmt.setInt(2, 12346);
+        assertEquals(1, stmt.executeUpdate());
     }
 }
