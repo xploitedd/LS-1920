@@ -1,4 +1,4 @@
 package pt.isel.ls.router;
 
-public class Response {
+public class RouteResponse {
 }

@@ -1,10 +1,10 @@
 package pt.isel.ls.handlers;
 
-import pt.isel.ls.router.Request;
-import pt.isel.ls.router.Response;
+import pt.isel.ls.router.RouteRequest;
+import pt.isel.ls.router.RouteResponse;
 
 public interface RouteHandler {
 
-    Response execute(Request request);
+    RouteResponse execute(RouteRequest request);
 
 }

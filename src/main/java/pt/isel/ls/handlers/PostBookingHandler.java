@@ -1,11 +1,11 @@
 package pt.isel.ls.handlers;
 
-import pt.isel.ls.router.Request;
-import pt.isel.ls.router.Response;
+import pt.isel.ls.router.RouteRequest;
+import pt.isel.ls.router.RouteResponse;
 
 public class PostBookingHandler implements RouteHandler {
     @Override
-    public Response execute(Request request) {
+    public RouteResponse execute(RouteRequest request) {
         return null;
     }
 }
