@@ -18,14 +18,25 @@ public class GetUserHandler implements RouteHandler {
         this.dataSource = dataSource;
     }
 
+    /**
+     * Gets user information
+     * @param request
+     * @return
+     */
     @Override
-    public RouteResponse execute(RouteRequest request) throws SQLException, RequestParameters.ParameterNotFoundException {
-        int uid = Integer.parseInt(request.getPathParameter("uid"));
-        Connection conn = dataSource.getConnection();
-        PreparedStatement stmt = conn.prepareStatement("SELECT * FROM USER WHERE uid = ?");
-        stmt.setInt(1,uid);
-        ResultSet res = stmt.executeQuery();
-        conn.close();
+    public RouteResponse execute(RouteRequest request) {
+
+        try (Connection conn = dataSource.getConnection()) {
+
+            int uid = Integer.parseInt(request.getPathParameter("uid"));
+            PreparedStatement stmt = conn.prepareStatement("SELECT * FROM USER WHERE uid = ?");
+            stmt.setInt(1,uid);
+            ResultSet res = stmt.executeQuery();
+
+        } catch (RequestParameters.ParameterNotFoundException | SQLException e) {
+            return new RouteResponse().setException(e);
+        }
+
         return null;
     }
 }

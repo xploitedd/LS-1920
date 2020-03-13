@@ -18,14 +18,24 @@ public class GetLabeledRoomsHandler implements RouteHandler {
         this.dataSource = dataSource;
     }
 
+    /**
+     * Gets all of the Rooms labeled with a specific Label
+     * @param request Request information
+     * @return routeResponse
+     */
     @Override
-    public RouteResponse execute(RouteRequest request) throws SQLException, RequestParameters.ParameterNotFoundException {
-        int lid = Integer.parseInt(request.getPathParameter("lid"));
-        Connection conn = dataSource.getConnection();
-        PreparedStatement stmt = conn.prepareStatement("SELECT * FROM ROOM WHERE rid IN (SELECT rid FROM ROOM_LABEL WHERE lid = ?)");
-        stmt.setInt(1,lid);
-        ResultSet res = stmt.executeQuery();
-        conn.close();
+    public RouteResponse execute(RouteRequest request) {
+        try (Connection conn = dataSource.getConnection()){
+
+            int lid = Integer.parseInt(request.getPathParameter("lid"));
+            PreparedStatement stmt = conn.prepareStatement("SELECT * FROM ROOM WHERE rid IN (SELECT rid FROM ROOM_LABEL WHERE lid = ?)");
+            stmt.setInt(1,lid);
+            ResultSet res = stmt.executeQuery();
+
+        } catch (RequestParameters.ParameterNotFoundException | SQLException e) {
+            return new RouteResponse().setException(e);
+        }
+
         return null;
     }
 }

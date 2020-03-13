@@ -18,23 +18,32 @@ public class GetRoomsHandler implements RouteHandler {
         this.dataSource = dataSource;
     }
 
+    /**
+     * Gets Rooms or a specific room
+     * @param request
+     * @return
+     */
     @Override
-    public RouteResponse execute(RouteRequest request) throws SQLException {
-        Connection conn = dataSource.getConnection();
-        PreparedStatement stmt;
-        ResultSet res;
+    public RouteResponse execute(RouteRequest request) {
+        try (Connection conn = dataSource.getConnection()){
 
-        if(request.getOptionalPathParameter("rid").isPresent()){
-            int rid = Integer.parseInt(request.getOptionalPathParameter("rid").get());
-            stmt = conn.prepareStatement("SELECT * FROM ROOM WHERE rid = ?");
-            stmt.setInt(1,rid);
-            res = stmt.executeQuery();
-        }else{
-            stmt = conn.prepareStatement("SELECT * FROM ROOMS");
-            res = stmt.executeQuery();
+            PreparedStatement stmt;
+            ResultSet res;
+
+            if(request.getOptionalPathParameter("rid").isPresent()){
+                int rid = Integer.parseInt(request.getOptionalPathParameter("rid").get());
+                stmt = conn.prepareStatement("SELECT * FROM ROOM WHERE rid = ?");
+                stmt.setInt(1,rid);
+                res = stmt.executeQuery();
+            }else{
+                stmt = conn.prepareStatement("SELECT * FROM ROOMS");
+                res = stmt.executeQuery();
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
 
-        conn.close();
         return null;
     }
 }

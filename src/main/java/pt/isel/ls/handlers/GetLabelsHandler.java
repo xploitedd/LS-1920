@@ -17,12 +17,20 @@ public class GetLabelsHandler implements RouteHandler {
         this.dataSource = dataSource;
     }
 
+    /**
+     * Gets all existing Labels
+     * @param request Request information
+     * @return routeResponse
+     */
     @Override
-    public RouteResponse execute(RouteRequest request) throws SQLException {
-        Connection conn = dataSource.getConnection();
-        PreparedStatement stmt = conn.prepareStatement("SELECT * FROM LABEL");
-        ResultSet res = stmt.executeQuery();
-        conn.close();
+    public RouteResponse execute(RouteRequest request){
+        try (Connection conn = dataSource.getConnection()){
+            PreparedStatement stmt = conn.prepareStatement("SELECT * FROM LABEL");
+            ResultSet res = stmt.executeQuery();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
         return null;
     }
 }
