@@ -29,10 +29,11 @@ public class GetRoomsHandler implements RouteHandler {
             stmt = conn.prepareStatement("SELECT * FROM ROOM WHERE rid = ?");
             stmt.setInt(1,rid);
             res = stmt.executeQuery();
+        }else{
+            stmt = conn.prepareStatement("SELECT * FROM ROOMS");
+            res = stmt.executeQuery();
         }
 
-        stmt = conn.prepareStatement("SELECT * FROM ROOMS");
-        res = stmt.executeQuery();
         conn.close();
         return null;
     }
