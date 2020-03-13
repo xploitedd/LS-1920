@@ -4,7 +4,9 @@ public class MessageView implements View {
 
     private String message;
 
-    public MessageView(String msg){ message = msg; }
+    public MessageView(String message) {
+        this.message = message;
+    }
 
     @Override
     public void render() {

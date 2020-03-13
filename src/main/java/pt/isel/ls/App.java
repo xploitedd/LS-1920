@@ -1,12 +1,26 @@
 package pt.isel.ls;
 
+import java.util.Optional;
+import java.util.Scanner;
 import org.postgresql.ds.PGSimpleDataSource;
-import pt.isel.ls.handlers.*;
-import pt.isel.ls.router.Method;
-import pt.isel.ls.router.RouteTemplate;
-import pt.isel.ls.router.Router;
+import pt.isel.ls.handlers.ExitHandler;
+import pt.isel.ls.handlers.GetLabeledRoomsHandler;
+import pt.isel.ls.handlers.GetLabelsHandler;
+import pt.isel.ls.handlers.GetRoomBookingsHandler;
+import pt.isel.ls.handlers.GetRoomsHandler;
+import pt.isel.ls.handlers.GetUserBookingsHandler;
+import pt.isel.ls.handlers.GetUserHandler;
+import pt.isel.ls.handlers.PostBookingHandler;
+import pt.isel.ls.handlers.PostLabelHandler;
+import pt.isel.ls.handlers.PostRoomHandler;
+import pt.isel.ls.handlers.PostUserHandler;
 
 import javax.sql.DataSource;
+import pt.isel.ls.router.Method;
+import pt.isel.ls.router.Path;
+import pt.isel.ls.router.RouteResponse;
+import pt.isel.ls.router.RouteTemplate;
+import pt.isel.ls.router.Router;
 
 public class App {
 
@@ -20,6 +34,7 @@ public class App {
         router = new Router();
 
         registerRoutes();
+        startApp();
     }
 
     private static void registerRoutes() {
@@ -39,6 +54,22 @@ public class App {
         router.registerRoute(Method.POST, RouteTemplate.of("/labels"), new PostLabelHandler(dataSource));
         router.registerRoute(Method.GET, RouteTemplate.of("/labels"), new GetLabelsHandler(dataSource));
         router.registerRoute(Method.GET, RouteTemplate.of("/labels/{lid}/rooms"), new GetLabeledRoomsHandler(dataSource));
+    }
+
+    private static void startApp() {
+        Scanner scanner = new Scanner(System.in);
+        while (scanner.hasNext()) {
+            // TODO: improve this code
+            System.out.print("> ");
+            String line = scanner.nextLine();
+            String[] parts = line.split(" ");
+            Method method = Method.valueOf(parts[0]);
+            Optional<Path> path = Path.of(parts[1]);
+            if (path.isPresent()) {
+                RouteResponse response = router.executeRoute(method, path.get(), null);
+                response.getView().render();
+            }
+        }
     }
 
     static DataSource getDataSource(String connectionUrl) {

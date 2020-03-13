@@ -7,6 +7,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import pt.isel.ls.handlers.RouteHandler;
+import pt.isel.ls.view.ExceptionView;
 
 /**
  * Router is responsible for routing
@@ -34,18 +35,19 @@ public class Router {
         }
     }
 
-    public Optional<RouteResponse> executeRoute(Method method, Path path, RequestParameters<List<String>> parameters) {
+    public RouteResponse executeRoute(Method method, Path path, RequestParameters<List<String>> parameters) {
         Set<Route> routes = methodRoutes.get(method);
         for (Route r : routes) {
             RouteTemplate template = r.getRouteTemplate();
             Optional<RequestParameters<String>> match = template.match(path);
             if (match.isPresent()) {
-                return Optional.of(r.getHandler()
-                        .execute(new RouteRequest(path, match.get(), parameters)));
+                return r.getHandler()
+                        .execute(new RouteRequest(path, match.get(), parameters));
             }
         }
 
-        return Optional.empty();
+        return new RouteResponse(new ExceptionView(new RouteNotFoundException(path)))
+                .setStatusCode(404);
     }
 
     public static class Route {
@@ -84,6 +86,14 @@ public class Router {
         @Override
         public int hashCode() {
             return Objects.hash(routeTemplate, handler);
+        }
+
+    }
+
+    private static class RouteNotFoundException extends Exception {
+
+        private RouteNotFoundException(Path path) {
+            super("The route " + path + " was not found!");
         }
 
     }

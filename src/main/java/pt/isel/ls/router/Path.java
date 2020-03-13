@@ -1,5 +1,6 @@
 package pt.isel.ls.router;
 
+import java.util.Arrays;
 import java.util.Optional;
 
 public class Path {
@@ -37,4 +38,8 @@ public class Path {
         return Optional.of(new Path(segments));
     }
 
+    @Override
+    public String toString() {
+        return String.join("/", pathSegments);
+    }
 }
