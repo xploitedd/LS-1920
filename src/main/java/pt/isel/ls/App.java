@@ -40,7 +40,7 @@ public class App {
         router.registerRoute(Method.GET, RouteTemplate.of("/rooms/{rid}?"), new GetRoomsHandler(dataSource));
         // Booking Handlers
         router.registerRoute(Method.POST, RouteTemplate.of("/rooms/{rid}/bookings"), new PostBookingHandler());
-        router.registerRoute(Method.GET, RouteTemplate.of("/rooms/{rid}/bookings/{bid}"), new GetBookingsHandler(dataSource));
+        router.registerRoute(Method.GET, RouteTemplate.of("/rooms/{rid}/bookings/{bid}?"), new GetRoomBookingsHandler(dataSource));
         // User Handlers
         router.registerRoute(Method.POST, RouteTemplate.of("/users"), new PostUserHandler());
         router.registerRoute(Method.GET, RouteTemplate.of("/users/{uid}"), new GetUserHandler(dataSource));
