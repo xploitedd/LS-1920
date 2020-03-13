@@ -1,12 +1,16 @@
 package pt.isel.ls.handlers;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
 import pt.isel.ls.model.Table;
 import pt.isel.ls.router.RequestParameters;
 import pt.isel.ls.router.RouteRequest;
 import pt.isel.ls.router.RouteResponse;
 
 import javax.sql.DataSource;
-import java.sql.*;
 import java.util.ArrayList;
 
 import pt.isel.ls.view.ExceptionView;
@@ -41,8 +45,9 @@ public class GetLabeledRoomsHandler implements RouteHandler {
             for (int i = 0; i < size; i++) {
                 columnNames.add(metaData.getColumnName(i));
             }
+
             Table table = new Table(columnNames.toArray(String[]::new));
-            while(res.next()) {
+            while (res.next()) {
                 int rid = res.getInt(1);
                 String name = res.getString(2);
                 String location = res.getString(3);
