@@ -54,10 +54,25 @@ public class PostRoomHandler implements RouteHandler {
             ret.setString(2,l);
             ret.setInt(3,c);
             ResultSet rs = ret.executeQuery();
+            rs.first();
             int rid = rs.getInt("rid");
-            //TODO: Fetch labels, check their IDs and insert rid-lid pairs into ROOM_LABEL
-
-
+            //Fetch labels, check their IDs
+            for (String lbl:labels) {
+                PreparedStatement ls = conn.prepareStatement(
+                        "SELECT lid FROM label WHERE name = ?;"
+                );
+                ls.setString(1,lbl);
+                ResultSet rls = ls.executeQuery();
+                rls.first();
+                int lid = rls.getInt("lid");
+                //insert rid-lid pairs into ROOM_LABEL
+                PreparedStatement rl = conn.prepareStatement(
+                        "INSERT INTO ROOM_LABEL (lid,rid) VALUES (?,?);"
+                );
+                rl.setInt(1,lid);
+                rl.setInt(2,rid);
+                rl.execute();
+            };
             return new RouteResponse(new MessageView("This room's unique identifier is: " + rid));
         } catch (RequestParameters.ParameterNotFoundException | SQLException e) {
             return new RouteResponse(new ExceptionView(e)).setStatusCode(500);

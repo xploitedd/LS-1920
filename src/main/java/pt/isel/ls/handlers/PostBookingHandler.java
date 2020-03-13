@@ -50,6 +50,7 @@ public class PostBookingHandler implements RouteHandler {
             ret.setInt(3,rid);
             ret.setInt(4,uid);
             ResultSet rs = ret.executeQuery();
+            rs.first();
             int bid = rs.getInt("bid");
             return new RouteResponse(new MessageView("This booking's unique identifier is: " + bid));
         } catch (RequestParameters.ParameterNotFoundException | SQLException e) {
