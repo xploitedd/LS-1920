@@ -1,6 +1,10 @@
 package pt.isel.ls;
 
 import org.postgresql.ds.PGSimpleDataSource;
+import pt.isel.ls.handlers.*;
+import pt.isel.ls.router.Method;
+import pt.isel.ls.router.RouteTemplate;
+import pt.isel.ls.router.Router;
 
 import javax.sql.DataSource;
 
@@ -8,9 +12,34 @@ public class App {
 
     private static final String DATABASE_CONNECTION_ENV = "JDBC_DATABASE_URL";
 
+    private static DataSource dataSource;
+    private static Router router;
+
     public static void main(String[] args) {
-        DataSource dataSource = getDataSource(System.getenv(DATABASE_CONNECTION_ENV));
-        System.out.println("Hello LS");
+        dataSource = getDataSource(System.getenv(DATABASE_CONNECTION_ENV));
+        router = new Router();
+
+        registerRoutes();
+    }
+
+    private static void registerRoutes() {
+        // Register All Routes
+        router.registerRoute(Method.EXIT, RouteTemplate.of("/"), new ExitHandler());
+        // Room Handlers
+        router.registerRoute(Method.POST, RouteTemplate.of("/rooms"), new PostRoomHandler());
+        router.registerRoute(Method.GET, RouteTemplate.of("/rooms"), new GetRoomsHandler());
+        router.registerRoute(Method.GET, RouteTemplate.of("/rooms/{rid}"), new GetRoomHandler());
+        // Booking Handlers
+        router.registerRoute(Method.POST, RouteTemplate.of("/rooms/{rid}/bookings"), new PostBookingHandler());
+        router.registerRoute(Method.GET, RouteTemplate.of("/rooms/{rid}/bookings/{bid}"), new GetBookingsHandler());
+        // User Handlers
+        router.registerRoute(Method.POST, RouteTemplate.of("/users"), new PostUserHandler());
+        router.registerRoute(Method.GET, RouteTemplate.of("/users/{uid}"), new GetUserHandler());
+        router.registerRoute(Method.GET, RouteTemplate.of("/users/{uid}/bookings"), new GetUserBookingsHandler());
+        // Label Handlers
+        router.registerRoute(Method.POST, RouteTemplate.of("/labels"), new PostLabelHandler());
+        router.registerRoute(Method.GET, RouteTemplate.of("/labels"), new GetLabelsHandler());
+        router.registerRoute(Method.GET, RouteTemplate.of("/labels/{lid}/rooms"), new GetLabeledRoomsHandler());
     }
 
     static DataSource getDataSource(String connectionUrl) {

@@ -41,7 +41,7 @@ public class Router {
 
         Map<RouteTemplate, RouteHandler> templates = optionalTemplates.get();
         for (RouteTemplate t : templates.keySet()) {
-            if (t.matches(routeRequest)) {
+            if (t.matches(routeRequest.getPath())) {
                 Route route = new Route(routeRequest, templates.get(t));
                 return Optional.of(route);
             }
