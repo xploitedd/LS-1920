@@ -8,6 +8,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Optional;
 
 public class GetRoomsHandler implements RouteHandler {
 
@@ -19,9 +20,17 @@ public class GetRoomsHandler implements RouteHandler {
 
     @Override
     public RouteResponse execute(RouteRequest request) throws SQLException {
-        Connection conn = dataSource.getConnection();
-        PreparedStatement stmt = conn.prepareStatement("SELECT * FROM LABEL");
-        ResultSet res = stmt.executeQuery();
+        Connection conn =dataSource.getConnection();
+        PreparedStatement stmt;
+        ResultSet res;
+        if(request.getOptionalParameter("rid").isPresent()){
+            int rid = Integer.parseInt(request.getOptionalPathParameter("rid").get());
+            stmt = conn.prepareStatement("SELECT * FROM ROOM WHERE rid = ?");
+            stmt.setInt(1,rid);
+            res = stmt.executeQuery();
+        }
+        stmt = conn.prepareStatement("SELECT * FROM ROOMS");
+        res = stmt.executeQuery();
         conn.close();
         return null;
     }

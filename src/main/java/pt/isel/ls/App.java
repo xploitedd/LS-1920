@@ -5,7 +5,6 @@ import pt.isel.ls.handlers.ExitHandler;
 import pt.isel.ls.handlers.GetBookingsHandler;
 import pt.isel.ls.handlers.GetLabeledRoomsHandler;
 import pt.isel.ls.handlers.GetLabelsHandler;
-import pt.isel.ls.handlers.GetRoomHandler;
 import pt.isel.ls.handlers.GetRoomsHandler;
 import pt.isel.ls.handlers.GetUserBookingsHandler;
 import pt.isel.ls.handlers.GetUserHandler;
