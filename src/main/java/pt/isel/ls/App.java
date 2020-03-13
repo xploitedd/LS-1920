@@ -38,8 +38,7 @@ public class App {
         router.registerRoute(Method.EXIT, RouteTemplate.of("/"), new ExitHandler());
         // Room Handlers
         router.registerRoute(Method.POST, RouteTemplate.of("/rooms"), new PostRoomHandler());
-        router.registerRoute(Method.GET, RouteTemplate.of("/rooms"), new GetRoomsHandler(dataSource));
-        router.registerRoute(Method.GET, RouteTemplate.of("/rooms/{rid}"), new GetRoomHandler(dataSource));
+        router.registerRoute(Method.GET, RouteTemplate.of("/rooms/{rid}?"), new GetRoomsHandler(dataSource));
         // Booking Handlers
         router.registerRoute(Method.POST, RouteTemplate.of("/rooms/{rid}/bookings"), new PostBookingHandler());
         router.registerRoute(Method.GET, RouteTemplate.of("/rooms/{rid}/bookings/{bid}"), new GetBookingsHandler(dataSource));
