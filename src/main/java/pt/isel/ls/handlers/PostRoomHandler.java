@@ -4,6 +4,7 @@ import pt.isel.ls.router.RequestParameters;
 import pt.isel.ls.router.RouteRequest;
 import pt.isel.ls.router.RouteResponse;
 import pt.isel.ls.view.ExceptionView;
+import pt.isel.ls.view.MessageView;
 
 import javax.sql.DataSource;
 import java.sql.Connection;
@@ -21,27 +22,35 @@ public class PostRoomHandler implements RouteHandler {
     @Override
     public RouteResponse execute(RouteRequest request) {
         try (Connection conn = dataSource.getConnection()) {
-            // name - the rooms's name.
-            //description - the rooms's description.
-            //location - the room's location.
-            //label - the set of labels for the room.
             String n = request.getParameter("name").get(0);
+            int c = Integer.parseInt(request.getParameter("capacity").get(0));
+            /* TODO: Ask teacher about this
             Optional<List<String>> desc = request.getOptionalParameter("description");
             if (desc.isPresent()) {
                 String d = desc.get().get(0);
             } else {
-                //TODO: Handle room descriptions
-            }
-            String l = request.getParameter("location").get(0);
-            PreparedStatement stmt = conn.prepareStatement("INSERT INTO label (name) VALUES (?);");
-            stmt.setString(1,n);
-            stmt.execute();
-            PreparedStatement ret = conn.prepareStatement("SELECT lid FROM label WHERE name = ?;");
-            stmt.setString(1,n);
-            ResultSet rs = stmt.executeQuery();
-            int lid = rs.getInt("lid"); //TODO: Return this somehow
 
-            return null;
+            }
+            */
+            String l = request.getParameter("location").get(0);
+            List<String> labels = request.getParameter("label");
+
+            PreparedStatement stmt = conn.prepareStatement("INSERT INTO ROOMS (name, location, capacity) VALUES (?,?,?);");
+            stmt.setString(1,n);
+            stmt.setString(2,l);
+            stmt.setInt(3,c);
+            stmt.execute();
+            //Again, if you find an easier way tell me
+            PreparedStatement ret = conn.prepareStatement("SELECT rid FROM ROOMS WHERE name = ? AND location = ? AND capacity = ?;");
+            ret.setString(1,n);
+            ret.setString(2,l);
+            ret.setInt(3,c);
+            ResultSet rs = ret.executeQuery();
+            int rid = rs.getInt("rid");
+            //TODO: Fetch labels, check their IDs and insert rid-lid pairs into ROOM_LABEL
+
+
+            return new RouteResponse(new MessageView("This room's unique identifier is: " + rid));
         } catch (RequestParameters.ParameterNotFoundException | SQLException e) {
             return new RouteResponse(new ExceptionView(e)).setStatusCode(500);
         }

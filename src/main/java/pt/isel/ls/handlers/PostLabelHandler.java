@@ -25,8 +25,8 @@ public class PostLabelHandler implements RouteHandler {
             stmt.setString(1,n);
             stmt.execute();
             PreparedStatement ret = conn.prepareStatement("SELECT lid FROM label WHERE name = ?;");
-            stmt.setString(1,n);
-            ResultSet rs = stmt.executeQuery();
+            ret.setString(1,n);
+            ResultSet rs = ret.executeQuery();
             int lid = rs.getInt("lid");
             return new RouteResponse(new MessageView("This label's unique identifier is: " + lid));
         } catch (RequestParameters.ParameterNotFoundException | SQLException e) {
