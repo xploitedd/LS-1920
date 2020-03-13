@@ -30,7 +30,12 @@ public class App {
     private static Router router;
 
     public static void main(String[] args) {
-        dataSource = getDataSource(System.getenv(DATABASE_CONNECTION_ENV));
+        String url = System.getenv(DATABASE_CONNECTION_ENV);
+        if (url == null) {
+            System.err.println("Please set the " + DATABASE_CONNECTION_ENV + " environment variable");
+            System.exit(1);
+        }
+        dataSource = getDataSource(url);
         router = new Router();
 
         registerRoutes();
