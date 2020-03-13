@@ -1,10 +1,12 @@
 package pt.isel.ls.router;
 
-import pt.isel.ls.handlers.RouteHandler;
-
 import java.util.HashMap;
-import java.util.Map;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
+import pt.isel.ls.handlers.RouteHandler;
 
 /**
  * Router is responsible for routing
@@ -13,7 +15,7 @@ import java.util.Optional;
  */
 public class Router {
 
-    private HashMap<Method, Optional<Map<RouteTemplate, RouteHandler>>> methodRoutes = new HashMap<>();
+    private HashMap<Method, Optional<Set<Route>>> methodRoutes = new HashMap<>();
 
     /**
      * Registers a new Route to this Router
@@ -21,51 +23,62 @@ public class Router {
      * @param handler Handler for the Route to be registered
      */
     public void registerRoute(Method method, RouteTemplate template, RouteHandler handler) {
-        Map<RouteTemplate, RouteHandler> templates = methodRoutes.get(method).orElse(new HashMap<>());
-        templates.put(template, handler);
+        Set<Route> routes = methodRoutes.get(method).orElse(new HashSet<>());
+        routes.add(new Route(template, handler));
         // put the map, useful in case it does not exist
-        methodRoutes.put(method, Optional.of(templates));
+        methodRoutes.put(method, Optional.of(routes));
     }
 
-    /**
-     * Finds a route that matches the request
-     * @param routeRequest Route requested
-     * @return None if not found, Route if found
-     */
-    public Optional<Route> findRoute(RouteRequest routeRequest) {
-        Method method = routeRequest.getMethod();
-        Optional<Map<RouteTemplate, RouteHandler>> optionalTemplates = methodRoutes.get(method);
-        if (optionalTemplates.isEmpty()) {
-            return Optional.empty();
-        }
-
-        Map<RouteTemplate, RouteHandler> templates = optionalTemplates.get();
-        for (RouteTemplate t : templates.keySet()) {
-            if (t.matches(routeRequest.getPath())) {
-                Route route = new Route(routeRequest, templates.get(t));
-                return Optional.of(route);
+    public void executeRoute(Method method, Path path, RequestParameters<List<String>> parameters) {
+        Optional<Set<Route>> routes = methodRoutes.get(method);
+        if (routes.isPresent()) {
+            for (Route r : routes.get()) {
+                RouteTemplate template = r.getRouteTemplate();
+                Optional<RequestParameters<String>> match = template.match(path);
+                if (match.isPresent()) {
+                    r.getHandler().execute(new RouteRequest(path, match.get(), parameters));
+                    return;
+                }
             }
         }
-
-        return Optional.empty();
     }
 
     public static class Route {
 
-        private RouteRequest routeRequest;
+        private RouteTemplate routeTemplate;
         private RouteHandler handler;
 
-        private Route(RouteRequest routeRequest, RouteHandler handler) {
-            this.routeRequest = routeRequest;
+        private Route(RouteTemplate routeTemplate, RouteHandler handler) {
+            this.routeTemplate = routeTemplate;
             this.handler = handler;
         }
 
-        public RouteRequest getRouteRequest() {
-            return routeRequest;
+        public RouteTemplate getRouteTemplate() {
+            return routeTemplate;
         }
 
         public RouteHandler getHandler() {
             return handler;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) {
+                return true;
+            }
+
+            if (o == null || getClass() != o.getClass()) {
+                return false;
+            }
+
+            Route route = (Route) o;
+            return routeTemplate.equals(route.routeTemplate)
+                    && handler.equals(route.handler);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(routeTemplate, handler);
         }
 
     }
