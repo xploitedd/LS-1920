@@ -19,7 +19,7 @@ public class GetLabeledRoomsHandler implements RouteHandler {
 
     @Override
     public RouteResponse execute(RouteRequest request) throws SQLException {
-        int lid = 0; //Placeholder until routeresponse is ready
+        int lid = 0; //Placeholder until RouteResponse is ready
         Connection conn =dataSource.getConnection();
         PreparedStatement stmt = conn.prepareStatement("SELECT * FROM ROOM WHERE rid IN (SELECT rid FROM ROOM_LABEL WHERE lid = ?)");
         stmt.setInt(1,lid);
