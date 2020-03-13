@@ -27,19 +27,19 @@ public class App {
         router.registerRoute(Method.EXIT, RouteTemplate.of("/"), new ExitHandler());
         // Room Handlers
         router.registerRoute(Method.POST, RouteTemplate.of("/rooms"), new PostRoomHandler());
-        router.registerRoute(Method.GET, RouteTemplate.of("/rooms"), new GetRoomsHandler());
-        router.registerRoute(Method.GET, RouteTemplate.of("/rooms/{rid}"), new GetRoomHandler());
+        router.registerRoute(Method.GET, RouteTemplate.of("/rooms"), new GetRoomsHandler(dataSource));
+        router.registerRoute(Method.GET, RouteTemplate.of("/rooms/{rid}"), new GetRoomHandler(dataSource));
         // Booking Handlers
         router.registerRoute(Method.POST, RouteTemplate.of("/rooms/{rid}/bookings"), new PostBookingHandler());
-        router.registerRoute(Method.GET, RouteTemplate.of("/rooms/{rid}/bookings/{bid}"), new GetBookingsHandler());
+        router.registerRoute(Method.GET, RouteTemplate.of("/rooms/{rid}/bookings/{bid}"), new GetBookingsHandler(dataSource));
         // User Handlers
         router.registerRoute(Method.POST, RouteTemplate.of("/users"), new PostUserHandler());
-        router.registerRoute(Method.GET, RouteTemplate.of("/users/{uid}"), new GetUserHandler());
+        router.registerRoute(Method.GET, RouteTemplate.of("/users/{uid}"), new GetUserHandler(dataSource));
         router.registerRoute(Method.GET, RouteTemplate.of("/users/{uid}/bookings"), new GetUserBookingsHandler());
         // Label Handlers
         router.registerRoute(Method.POST, RouteTemplate.of("/labels"), new PostLabelHandler());
-        router.registerRoute(Method.GET, RouteTemplate.of("/labels"), new GetLabelsHandler());
-        router.registerRoute(Method.GET, RouteTemplate.of("/labels/{lid}/rooms"), new GetLabeledRoomsHandler());
+        router.registerRoute(Method.GET, RouteTemplate.of("/labels"), new GetLabelsHandler(dataSource));
+        router.registerRoute(Method.GET, RouteTemplate.of("/labels/{lid}/rooms"), new GetLabeledRoomsHandler(dataSource));
     }
 
     static DataSource getDataSource(String connectionUrl) {
