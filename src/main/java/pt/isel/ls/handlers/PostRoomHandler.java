@@ -35,7 +35,6 @@ public class PostRoomHandler implements RouteHandler {
             }
             */
             String l = request.getParameter("location").get(0);
-            List<String> labels = request.getParameter("label");
 
             PreparedStatement stmt = conn.prepareStatement(
                     "INSERT INTO ROOMS (name, location, capacity) VALUES (?,?,?);"
@@ -57,6 +56,7 @@ public class PostRoomHandler implements RouteHandler {
             rs.first();
             int rid = rs.getInt("rid");
             //Fetch labels, check their IDs
+            List<String> labels = request.getParameter("label");
             for (String lbl:labels) {
                 PreparedStatement ls = conn.prepareStatement(
                         "SELECT lid FROM label WHERE name = ?;"
@@ -72,7 +72,7 @@ public class PostRoomHandler implements RouteHandler {
                 rl.setInt(1,lid);
                 rl.setInt(2,rid);
                 rl.execute();
-            };
+            }
             return new RouteResponse(new MessageView("This room's unique identifier is: " + rid));
         } catch (RequestParameters.ParameterNotFoundException | SQLException e) {
             return new RouteResponse(new ExceptionView(e)).setStatusCode(500);
