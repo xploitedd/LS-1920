@@ -1,7 +1,18 @@
 package pt.isel.ls;
 
 import org.postgresql.ds.PGSimpleDataSource;
-import pt.isel.ls.handlers.*;
+import pt.isel.ls.handlers.ExitHandler;
+import pt.isel.ls.handlers.GetBookingsHandler;
+import pt.isel.ls.handlers.GetLabeledRoomsHandler;
+import pt.isel.ls.handlers.GetLabelsHandler;
+import pt.isel.ls.handlers.GetRoomHandler;
+import pt.isel.ls.handlers.GetRoomsHandler;
+import pt.isel.ls.handlers.GetUserBookingsHandler;
+import pt.isel.ls.handlers.GetUserHandler;
+import pt.isel.ls.handlers.PostBookingHandler;
+import pt.isel.ls.handlers.PostLabelHandler;
+import pt.isel.ls.handlers.PostRoomHandler;
+import pt.isel.ls.handlers.PostUserHandler;
 import pt.isel.ls.router.Method;
 import pt.isel.ls.router.RouteTemplate;
 import pt.isel.ls.router.Router;
