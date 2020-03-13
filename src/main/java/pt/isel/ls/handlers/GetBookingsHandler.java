@@ -15,6 +15,7 @@ public class GetBookingsHandler implements RouteHandler {
 
     @Override
     public RouteResponse execute(RouteRequest request) {
+
         return null;
     }
 }
