@@ -10,6 +10,7 @@ import pt.isel.ls.router.RouteResponse;
 
 import javax.sql.DataSource;
 import pt.isel.ls.view.ExceptionView;
+import pt.isel.ls.view.MessageView;
 
 public class PostLabelHandler implements RouteHandler {
     private DataSource dataSource;
@@ -26,9 +27,8 @@ public class PostLabelHandler implements RouteHandler {
             PreparedStatement ret = conn.prepareStatement("SELECT lid FROM label WHERE name = ?;");
             stmt.setString(1,n);
             ResultSet rs = stmt.executeQuery();
-            int lid = rs.getInt("lid"); //TODO: Return this somehow
-
-            return new RouteResponse(null);
+            int lid = rs.getInt("lid");
+            return new RouteResponse(new MessageView("This label's unique identifier is: " + lid));
         } catch (RequestParameters.ParameterNotFoundException | SQLException e) {
             return new RouteResponse(new ExceptionView(e)).setStatusCode(500);
         }
