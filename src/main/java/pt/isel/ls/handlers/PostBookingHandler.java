@@ -14,8 +14,10 @@ import pt.isel.ls.view.ExceptionView;
 import pt.isel.ls.view.MessageView;
 
 public class PostBookingHandler implements RouteHandler {
+
     private DataSource dataSource;
-    public PostBookingHandler(DataSource dataSource){
+
+    public PostBookingHandler(DataSource dataSource) {
         this.dataSource = dataSource;
     }
 
@@ -29,14 +31,20 @@ public class PostBookingHandler implements RouteHandler {
             //TODO: Make sure these Strings are TIMESTAMPs
             Timestamp b = Timestamp.valueOf(begin);
             Timestamp e = Timestamp.valueOf(end);
-            PreparedStatement stmt = conn.prepareStatement("INSERT INTO BOOKING (begin,\"end\",rid,uid) VALUES (?,?,?,?);");
+            PreparedStatement stmt = conn.prepareStatement(
+                    "INSERT INTO BOOKING (begin,\"end\",rid,uid) VALUES (?,?,?,?);"
+            );
+
             stmt.setTimestamp(1,b);
             stmt.setTimestamp(2,e);
             stmt.setInt(3,rid);
             stmt.setInt(4,uid);
             stmt.execute();
             // If you find a better way to do this please tell me
-            PreparedStatement ret = conn.prepareStatement("SELECT bid FROM BOOKING WHERE begin = ? AND end = ? AND rid = ? AND uid = ?;");
+            PreparedStatement ret = conn.prepareStatement(
+                    "SELECT bid FROM BOOKING WHERE begin = ? AND end = ? AND rid = ? AND uid = ?;"
+            );
+
             ret.setTimestamp(1,b);
             ret.setTimestamp(2,e);
             ret.setInt(3,rid);

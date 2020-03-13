@@ -15,7 +15,7 @@ public class GetRoomBookingsHandler implements RouteHandler {
 
     private DataSource dataSource;
 
-    public GetRoomBookingsHandler(DataSource dataSource){
+    public GetRoomBookingsHandler(DataSource dataSource) {
         this.dataSource = dataSource;
     }
 
@@ -27,11 +27,11 @@ public class GetRoomBookingsHandler implements RouteHandler {
 
     @Override
     public RouteResponse execute(RouteRequest request) {
-        try (Connection conn = dataSource.getConnection()){
+        try (Connection conn = dataSource.getConnection()) {
             int rid = Integer.parseInt(request.getPathParameter("rid"));
             PreparedStatement stmt;
 
-            if (request.getOptionalPathParameter("bid").isPresent()){
+            if (request.getOptionalPathParameter("bid").isPresent()) {
                 int bid = Integer.parseInt(request.getOptionalPathParameter("bid").get());
                 stmt = conn.prepareStatement("SELECT * FROM BOOKING WHERE rid = ? AND bid = ?");
                 stmt.setInt(1, rid);

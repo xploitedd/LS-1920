@@ -15,13 +15,13 @@ public class GetUserHandler implements RouteHandler {
 
     private DataSource dataSource;
 
-    public GetUserHandler(DataSource dataSource){
+    public GetUserHandler(DataSource dataSource) {
         this.dataSource = dataSource;
     }
 
     /**
      * Gets user information
-     * @param request
+     * @param request The route request
      * @return
      */
     @Override

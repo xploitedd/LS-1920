@@ -15,18 +15,18 @@ public class GetUserBookingsHandler implements RouteHandler {
 
     private DataSource dataSource;
 
-    public GetUserBookingsHandler ( DataSource dataSource){
+    public GetUserBookingsHandler(DataSource dataSource) {
         this.dataSource = dataSource;
     }
 
     /**
      * Gets booking booked by a user
-     * @param request
+     * @param request The route request
      * @return
      */
     @Override
     public RouteResponse execute(RouteRequest request) {
-        try (Connection conn = dataSource.getConnection()){
+        try (Connection conn = dataSource.getConnection()) {
             int uid = Integer.parseInt(request.getPathParameter("uid"));
             PreparedStatement stmt = conn.prepareStatement("SELECT * FROM BOOKING WHERE uid = ?");
             stmt.setInt(1, uid);

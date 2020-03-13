@@ -1,6 +1,5 @@
 package pt.isel.ls.router;
 
-import java.util.Arrays;
 import java.util.Optional;
 
 public class Path {

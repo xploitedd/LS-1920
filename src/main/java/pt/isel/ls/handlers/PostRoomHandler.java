@@ -12,13 +12,15 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
-import java.util.Optional;
 
 public class PostRoomHandler implements RouteHandler {
+
     private DataSource dataSource;
-    public PostRoomHandler(DataSource dataSource){
+
+    public PostRoomHandler(DataSource dataSource) {
         this.dataSource = dataSource;
     }
+
     @Override
     public RouteResponse execute(RouteRequest request) {
         try (Connection conn = dataSource.getConnection()) {
@@ -35,13 +37,19 @@ public class PostRoomHandler implements RouteHandler {
             String l = request.getParameter("location").get(0);
             List<String> labels = request.getParameter("label");
 
-            PreparedStatement stmt = conn.prepareStatement("INSERT INTO ROOMS (name, location, capacity) VALUES (?,?,?);");
+            PreparedStatement stmt = conn.prepareStatement(
+                    "INSERT INTO ROOMS (name, location, capacity) VALUES (?,?,?);"
+            );
+
             stmt.setString(1,n);
             stmt.setString(2,l);
             stmt.setInt(3,c);
             stmt.execute();
             //Again, if you find an easier way tell me
-            PreparedStatement ret = conn.prepareStatement("SELECT rid FROM ROOMS WHERE name = ? AND location = ? AND capacity = ?;");
+            PreparedStatement ret = conn.prepareStatement(
+                    "SELECT rid FROM ROOMS WHERE name = ? AND location = ? AND capacity = ?;"
+            );
+
             ret.setString(1,n);
             ret.setString(2,l);
             ret.setInt(3,c);

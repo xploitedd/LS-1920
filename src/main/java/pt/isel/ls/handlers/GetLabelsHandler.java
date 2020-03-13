@@ -24,8 +24,8 @@ public class GetLabelsHandler implements RouteHandler {
      * @return routeResponse
      */
     @Override
-    public RouteResponse execute(RouteRequest request){
-        try (Connection conn = dataSource.getConnection()){
+    public RouteResponse execute(RouteRequest request) {
+        try (Connection conn = dataSource.getConnection()) {
             PreparedStatement stmt = conn.prepareStatement("SELECT * FROM LABEL");
             ResultSet res = stmt.executeQuery();
             return new RouteResponse(null);

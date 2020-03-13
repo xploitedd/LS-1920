@@ -8,29 +8,29 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Optional;
+
 import pt.isel.ls.view.ExceptionView;
 
 public class GetRoomsHandler implements RouteHandler {
 
     private DataSource dataSource;
 
-    public GetRoomsHandler(DataSource dataSource){
+    public GetRoomsHandler(DataSource dataSource) {
         this.dataSource = dataSource;
     }
 
     /**
      * Gets Rooms or a specific room
-     * @param request
+     * @param request The route request
      * @return
      */
     @Override
     public RouteResponse execute(RouteRequest request) {
-        try (Connection conn = dataSource.getConnection()){
+        try (Connection conn = dataSource.getConnection()) {
             PreparedStatement stmt;
             ResultSet res;
 
-            if (request.getOptionalPathParameter("rid").isPresent()){
+            if (request.getOptionalPathParameter("rid").isPresent()) {
                 int rid = Integer.parseInt(request.getOptionalPathParameter("rid").get());
                 stmt = conn.prepareStatement("SELECT * FROM ROOM WHERE rid = ?");
                 stmt.setInt(1,rid);

@@ -13,10 +13,13 @@ import pt.isel.ls.view.ExceptionView;
 import pt.isel.ls.view.MessageView;
 
 public class PostLabelHandler implements RouteHandler {
+
     private DataSource dataSource;
-    public PostLabelHandler(DataSource dataSource){
+
+    public PostLabelHandler(DataSource dataSource) {
         this.dataSource = dataSource;
     }
+
     @Override
     public RouteResponse execute(RouteRequest request) {
         try (Connection conn = dataSource.getConnection()) {
