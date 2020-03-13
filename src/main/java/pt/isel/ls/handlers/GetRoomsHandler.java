@@ -23,12 +23,14 @@ public class GetRoomsHandler implements RouteHandler {
         Connection conn =dataSource.getConnection();
         PreparedStatement stmt;
         ResultSet res;
+
         if(request.getOptionalParameter("rid").isPresent()){
             int rid = Integer.parseInt(request.getOptionalPathParameter("rid").get());
             stmt = conn.prepareStatement("SELECT * FROM ROOM WHERE rid = ?");
             stmt.setInt(1,rid);
             res = stmt.executeQuery();
         }
+
         stmt = conn.prepareStatement("SELECT * FROM ROOMS");
         res = stmt.executeQuery();
         conn.close();

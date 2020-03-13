@@ -23,6 +23,7 @@ public class GetRoomBookingsHandler implements RouteHandler {
         Connection conn = dataSource.getConnection();
         int rid = Integer.parseInt(request.getPathParameter("rid"));
         PreparedStatement stmt;
+
         if(request.getOptionalPathParameter("bid").isPresent()){
             int bid = Integer.parseInt(request.getOptionalPathParameter("bid").get());
             stmt = conn.prepareStatement("SELECT * FROM BOOKING WHERE rid = ? AND bid = ?");
@@ -32,6 +33,7 @@ public class GetRoomBookingsHandler implements RouteHandler {
             stmt = conn.prepareStatement("SELECT * FROM BOOKING WHERE rid = ?");
             stmt.setInt(1, rid);
         }
+        
         ResultSet res = stmt.executeQuery();
         conn.close();
         return null;

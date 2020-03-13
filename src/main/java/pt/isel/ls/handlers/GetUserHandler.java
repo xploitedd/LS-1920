@@ -1,5 +1,6 @@
 package pt.isel.ls.handlers;
 
+import pt.isel.ls.router.RequestParameters;
 import pt.isel.ls.router.RouteRequest;
 import pt.isel.ls.router.RouteResponse;
 
@@ -18,9 +19,9 @@ public class GetUserHandler implements RouteHandler {
     }
 
     @Override
-    public RouteResponse execute(RouteRequest request) throws SQLException {
-        int uid = 1;
-        Connection conn =dataSource.getConnection();
+    public RouteResponse execute(RouteRequest request) throws SQLException, RequestParameters.ParameterNotFoundException {
+        int uid = Integer.parseInt(request.getPathParameter("uid"));
+        Connection conn = dataSource.getConnection();
         PreparedStatement stmt = conn.prepareStatement("SELECT * FROM USER WHERE uid = ?");
         stmt.setInt(1,uid);
         ResultSet res = stmt.executeQuery();

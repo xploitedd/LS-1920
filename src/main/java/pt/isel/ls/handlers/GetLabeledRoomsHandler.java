@@ -1,5 +1,6 @@
 package pt.isel.ls.handlers;
 
+import pt.isel.ls.router.RequestParameters;
 import pt.isel.ls.router.RouteRequest;
 import pt.isel.ls.router.RouteResponse;
 
@@ -18,9 +19,9 @@ public class GetLabeledRoomsHandler implements RouteHandler {
     }
 
     @Override
-    public RouteResponse execute(RouteRequest request) throws SQLException {
-        int lid = 0; //Placeholder until RouteResponse is ready
-        Connection conn =dataSource.getConnection();
+    public RouteResponse execute(RouteRequest request) throws SQLException, RequestParameters.ParameterNotFoundException {
+        int lid = Integer.parseInt(request.getPathParameter("lid"));
+        Connection conn = dataSource.getConnection();
         PreparedStatement stmt = conn.prepareStatement("SELECT * FROM ROOM WHERE rid IN (SELECT rid FROM ROOM_LABEL WHERE lid = ?)");
         stmt.setInt(1,lid);
         ResultSet res = stmt.executeQuery();
