@@ -73,16 +73,24 @@ public class App {
 
     private static void startApp() {
         Scanner scanner = new Scanner(System.in);
-        while (scanner.hasNext()) {
-            // TODO: improve this code
+        for ( ; ; ) {
             System.out.print("> ");
-            String line = scanner.nextLine();
-            String[] parts = line.split(" ");
-            Method method = Method.valueOf(parts[0]);
-            Optional<Path> path = Path.of(parts[1]);
-            if (path.isPresent()) {
-                RouteResponse response = router.executeRoute(method, path.get(), null);
-                response.getView().render();
+            if (scanner.hasNext()) {
+                try {
+                    // TODO: improve this code
+                    System.out.print("> ");
+                    String line = scanner.nextLine();
+                    System.out.println();
+                    String[] parts = line.split(" ");
+                    Method method = Method.valueOf(parts[0]);
+                    Optional<Path> path = Path.of(parts[1]);
+                    if (path.isPresent()) {
+                        RouteResponse response = router.executeRoute(method, path.get(), null);
+                        response.getView().render();
+                    }
+                } catch (IllegalArgumentException ignored) {
+                    System.out.println("Method not allowed");
+                }
             }
         }
     }

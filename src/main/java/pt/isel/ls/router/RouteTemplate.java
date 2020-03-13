@@ -37,6 +37,8 @@ public class RouteTemplate {
                 if (((ParameterTemplateSegment) templateSegment).isObligatory) {
                     return Optional.empty();
                 }
+            } else {
+                return Optional.empty();
             }
         }
 
