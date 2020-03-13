@@ -46,7 +46,7 @@ public class App {
         // User Handlers
         router.registerRoute(Method.POST, RouteTemplate.of("/users"), new PostUserHandler());
         router.registerRoute(Method.GET, RouteTemplate.of("/users/{uid}"), new GetUserHandler(dataSource));
-        router.registerRoute(Method.GET, RouteTemplate.of("/users/{uid}/bookings"), new GetUserBookingsHandler());
+        router.registerRoute(Method.GET, RouteTemplate.of("/users/{uid}/bookings"), new GetUserBookingsHandler(dataSource));
         // Label Handlers
         router.registerRoute(Method.POST, RouteTemplate.of("/labels"), new PostLabelHandler());
         router.registerRoute(Method.GET, RouteTemplate.of("/labels"), new GetLabelsHandler(dataSource));

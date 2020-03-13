@@ -1,5 +1,6 @@
 package pt.isel.ls.router;
 
+import java.sql.*;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -29,7 +30,7 @@ public class Router {
         methodRoutes.put(method, Optional.of(routes));
     }
 
-    public void executeRoute(Method method, Path path, RequestParameters<List<String>> parameters) {
+    public void executeRoute(Method method, Path path, RequestParameters<List<String>> parameters) throws SQLException {
         Optional<Set<Route>> routes = methodRoutes.get(method);
         if (routes.isPresent()) {
             for (Route r : routes.get()) {
