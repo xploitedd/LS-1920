@@ -1,6 +1,5 @@
 package pt.isel.ls.router;
 
-import java.sql.*;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -16,7 +15,7 @@ import pt.isel.ls.handlers.RouteHandler;
  */
 public class Router {
 
-    private HashMap<Method, Optional<Set<Route>>> methodRoutes = new HashMap<>();
+    private HashMap<Method, Set<Route>> methodRoutes = new HashMap<>();
 
     /**
      * Registers a new Route to this Router
@@ -24,24 +23,29 @@ public class Router {
      * @param handler Handler for the Route to be registered
      */
     public void registerRoute(Method method, RouteTemplate template, RouteHandler handler) {
-        Set<Route> routes = methodRoutes.get(method).orElse(new HashSet<>());
-        routes.add(new Route(template, handler));
-        // put the map, useful in case it does not exist
-        methodRoutes.put(method, Optional.of(routes));
+        Route route = new Route(template, handler);
+        Set<Route> routes = methodRoutes.get(method);
+        if (routes == null) {
+            routes = new HashSet<>();
+            routes.add(route);
+            methodRoutes.put(method, routes);
+        } else {
+            routes.add(route);
+        }
     }
 
-    public void executeRoute(Method method, Path path, RequestParameters<List<String>> parameters) throws SQLException {
-        Optional<Set<Route>> routes = methodRoutes.get(method);
-        if (routes.isPresent()) {
-            for (Route r : routes.get()) {
-                RouteTemplate template = r.getRouteTemplate();
-                Optional<RequestParameters<String>> match = template.match(path);
-                if (match.isPresent()) {
-                    r.getHandler().execute(new RouteRequest(path, match.get(), parameters));
-                    return;
-                }
+    public Optional<RouteResponse> executeRoute(Method method, Path path, RequestParameters<List<String>> parameters) {
+        Set<Route> routes = methodRoutes.get(method);
+        for (Route r : routes) {
+            RouteTemplate template = r.getRouteTemplate();
+            Optional<RequestParameters<String>> match = template.match(path);
+            if (match.isPresent()) {
+                return Optional.of(r.getHandler()
+                        .execute(new RouteRequest(path, match.get(), parameters)));
             }
         }
+
+        return Optional.empty();
     }
 
     public static class Route {

@@ -8,6 +8,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import pt.isel.ls.view.ExceptionView;
 
 public class GetLabelsHandler implements RouteHandler {
 
@@ -27,10 +28,9 @@ public class GetLabelsHandler implements RouteHandler {
         try (Connection conn = dataSource.getConnection()){
             PreparedStatement stmt = conn.prepareStatement("SELECT * FROM LABEL");
             ResultSet res = stmt.executeQuery();
+            return new RouteResponse(null);
         } catch (SQLException e) {
-            e.printStackTrace();
+            return new RouteResponse(new ExceptionView(e)).setStatusCode(500);
         }
-
-        return null;
     }
 }

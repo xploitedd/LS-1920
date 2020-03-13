@@ -1,11 +1,15 @@
 package pt.isel.ls.handlers;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import pt.isel.ls.router.RequestParameters;
 import pt.isel.ls.router.RouteRequest;
 import pt.isel.ls.router.RouteResponse;
 
 import javax.sql.DataSource;
-import java.sql.*;
+import pt.isel.ls.view.ExceptionView;
 
 public class PostLabelHandler implements RouteHandler {
     private DataSource dataSource;
@@ -24,9 +28,9 @@ public class PostLabelHandler implements RouteHandler {
             ResultSet rs = stmt.executeQuery();
             int lid = rs.getInt("lid"); //TODO: Return this somehow
 
-            return null;
+            return new RouteResponse(null);
         } catch (RequestParameters.ParameterNotFoundException | SQLException e) {
-            return new RouteResponse().setException(e);
+            return new RouteResponse(new ExceptionView(e)).setStatusCode(500);
         }
     }
 }

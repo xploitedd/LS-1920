@@ -1,11 +1,16 @@
 package pt.isel.ls.handlers;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Timestamp;
 import pt.isel.ls.router.RequestParameters;
 import pt.isel.ls.router.RouteRequest;
 import pt.isel.ls.router.RouteResponse;
 
 import javax.sql.DataSource;
-import java.sql.*;
+import pt.isel.ls.view.ExceptionView;
 
 public class PostBookingHandler implements RouteHandler {
     private DataSource dataSource;
@@ -30,9 +35,9 @@ public class PostBookingHandler implements RouteHandler {
             stmt.setInt(4,uid);
 
             ResultSet res = stmt.executeQuery();
-            return null;
+            return new RouteResponse(null);
         } catch (RequestParameters.ParameterNotFoundException | SQLException e) {
-            return new RouteResponse().setException(e);
+            return new RouteResponse(new ExceptionView(e)).setStatusCode(500);
         }
     }
 }

@@ -9,6 +9,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Optional;
+import pt.isel.ls.view.ExceptionView;
 
 public class GetRoomsHandler implements RouteHandler {
 
@@ -26,24 +27,21 @@ public class GetRoomsHandler implements RouteHandler {
     @Override
     public RouteResponse execute(RouteRequest request) {
         try (Connection conn = dataSource.getConnection()){
-
             PreparedStatement stmt;
             ResultSet res;
 
-            if(request.getOptionalPathParameter("rid").isPresent()){
+            if (request.getOptionalPathParameter("rid").isPresent()){
                 int rid = Integer.parseInt(request.getOptionalPathParameter("rid").get());
                 stmt = conn.prepareStatement("SELECT * FROM ROOM WHERE rid = ?");
                 stmt.setInt(1,rid);
-                res = stmt.executeQuery();
-            }else{
+            } else {
                 stmt = conn.prepareStatement("SELECT * FROM ROOMS");
-                res = stmt.executeQuery();
             }
 
+            res = stmt.executeQuery();
+            return new RouteResponse(null);
         } catch (SQLException e) {
-            e.printStackTrace();
+            return new RouteResponse(new ExceptionView(e)).setStatusCode(500);
         }
-
-        return null;
     }
 }

@@ -9,6 +9,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import pt.isel.ls.view.ExceptionView;
 
 public class GetRoomBookingsHandler implements RouteHandler {
 
@@ -27,24 +28,22 @@ public class GetRoomBookingsHandler implements RouteHandler {
     @Override
     public RouteResponse execute(RouteRequest request) {
         try (Connection conn = dataSource.getConnection()){
-
             int rid = Integer.parseInt(request.getPathParameter("rid"));
             PreparedStatement stmt;
 
-            if(request.getOptionalPathParameter("bid").isPresent()){
+            if (request.getOptionalPathParameter("bid").isPresent()){
                 int bid = Integer.parseInt(request.getOptionalPathParameter("bid").get());
                 stmt = conn.prepareStatement("SELECT * FROM BOOKING WHERE rid = ? AND bid = ?");
-                stmt.setInt(1,rid);
-                stmt.setInt(2,bid);
-            }else {
+                stmt.setInt(1, rid);
+                stmt.setInt(2, bid);
+            } else {
                 stmt = conn.prepareStatement("SELECT * FROM BOOKING WHERE rid = ?");
                 stmt.setInt(1, rid);
             }
 
             ResultSet res = stmt.executeQuery();
-
-        } catch (RequestParameters.ParameterNotFoundException | SQLException e) {
-            return new RouteResponse().setException(e);
+        } catch (RequestParameters.ParameterNotFoundException | SQLException | NumberFormatException e) {
+            return new RouteResponse(new ExceptionView(e)).setStatusCode(500);
         }
 
         return null;

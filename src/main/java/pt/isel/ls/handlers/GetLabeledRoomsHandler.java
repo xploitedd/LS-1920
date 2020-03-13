@@ -9,6 +9,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import pt.isel.ls.router.Router.Route;
+import pt.isel.ls.view.ExceptionView;
 
 public class GetLabeledRoomsHandler implements RouteHandler {
 
@@ -26,16 +28,13 @@ public class GetLabeledRoomsHandler implements RouteHandler {
     @Override
     public RouteResponse execute(RouteRequest request) {
         try (Connection conn = dataSource.getConnection()){
-
             int lid = Integer.parseInt(request.getPathParameter("lid"));
             PreparedStatement stmt = conn.prepareStatement("SELECT * FROM ROOM WHERE rid IN (SELECT rid FROM ROOM_LABEL WHERE lid = ?)");
-            stmt.setInt(1,lid);
+            stmt.setInt(1, lid);
             ResultSet res = stmt.executeQuery();
-
+            return new RouteResponse(null);
         } catch (RequestParameters.ParameterNotFoundException | SQLException e) {
-            return new RouteResponse().setException(e);
+            return new RouteResponse(new ExceptionView(e)).setStatusCode(500);
         }
-
-        return null;
     }
 }
