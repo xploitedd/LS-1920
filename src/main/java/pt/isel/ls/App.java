@@ -36,17 +36,17 @@ public class App {
         // Register All Routes
         router.registerRoute(Method.EXIT, RouteTemplate.of("/"), new ExitHandler());
         // Room Handlers
-        router.registerRoute(Method.POST, RouteTemplate.of("/rooms"), new PostRoomHandler());
+        router.registerRoute(Method.POST, RouteTemplate.of("/rooms"), new PostRoomHandler(dataSource));
         router.registerRoute(Method.GET, RouteTemplate.of("/rooms/{rid}?"), new GetRoomsHandler(dataSource));
         // Booking Handlers
-        router.registerRoute(Method.POST, RouteTemplate.of("/rooms/{rid}/bookings"), new PostBookingHandler());
+        router.registerRoute(Method.POST, RouteTemplate.of("/rooms/{rid}/bookings"), new PostBookingHandler(dataSource));
         router.registerRoute(Method.GET, RouteTemplate.of("/rooms/{rid}/bookings/{bid}?"), new GetRoomBookingsHandler(dataSource));
         // User Handlers
-        router.registerRoute(Method.POST, RouteTemplate.of("/users"), new PostUserHandler());
+        router.registerRoute(Method.POST, RouteTemplate.of("/users"), new PostUserHandler(dataSource));
         router.registerRoute(Method.GET, RouteTemplate.of("/users/{uid}"), new GetUserHandler(dataSource));
         router.registerRoute(Method.GET, RouteTemplate.of("/users/{uid}/bookings"), new GetUserBookingsHandler(dataSource));
         // Label Handlers
-        router.registerRoute(Method.POST, RouteTemplate.of("/labels"), new PostLabelHandler());
+        router.registerRoute(Method.POST, RouteTemplate.of("/labels"), new PostLabelHandler(dataSource));
         router.registerRoute(Method.GET, RouteTemplate.of("/labels"), new GetLabelsHandler(dataSource));
         router.registerRoute(Method.GET, RouteTemplate.of("/labels/{lid}/rooms"), new GetLabeledRoomsHandler(dataSource));
     }
