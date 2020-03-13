@@ -20,11 +20,11 @@ public class GetRoomsHandler implements RouteHandler {
 
     @Override
     public RouteResponse execute(RouteRequest request) throws SQLException {
-        Connection conn =dataSource.getConnection();
+        Connection conn = dataSource.getConnection();
         PreparedStatement stmt;
         ResultSet res;
 
-        if(request.getOptionalParameter("rid").isPresent()){
+        if(request.getOptionalPathParameter("rid").isPresent()){
             int rid = Integer.parseInt(request.getOptionalPathParameter("rid").get());
             stmt = conn.prepareStatement("SELECT * FROM ROOM WHERE rid = ?");
             stmt.setInt(1,rid);
