@@ -56,7 +56,7 @@ public class RouteTemplate {
             String segment = segments[i];
             if (isParameterSegment(segment)) {
                 // guarantee that only the last segment can be optional
-                boolean isObligatory = !isOptionalParameter(segment) || i + 1 != segments.length;
+                boolean isObligatory = isObligatoryParameter(segment) || i + 1 != segments.length;
                 templateSegments.add(new ParameterTemplateSegment(
                         getParameterName(segment),
                         isObligatory
@@ -77,8 +77,8 @@ public class RouteTemplate {
         return segment.startsWith("{") && segment.endsWith("}") && segment.length() > 2;
     }
 
-    private static boolean isOptionalParameter(String segment) {
-        return segment.endsWith("}?");
+    private static boolean isObligatoryParameter(String segment) {
+        return !segment.endsWith("}?");
     }
 
     private abstract static class TemplateSegment {
