@@ -23,8 +23,8 @@ public class GetRoomBookingsHandler implements RouteHandler {
 
     /**
      * Gets Bookings from Rooms
-     * @param request Request Information
-     * @return
+     * @param request The route request
+     * @return a RouteResponse with a TableView of the data
      */
 
     @Override

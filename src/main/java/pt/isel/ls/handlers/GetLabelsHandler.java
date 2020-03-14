@@ -23,8 +23,8 @@ public class GetLabelsHandler implements RouteHandler {
 
     /**
      * Gets all existing Labels
-     * @param request Request information
-     * @return routeResponse
+     * @param request The route request
+     * @return a RouteResponse with a TableView for the router
      */
     @Override
     public RouteResponse execute(RouteRequest request) throws Throwable {

@@ -22,9 +22,9 @@ public class GetUserBookingsHandler implements RouteHandler {
     }
 
     /**
-     * Gets booking booked by a user
+     * Gets bookings booked by a user
      * @param request The route request
-     * @return
+     * @return a RouteResponse with a TableView of the data
      */
     @Override
     public RouteResponse execute(RouteRequest request) throws Throwable {

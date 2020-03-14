@@ -22,9 +22,9 @@ public class GetRoomsHandler implements RouteHandler {
     }
 
     /**
-     * Gets Rooms or a specific room
+     * Gets all of the Rooms or a specific room
      * @param request The route request
-     * @return
+     * @return a RouteResponse with a TableView of the data
      */
     @Override
     public RouteResponse execute(RouteRequest request) throws Throwable {

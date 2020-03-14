@@ -5,7 +5,11 @@ import pt.isel.ls.router.RouteResponse;
 import pt.isel.ls.view.ExitView;
 
 public class ExitHandler implements RouteHandler {
-
+    /**
+     * Exits
+     * @param request
+     * @return
+     */
     @Override
     public RouteResponse execute(RouteRequest request) {
         return new RouteResponse(new ExitView());

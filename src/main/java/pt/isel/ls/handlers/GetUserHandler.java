@@ -22,9 +22,9 @@ public class GetUserHandler implements RouteHandler {
     }
 
     /**
-     * Gets user information
+     * Gets a specific user
      * @param request The route request
-     * @return
+     * @return a RouteResponse with a TableView of the data
      */
     @Override
     public RouteResponse execute(RouteRequest request) throws Throwable {
