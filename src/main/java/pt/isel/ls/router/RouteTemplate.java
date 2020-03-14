@@ -19,10 +19,12 @@ public class RouteTemplate {
         for (String segment : path.getPathSegments()) {
             if (templateSegmentIterator.hasNext()) {
                 TemplateSegment templateSegment = templateSegmentIterator.next();
+                // check if it matches the actual segment
                 if (templateSegment.match(segment)) {
                     if (templateSegment instanceof ParameterTemplateSegment) {
                         // add the parameter to the map
-                        pathParameters.put(((ParameterTemplateSegment) templateSegment).segment, segment);
+                        ParameterTemplateSegment pts = (ParameterTemplateSegment) templateSegment;
+                        pathParameters.put(pts.segment, segment);
                     }
                 } else {
                     return Optional.empty();
@@ -31,10 +33,12 @@ public class RouteTemplate {
         }
 
         // check if there are any obligatory parameters ahead
-        while (templateSegmentIterator.hasNext()) {
+        if (templateSegmentIterator.hasNext()) {
             TemplateSegment templateSegment = templateSegmentIterator.next();
             if (templateSegment instanceof ParameterTemplateSegment) {
-                if (((ParameterTemplateSegment) templateSegment).isObligatory) {
+                ParameterTemplateSegment pts = (ParameterTemplateSegment) templateSegment;
+                // only the last segment can be optional according to the contract
+                if (pts.isObligatory) {
                     return Optional.empty();
                 }
             } else {
@@ -48,11 +52,14 @@ public class RouteTemplate {
     public static RouteTemplate of(String routeString) {
         ArrayList<TemplateSegment> templateSegments = new ArrayList<>();
         String[] segments = RouterUtils.getValidSegments(routeString);
-        for (String segment : segments) {
+        for (int i = 0; i < segments.length; i++) {
+            String segment = segments[i];
             if (isParameterSegment(segment)) {
+                // guarantee that only the last segment can be optional
+                boolean isObligatory = !isOptionalParameter(segment) || i + 1 != segments.length;
                 templateSegments.add(new ParameterTemplateSegment(
                         getParameterName(segment),
-                        !isOptionalParameter(segment)
+                        isObligatory
                 ));
             } else {
                 templateSegments.add(new ConstantTemplateSegment(segment));

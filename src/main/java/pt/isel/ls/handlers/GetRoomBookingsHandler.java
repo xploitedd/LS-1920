@@ -26,7 +26,6 @@ public class GetRoomBookingsHandler implements RouteHandler {
      * @param request The route request
      * @return a RouteResponse with a TableView of the data
      */
-
     @Override
     public RouteResponse execute(RouteRequest request) throws Throwable {
         try (Connection conn = dataSource.getConnection()) {
