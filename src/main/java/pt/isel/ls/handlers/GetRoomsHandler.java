@@ -55,9 +55,10 @@ public class GetRoomsHandler implements RouteHandler {
                 int resRid = res.getInt(1);
                 String name = res.getString(2);
                 String location = res.getString(3);
-                int capacity = res.getInt(4);
+                String desc = res.getString(4);
+                int capacity = res.getInt(5);
 
-                table.addTableRow(Integer.toString(resRid), name, location, Integer.toString(capacity));
+                table.addTableRow(Integer.toString(resRid), name, location, desc, Integer.toString(capacity));
             }
             return new RouteResponse(new TableView(table));
         }
