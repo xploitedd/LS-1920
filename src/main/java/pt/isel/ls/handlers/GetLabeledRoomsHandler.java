@@ -11,7 +11,7 @@ import pt.isel.ls.router.RouteResponse;
 import javax.sql.DataSource;
 import java.util.ArrayList;
 
-import pt.isel.ls.view.TableView;
+import pt.isel.ls.view.console.TableView;
 
 public class GetLabeledRoomsHandler implements RouteHandler {
 

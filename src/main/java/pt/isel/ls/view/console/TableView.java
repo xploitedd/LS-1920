@@ -1,4 +1,4 @@
-package pt.isel.ls.view;
+package pt.isel.ls.view.console;
 
 import pt.isel.ls.model.Table;
 

@@ -7,7 +7,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import pt.isel.ls.handlers.RouteHandler;
-import pt.isel.ls.view.ThrowableView;
+import pt.isel.ls.view.console.ThrowableView;
 
 /**
  * Router is responsible for routing

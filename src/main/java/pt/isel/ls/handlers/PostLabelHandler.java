@@ -7,7 +7,7 @@ import pt.isel.ls.router.RouteRequest;
 import pt.isel.ls.router.RouteResponse;
 
 import javax.sql.DataSource;
-import pt.isel.ls.view.MessageView;
+import pt.isel.ls.view.console.MessageView;
 
 public class PostLabelHandler implements RouteHandler {
 

@@ -2,7 +2,7 @@ package pt.isel.ls.handlers;
 
 import pt.isel.ls.router.RouteRequest;
 import pt.isel.ls.router.RouteResponse;
-import pt.isel.ls.view.MessageView;
+import pt.isel.ls.view.console.MessageView;
 
 import javax.sql.DataSource;
 import java.sql.Connection;

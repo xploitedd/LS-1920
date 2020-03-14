@@ -11,7 +11,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSetMetaData;
 import java.util.ArrayList;
 
-import pt.isel.ls.view.TableView;
+import pt.isel.ls.view.console.TableView;
 
 public class GetRoomsHandler implements RouteHandler {
 

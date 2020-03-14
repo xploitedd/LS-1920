@@ -1,6 +1,6 @@
 package pt.isel.ls.router;
 
-import pt.isel.ls.view.View;
+import pt.isel.ls.view.console.View;
 
 public class RouteResponse {
 
