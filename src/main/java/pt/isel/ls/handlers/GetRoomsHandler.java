@@ -24,7 +24,8 @@ public class GetRoomsHandler implements RouteHandler {
     /**
      * Gets all of the Rooms or a specific room
      * @param request The route request
-     * @return a RouteResponse with a TableView of the data
+     * @return returns a RouteResponse with a tableView for the router
+     * @throws Throwable Sent to the router
      */
     @Override
     public RouteResponse execute(RouteRequest request) throws Throwable {

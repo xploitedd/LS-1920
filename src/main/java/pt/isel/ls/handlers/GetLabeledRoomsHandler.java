@@ -25,6 +25,7 @@ public class GetLabeledRoomsHandler implements RouteHandler {
      * Gets all of the rooms with a certain label
      * @param request The route request
      * @return returns a RouteResponse with a tableView for the router
+     * @throws Throwable Sent to the router
      */
     @Override
     public RouteResponse execute(RouteRequest request) throws Throwable {
