@@ -31,7 +31,7 @@ public class GetUserBookingsHandler implements RouteHandler {
     public RouteResponse execute(RouteRequest request) throws Throwable {
         try (Connection conn = dataSource.getConnection()) {
             int uid = Integer.parseInt(request.getPathParameter("uid"));
-            PreparedStatement stmt = conn.prepareStatement("SELECT * FROM BOOKING WHERE uid = ?");
+            PreparedStatement stmt = conn.prepareStatement("SELECT * FROM booking WHERE uid = ?");
             stmt.setInt(1, uid);
             ResultSet res = stmt.executeQuery();
 

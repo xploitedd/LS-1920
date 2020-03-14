@@ -35,7 +35,7 @@ CREATE TABLE booking (
     constraint booking_end_minute_check check (cast(extract(minute from "end") as decimal) % 10 = 0)
 );
 
-CREATE TABLE ROOM_LABEL (
+CREATE TABLE room_label (
     lid SERIAL REFERENCES "label"(lid),
     rid SERIAL REFERENCES room(rid)
 )

@@ -35,11 +35,11 @@ public class GetRoomBookingsHandler implements RouteHandler {
 
             if (request.getOptionalPathParameter("bid").isPresent()) {
                 int bid = Integer.parseInt(request.getOptionalPathParameter("bid").get());
-                stmt = conn.prepareStatement("SELECT * FROM BOOKING WHERE rid = ? AND bid = ?");
+                stmt = conn.prepareStatement("SELECT * FROM booking WHERE rid = ? AND bid = ?");
                 stmt.setInt(1, rid);
                 stmt.setInt(2, bid);
             } else {
-                stmt = conn.prepareStatement("SELECT * FROM BOOKING WHERE rid = ?");
+                stmt = conn.prepareStatement("SELECT * FROM booking WHERE rid = ?");
                 stmt.setInt(1, rid);
             }
 

@@ -35,10 +35,10 @@ public class GetRoomsHandler implements RouteHandler {
 
             if (request.getOptionalPathParameter("rid").isPresent()) {
                 int rid = Integer.parseInt(request.getOptionalPathParameter("rid").get());
-                stmt = conn.prepareStatement("SELECT * FROM ROOM WHERE rid = ?");
+                stmt = conn.prepareStatement("SELECT * FROM room WHERE rid = ?");
                 stmt.setInt(1,rid);
             } else {
-                stmt = conn.prepareStatement("SELECT * FROM ROOMS");
+                stmt = conn.prepareStatement("SELECT * FROM room");
             }
 
             res = stmt.executeQuery();

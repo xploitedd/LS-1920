@@ -30,7 +30,7 @@ public class GetLabelsHandler implements RouteHandler {
     @Override
     public RouteResponse execute(RouteRequest request) throws Throwable {
         try (Connection conn = dataSource.getConnection()) {
-            PreparedStatement stmt = conn.prepareStatement("SELECT * FROM LABEL");
+            PreparedStatement stmt = conn.prepareStatement("SELECT * FROM label");
             ResultSet res = stmt.executeQuery();
             ResultSetMetaData metaData = res.getMetaData();
 

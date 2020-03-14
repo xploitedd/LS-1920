@@ -32,7 +32,7 @@ public class GetLabeledRoomsHandler implements RouteHandler {
         try (Connection conn = dataSource.getConnection()) {
             int lid = Integer.parseInt(request.getPathParameter("lid"));
             PreparedStatement stmt = conn.prepareStatement(
-                    "SELECT * FROM ROOM WHERE rid IN (SELECT rid FROM ROOM_LABEL WHERE lid = ?)"
+                    "SELECT * FROM room WHERE rid IN (SELECT rid FROM room_label WHERE lid = ?)"
             );
 
             stmt.setInt(1, lid);
