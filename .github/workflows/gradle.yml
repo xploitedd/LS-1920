@@ -22,7 +22,5 @@ jobs:
         java-version: 1.11
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
-    - name: Set test database environmente variable
-      run: export JDBC_TEST_DATABASE_URL="jdbc:postgresql://vps.xploited.xyz:5432/github?user=github&password=github123"
     - name: Build with Gradle
-      run: ./gradlew build
+      run: JDBC_TEST_DATABASE_URL="jdbc:postgresql://vps.xploited.xyz:5432/github?user=github&password=github123" ./gradlew build
