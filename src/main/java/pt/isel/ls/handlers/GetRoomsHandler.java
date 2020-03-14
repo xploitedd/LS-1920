@@ -9,10 +9,8 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.PreparedStatement;
 import java.sql.ResultSetMetaData;
-import java.sql.SQLException;
 import java.util.ArrayList;
 
-import pt.isel.ls.view.ExceptionView;
 import pt.isel.ls.view.TableView;
 
 public class GetRoomsHandler implements RouteHandler {
@@ -29,7 +27,7 @@ public class GetRoomsHandler implements RouteHandler {
      * @return
      */
     @Override
-    public RouteResponse execute(RouteRequest request) {
+    public RouteResponse execute(RouteRequest request) throws Throwable {
         try (Connection conn = dataSource.getConnection()) {
             PreparedStatement stmt;
             ResultSet res;
@@ -61,8 +59,6 @@ public class GetRoomsHandler implements RouteHandler {
                 table.addTableRow(Integer.toString(resRid), name, location, Integer.toString(capacity));
             }
             return new RouteResponse(new TableView(table));
-        } catch (SQLException e) {
-            return new RouteResponse(new ExceptionView(e)).setStatusCode(500);
         }
     }
 }

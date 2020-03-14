@@ -3,14 +3,11 @@ package pt.isel.ls.handlers;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.sql.Timestamp;
-import pt.isel.ls.router.RequestParameters;
 import pt.isel.ls.router.RouteRequest;
 import pt.isel.ls.router.RouteResponse;
 
 import javax.sql.DataSource;
-import pt.isel.ls.view.ExceptionView;
 import pt.isel.ls.view.MessageView;
 
 public class PostBookingHandler implements RouteHandler {
@@ -22,7 +19,7 @@ public class PostBookingHandler implements RouteHandler {
     }
 
     @Override
-    public RouteResponse execute(RouteRequest request) {
+    public RouteResponse execute(RouteRequest request) throws Throwable {
         try (Connection conn = dataSource.getConnection()) {
             int rid = Integer.parseInt(request.getPathParameter("rid"));
             int uid = Integer.parseInt(request.getPathParameter("rid"));
@@ -53,8 +50,6 @@ public class PostBookingHandler implements RouteHandler {
             rs.first();
             int bid = rs.getInt("bid");
             return new RouteResponse(new MessageView("This booking's unique identifier is: " + bid));
-        } catch (RequestParameters.ParameterNotFoundException | SQLException e) {
-            return new RouteResponse(new ExceptionView(e)).setStatusCode(500);
         }
     }
 }

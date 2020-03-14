@@ -1,16 +1,13 @@
 package pt.isel.ls.handlers;
 
-import pt.isel.ls.router.RequestParameters;
 import pt.isel.ls.router.RouteRequest;
 import pt.isel.ls.router.RouteResponse;
-import pt.isel.ls.view.ExceptionView;
 import pt.isel.ls.view.MessageView;
 
 import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.List;
 
 public class PostRoomHandler implements RouteHandler {
@@ -22,7 +19,7 @@ public class PostRoomHandler implements RouteHandler {
     }
 
     @Override
-    public RouteResponse execute(RouteRequest request) {
+    public RouteResponse execute(RouteRequest request) throws Throwable {
         try (Connection conn = dataSource.getConnection()) {
             String n = request.getParameter("name").get(0);
             int c = Integer.parseInt(request.getParameter("capacity").get(0));
@@ -74,8 +71,6 @@ public class PostRoomHandler implements RouteHandler {
                 rl.execute();
             }
             return new RouteResponse(new MessageView("This room's unique identifier is: " + rid));
-        } catch (RequestParameters.ParameterNotFoundException | SQLException e) {
-            return new RouteResponse(new ExceptionView(e)).setStatusCode(500);
         }
     }
 }

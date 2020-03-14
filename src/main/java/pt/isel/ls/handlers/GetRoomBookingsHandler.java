@@ -1,7 +1,6 @@
 package pt.isel.ls.handlers;
 
 import pt.isel.ls.model.Table;
-import pt.isel.ls.router.RequestParameters;
 import pt.isel.ls.router.RouteRequest;
 import pt.isel.ls.router.RouteResponse;
 
@@ -10,10 +9,8 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.PreparedStatement;
 import java.sql.ResultSetMetaData;
-import java.sql.SQLException;
 import java.util.ArrayList;
 
-import pt.isel.ls.view.ExceptionView;
 import pt.isel.ls.view.TableView;
 
 public class GetRoomBookingsHandler implements RouteHandler {
@@ -31,7 +28,7 @@ public class GetRoomBookingsHandler implements RouteHandler {
      */
 
     @Override
-    public RouteResponse execute(RouteRequest request) {
+    public RouteResponse execute(RouteRequest request) throws Throwable {
         try (Connection conn = dataSource.getConnection()) {
             int rid = Integer.parseInt(request.getPathParameter("rid"));
             PreparedStatement stmt;
@@ -67,8 +64,6 @@ public class GetRoomBookingsHandler implements RouteHandler {
                         Integer.toString(resUid));
             }
             return new RouteResponse(new TableView(table));
-        } catch (RequestParameters.ParameterNotFoundException | SQLException | NumberFormatException e) {
-            return new RouteResponse(new ExceptionView(e)).setStatusCode(500);
         }
     }
 }

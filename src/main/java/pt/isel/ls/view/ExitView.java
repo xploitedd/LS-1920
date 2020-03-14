@@ -9,7 +9,7 @@ public class ExitView implements View {
             Thread.sleep(2000);
             System.exit(0);
         } catch (InterruptedException e) {
-            new ExceptionView(e).render();
+            new ThrowableView(e).render();
         }
     }
 

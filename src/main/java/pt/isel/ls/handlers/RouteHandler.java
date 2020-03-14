@@ -5,6 +5,6 @@ import pt.isel.ls.router.RouteResponse;
 
 public interface RouteHandler {
 
-    RouteResponse execute(RouteRequest request);
+    RouteResponse execute(RouteRequest request) throws Throwable;
 
 }

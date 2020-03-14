@@ -7,7 +7,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import pt.isel.ls.handlers.RouteHandler;
-import pt.isel.ls.view.ExceptionView;
+import pt.isel.ls.view.ThrowableView;
 
 /**
  * Router is responsible for routing
@@ -41,12 +41,17 @@ public class Router {
             RouteTemplate template = r.getRouteTemplate();
             Optional<RequestParameters<String>> match = template.match(path);
             if (match.isPresent()) {
-                return r.getHandler()
-                        .execute(new RouteRequest(path, match.get(), parameters));
+                try {
+                    return r.getHandler()
+                            .execute(new RouteRequest(path, match.get(), parameters));
+                } catch (Throwable throwable) {
+                    return new RouteResponse(new ThrowableView(throwable))
+                            .setStatusCode(500);
+                }
             }
         }
 
-        return new RouteResponse(new ExceptionView(new RouteNotFoundException(path)))
+        return new RouteResponse(new ThrowableView(new RouteNotFoundException(path)))
                 .setStatusCode(404);
     }
 

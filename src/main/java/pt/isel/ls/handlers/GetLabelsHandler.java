@@ -9,10 +9,8 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.PreparedStatement;
 import java.sql.ResultSetMetaData;
-import java.sql.SQLException;
 import java.util.ArrayList;
 
-import pt.isel.ls.view.ExceptionView;
 import pt.isel.ls.view.TableView;
 
 public class GetLabelsHandler implements RouteHandler {
@@ -29,7 +27,7 @@ public class GetLabelsHandler implements RouteHandler {
      * @return routeResponse
      */
     @Override
-    public RouteResponse execute(RouteRequest request) {
+    public RouteResponse execute(RouteRequest request) throws Throwable {
         try (Connection conn = dataSource.getConnection()) {
             PreparedStatement stmt = conn.prepareStatement("SELECT * FROM LABEL");
             ResultSet res = stmt.executeQuery();
@@ -47,9 +45,8 @@ public class GetLabelsHandler implements RouteHandler {
 
                 table.addTableRow(Integer.toString(lid), name);
             }
+
             return new RouteResponse(new TableView(table));
-        } catch (SQLException e) {
-            return new RouteResponse(new ExceptionView(e)).setStatusCode(500);
         }
     }
 }

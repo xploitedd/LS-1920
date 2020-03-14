@@ -4,16 +4,13 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
-import java.sql.SQLException;
 import pt.isel.ls.model.Table;
-import pt.isel.ls.router.RequestParameters;
 import pt.isel.ls.router.RouteRequest;
 import pt.isel.ls.router.RouteResponse;
 
 import javax.sql.DataSource;
 import java.util.ArrayList;
 
-import pt.isel.ls.view.ExceptionView;
 import pt.isel.ls.view.TableView;
 
 public class GetLabeledRoomsHandler implements RouteHandler {
@@ -30,7 +27,7 @@ public class GetLabeledRoomsHandler implements RouteHandler {
      * @return routeResponse
      */
     @Override
-    public RouteResponse execute(RouteRequest request) {
+    public RouteResponse execute(RouteRequest request) throws Throwable {
         try (Connection conn = dataSource.getConnection()) {
             int lid = Integer.parseInt(request.getPathParameter("lid"));
             PreparedStatement stmt = conn.prepareStatement(
@@ -56,8 +53,6 @@ public class GetLabeledRoomsHandler implements RouteHandler {
                 table.addTableRow(Integer.toString(rid),name,location,Integer.toString(capacity));
             }
             return new RouteResponse(new TableView(table));
-        } catch (RequestParameters.ParameterNotFoundException | SQLException e) {
-            return new RouteResponse(new ExceptionView(e)).setStatusCode(500);
         }
     }
 }
