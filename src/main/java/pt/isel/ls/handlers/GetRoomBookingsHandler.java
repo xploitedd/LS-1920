@@ -48,7 +48,7 @@ public class GetRoomBookingsHandler implements RouteHandler {
             ResultSetMetaData metaData = res.getMetaData();
             int size = metaData.getColumnCount();
             ArrayList<String> columnNames = new ArrayList<>(size);
-            for (int i = 0; i < size; i++) {
+            for (int i = 1; i <= size; i++) {
                 columnNames.add(metaData.getColumnName(i));
             }
 

@@ -38,9 +38,10 @@ public class GetLabeledRoomsHandler implements RouteHandler {
             stmt.setInt(1, lid);
             ResultSet res = stmt.executeQuery();
             ResultSetMetaData metaData = res.getMetaData();
+
             int size = metaData.getColumnCount();
             ArrayList<String> columnNames = new ArrayList<>(size);
-            for (int i = 0; i < size; i++) {
+            for (int i = 1; i <= size; i++) {
                 columnNames.add(metaData.getColumnName(i));
             }
 

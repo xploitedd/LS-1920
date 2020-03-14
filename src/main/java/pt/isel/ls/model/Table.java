@@ -6,10 +6,12 @@ import java.util.List;
 
 public class Table {
 
+    private final StringBuffer stringBuffer = new StringBuffer();
     private final List<List<String>> rows = new LinkedList<>();
 
     public Table(String... columnNames) {
         rows.add(Arrays.asList(columnNames));
+        appendRowToBuffer(columnNames);
     }
 
     public void addTableRow(String... values) throws IllegalArgumentException {
@@ -18,6 +20,7 @@ public class Table {
         }
 
         rows.add(Arrays.asList(values));
+        appendRowToBuffer(values);
     }
 
     public int countColumns() {
@@ -28,21 +31,18 @@ public class Table {
         return rows.size();
     }
 
-    @Override
-    public String toString() {
-        StringBuffer sb = new StringBuffer();
-        // print header
-        for (int i = 0; i < rows.size(); ++i) {
-            List<String> row = rows.get(i);
-            for (int j = 0; j < row.size(); j++) {
-                sb.append(row.get(i));
-                if (i + 1 != row.size()) {
-                    sb.append("\t ");
-                }
+    private void appendRowToBuffer(String... values) {
+        for (int i = 0; i < values.length; i++) {
+            stringBuffer.append(values[i]);
+            if (i + 1 != values.length) {
+                stringBuffer.append("\t ");
             }
         }
+    }
 
-        return sb.toString();
+    @Override
+    public String toString() {
+        return stringBuffer.toString();
     }
 
 }

@@ -100,7 +100,7 @@ public class App {
         }
     }
 
-    static DataSource getDataSource(String connectionUrl) {
+    private static DataSource getDataSource(String connectionUrl) {
         PGSimpleDataSource dataSource = new PGSimpleDataSource();
         dataSource.setUrl(connectionUrl);
         return dataSource;

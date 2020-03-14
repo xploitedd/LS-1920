@@ -3,7 +3,6 @@ package pt.isel.ls;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import javax.sql.DataSource;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
@@ -11,14 +10,15 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import org.postgresql.ds.PGSimpleDataSource;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 public class DatabaseTest {
 
-    private static final String DATABASE_CONNECTION_ENV = "JDBC_DATABASE_URL";
-    private static final DataSource dataSource = App.getDataSource(System.getenv(DATABASE_CONNECTION_ENV));
+    private static final String DATABASE_CONNECTION_ENV = "JDBC_TEST_DATABASE_URL";
+    private static final PGSimpleDataSource dataSource = new PGSimpleDataSource();
 
     private static void executeFile(String filePath) throws SQLException, IOException {
         Connection conn = dataSource.getConnection();
@@ -33,6 +33,7 @@ public class DatabaseTest {
 
     @BeforeClass
     public static void databaseTests_createSchema() throws SQLException, IOException {
+        dataSource.setUrl(System.getenv(DATABASE_CONNECTION_ENV));
         executeFile("src/test/sql/createSchema.sql");
         executeFile("src/test/sql/addData.sql");
     }

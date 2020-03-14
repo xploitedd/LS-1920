@@ -52,12 +52,14 @@ public class PostRoomHandler implements RouteHandler {
             ResultSet rs = ret.executeQuery();
             rs.first();
             int rid = rs.getInt("rid");
+
             //Fetch labels, check their IDs
             List<String> labels = request.getParameter("label");
-            for (String lbl:labels) {
+            for (String lbl : labels) {
                 PreparedStatement ls = conn.prepareStatement(
                         "SELECT lid FROM label WHERE name = ?;"
                 );
+
                 ls.setString(1,lbl);
                 ResultSet rls = ls.executeQuery();
                 rls.first();
@@ -66,10 +68,12 @@ public class PostRoomHandler implements RouteHandler {
                 PreparedStatement rl = conn.prepareStatement(
                         "INSERT INTO ROOM_LABEL (lid,rid) VALUES (?,?);"
                 );
+
                 rl.setInt(1,lid);
                 rl.setInt(2,rid);
                 rl.execute();
             }
+
             return new RouteResponse(new MessageView("This room's unique identifier is: " + rid));
         }
     }
