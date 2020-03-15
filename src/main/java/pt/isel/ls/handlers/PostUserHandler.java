@@ -2,7 +2,7 @@ package pt.isel.ls.handlers;
 
 import pt.isel.ls.router.RouteRequest;
 import pt.isel.ls.router.RouteResponse;
-import pt.isel.ls.view.console.MessageView;
+import pt.isel.ls.view.console.IdentifierView;
 
 import javax.sql.DataSource;
 import java.sql.Connection;
@@ -36,7 +36,7 @@ public class PostUserHandler implements RouteHandler {
             ResultSet rs = ret.executeQuery();
             rs.first();
             int uid = rs.getInt("uid");
-            return new RouteResponse(new MessageView("This user's unique identifier is: " + uid));
+            return new RouteResponse(new IdentifierView("user",uid));
         }
     }
 

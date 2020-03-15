@@ -1,13 +1,13 @@
 package pt.isel.ls.handlers;
 
+import pt.isel.ls.router.RouteRequest;
+import pt.isel.ls.router.RouteResponse;
+import pt.isel.ls.view.console.IdentifierView;
+
+import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import pt.isel.ls.router.RouteRequest;
-import pt.isel.ls.router.RouteResponse;
-
-import javax.sql.DataSource;
-import pt.isel.ls.view.console.MessageView;
 
 public class PostLabelHandler implements RouteHandler {
 
@@ -31,7 +31,7 @@ public class PostLabelHandler implements RouteHandler {
             rs.first();
 
             int lid = rs.getInt("lid");
-            return new RouteResponse(new MessageView("This label's unique identifier is: " + lid));
+            return new RouteResponse(new IdentifierView("label",lid));
         }
     }
 }

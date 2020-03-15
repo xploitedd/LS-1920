@@ -1,14 +1,14 @@
 package pt.isel.ls.handlers;
 
+import pt.isel.ls.router.RouteRequest;
+import pt.isel.ls.router.RouteResponse;
+import pt.isel.ls.view.console.IdentifierView;
+
+import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Timestamp;
-import pt.isel.ls.router.RouteRequest;
-import pt.isel.ls.router.RouteResponse;
-
-import javax.sql.DataSource;
-import pt.isel.ls.view.console.MessageView;
 
 public class PostBookingHandler implements RouteHandler {
 
@@ -49,7 +49,7 @@ public class PostBookingHandler implements RouteHandler {
             ResultSet rs = ret.executeQuery();
             rs.first();
             int bid = rs.getInt("bid");
-            return new RouteResponse(new MessageView("This booking's unique identifier is: " + bid));
+            return new RouteResponse(new IdentifierView("booking",bid));
         }
     }
 }

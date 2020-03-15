@@ -2,7 +2,7 @@ package pt.isel.ls.handlers;
 
 import pt.isel.ls.router.RouteRequest;
 import pt.isel.ls.router.RouteResponse;
-import pt.isel.ls.view.console.MessageView;
+import pt.isel.ls.view.console.IdentifierView;
 
 import javax.sql.DataSource;
 import java.sql.Connection;
@@ -78,7 +78,7 @@ public class PostRoomHandler implements RouteHandler {
                 rl.execute();
             }
 
-            return new RouteResponse(new MessageView("This room's unique identifier is: " + rid));
+            return new RouteResponse(new IdentifierView("room",rid));
         }
     }
 }
