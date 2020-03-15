@@ -20,7 +20,7 @@ public class GetLabeledRoomsHandler implements RouteHandler {
     public GetLabeledRoomsHandler(DataSource dataSource) {
         this.dataSource = dataSource;
     }
-
+    // TODO: Make GET handlers comply with optional description
     /**
      * Gets all of the rooms with a certain label
      * @param request The route request

@@ -8,9 +8,13 @@ CREATE TABLE room (
     rid SERIAL PRIMARY KEY,
     name varchar(50),
     location varchar(50),
-    description varchar(200),
     capacity smallint,
     constraint room_capacity_min_check check (capacity > 1)
+);
+
+CREATE TABLE DESCRIPTION (
+    rid SERIAL PRIMARY KEY REFERENCES room(rid),
+    description varchar(200)
 );
 
 CREATE TABLE "user" (

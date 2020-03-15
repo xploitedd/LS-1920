@@ -9,6 +9,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.List;
+import java.util.Optional;
 
 public class PostRoomHandler implements RouteHandler {
 
@@ -23,14 +24,6 @@ public class PostRoomHandler implements RouteHandler {
         try (Connection conn = dataSource.getConnection()) {
             String n = request.getParameter("name").get(0);
             int c = Integer.parseInt(request.getParameter("capacity").get(0));
-            /* TODO: Ask teacher about this
-            Optional<List<String>> desc = request.getOptionalParameter("description");
-            if (desc.isPresent()) {
-                String d = desc.get().get(0);
-            } else {
-
-            }
-            */
             String l = request.getParameter("location").get(0);
 
             PreparedStatement stmt = conn.prepareStatement(
@@ -52,6 +45,17 @@ public class PostRoomHandler implements RouteHandler {
             ResultSet rs = ret.executeQuery();
             rs.first();
             int rid = rs.getInt("rid");
+            //Optional description
+            Optional<List<String>> desc = request.getOptionalParameter("description");
+            if (desc.isPresent()) {
+                String d = desc.get().get(0);
+                PreparedStatement din = conn.prepareStatement(
+                        "INSERT INTO DESCRIPTION (rid, description) VALUES (?,?);"
+                );
+                din.setInt(1,rid);
+                din.setString(2,d);
+                din.execute();
+            }
 
             //Fetch labels, check their IDs
             List<String> labels = request.getParameter("label");
