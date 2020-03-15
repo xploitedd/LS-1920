@@ -86,7 +86,7 @@ public class App {
                     System.out.print("> ");
                     String line = scanner.nextLine();
                     System.out.println();
-                    String[] parts = line.split(" ");
+                    String[] parts = line.split(" "); //check size of parts to not get arrayOutOfBounds
                     Method method = Method.valueOf(parts[0]);
                     Optional<Path> path = Path.of(parts[1]);
                     if (path.isPresent()) {

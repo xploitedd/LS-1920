@@ -15,6 +15,7 @@ import pt.isel.ls.view.console.TableView;
 
 public class GetRoomsHandler implements RouteHandler {
 
+    private static final String NO_DESCRIPTION = "No Description";
     private DataSource dataSource;
 
     public GetRoomsHandler(DataSource dataSource) {
@@ -55,10 +56,19 @@ public class GetRoomsHandler implements RouteHandler {
                 int resRid = res.getInt(1);
                 String name = res.getString(2);
                 String location = res.getString(3);
-                String desc = res.getString(4);
                 int capacity = res.getInt(5);
+                //Get description from rid
+                PreparedStatement dget = conn.prepareStatement(
+                        "SELECT description FROM DESCRIPTION WHERE rid = ?"
+                );
+                dget.setInt(1, resRid);
+                ResultSet drs = dget.executeQuery();
+                String desc = NO_DESCRIPTION;
+                if (drs.first()) {
+                    desc = drs.getString("description");
+                }
 
-                table.addTableRow(Integer.toString(resRid), name, location, desc, Integer.toString(capacity));
+                table.addTableRow(Integer.toString(resRid), name, location, Integer.toString(capacity), desc);
             }
             return new RouteResponse(new TableView(table));
         }

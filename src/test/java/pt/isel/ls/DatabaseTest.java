@@ -13,6 +13,7 @@ import java.sql.SQLException;
 import org.postgresql.ds.PGSimpleDataSource;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 public class DatabaseTest {
@@ -33,7 +34,9 @@ public class DatabaseTest {
 
     @BeforeClass
     public static void databaseTests_createSchema() throws SQLException, IOException {
-        dataSource.setUrl(System.getenv(DATABASE_CONNECTION_ENV));
+        String url = System.getenv(DATABASE_CONNECTION_ENV);
+        assertNotNull(url);
+        dataSource.setUrl(url);
         executeFile("src/test/sql/createSchema.sql");
         executeFile("src/test/sql/addData.sql");
     }

@@ -15,18 +15,19 @@ import pt.isel.ls.view.console.TableView;
 
 public class GetLabeledRoomsHandler implements RouteHandler {
 
+    private static final String NO_DESCRIPTION = "No Description";
     private DataSource dataSource;
 
     public GetLabeledRoomsHandler(DataSource dataSource) {
         this.dataSource = dataSource;
     }
-    // TODO: Make GET handlers comply with optional description
     /**
      * Gets all of the rooms with a certain label
      * @param request The route request
      * @return returns a RouteResponse with a tableView for the router
      * @throws Throwable Sent to the router
      */
+
     @Override
     public RouteResponse execute(RouteRequest request) throws Throwable {
         try (Connection conn = dataSource.getConnection()) {
@@ -44,16 +45,26 @@ public class GetLabeledRoomsHandler implements RouteHandler {
             for (int i = 1; i <= size; i++) {
                 columnNames.add(metaData.getColumnName(i));
             }
+            columnNames.add("description");
 
             Table table = new Table(columnNames.toArray(String[]::new));
             while (res.next()) {
                 int rid = res.getInt(1);
                 String name = res.getString(2);
                 String location = res.getString(3);
-                String desc = res.getString(4);
-                int capacity = res.getInt(5);
+                int capacity = res.getInt(4);
+                //Get description from rid
+                PreparedStatement dget = conn.prepareStatement(
+                        "SELECT description FROM DESCRIPTION WHERE rid = ?"
+                );
+                dget.setInt(1, rid);
+                ResultSet drs = dget.executeQuery();
+                String desc = NO_DESCRIPTION;
+                if (drs.first()) {
+                    desc = drs.getString("description");
+                }
 
-                table.addTableRow(Integer.toString(rid), name, location, desc, Integer.toString(capacity));
+                table.addTableRow(Integer.toString(rid), name, location, Integer.toString(capacity), desc);
             }
             return new RouteResponse(new TableView(table));
         }
