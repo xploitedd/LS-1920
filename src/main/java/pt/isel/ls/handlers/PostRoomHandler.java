@@ -43,7 +43,7 @@ public class PostRoomHandler implements RouteHandler {
             ret.setString(2,l);
             ret.setInt(3,c);
             ResultSet rs = ret.executeQuery();
-            rs.first();
+            rs.next();
             int rid = rs.getInt("rid");
             //Optional description
             Optional<List<String>> desc = request.getOptionalParameter("description");
@@ -66,7 +66,7 @@ public class PostRoomHandler implements RouteHandler {
 
                 ls.setString(1,lbl);
                 ResultSet rls = ls.executeQuery();
-                rls.first();
+                rls.next();
                 int lid = rls.getInt("lid");
                 //insert rid-lid pairs into ROOM_LABEL
                 PreparedStatement rl = conn.prepareStatement(

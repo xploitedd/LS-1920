@@ -47,7 +47,7 @@ public class PostBookingHandler implements RouteHandler {
             ret.setInt(3,rid);
             ret.setInt(4,uid);
             ResultSet rs = ret.executeQuery();
-            rs.first();
+            rs.next();
             int bid = rs.getInt("bid");
             return new RouteResponse(new IdentifierView("booking",bid));
         }

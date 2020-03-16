@@ -28,7 +28,7 @@ public class PostLabelHandler implements RouteHandler {
             PreparedStatement ret = conn.prepareStatement("SELECT lid FROM label WHERE name = ?;");
             ret.setString(1,n);
             ResultSet rs = ret.executeQuery();
-            rs.first();
+            rs.next();
 
             int lid = rs.getInt("lid");
             return new RouteResponse(new IdentifierView("label",lid));
