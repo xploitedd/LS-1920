@@ -31,7 +31,7 @@ public class GetUserHandler implements RouteHandler {
     public RouteResponse execute(RouteRequest request) throws Throwable {
         try (Connection conn = dataSource.getConnection()) {
             int uid = Integer.parseInt(request.getPathParameter("uid"));
-            PreparedStatement stmt = conn.prepareStatement("SELECT * FROM user WHERE uid = ?");
+            PreparedStatement stmt = conn.prepareStatement("SELECT * FROM \"user\" WHERE uid = ?");
             stmt.setInt(1, uid);
             ResultSet res = stmt.executeQuery();
 

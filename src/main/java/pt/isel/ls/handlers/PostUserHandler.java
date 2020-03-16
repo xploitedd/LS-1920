@@ -29,12 +29,12 @@ public class PostUserHandler implements RouteHandler {
             stmt.setString(2,n);
             stmt.execute();
             PreparedStatement ret = conn.prepareStatement(
-                    "SELECT uid FROM label WHERE email = ? AND name = ?;"
+                    "SELECT uid FROM \"user\" WHERE email = ? AND name = ?;"
             );
             ret.setString(1,e);
             ret.setString(2,n);
             ResultSet rs = ret.executeQuery();
-            rs.first();
+            rs.next();
             int uid = rs.getInt("uid");
             return new RouteResponse(new IdentifierView("user",uid));
         }
