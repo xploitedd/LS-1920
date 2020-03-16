@@ -27,7 +27,7 @@ public class PostRoomHandler implements RouteHandler {
             String l = request.getParameter("location").get(0);
 
             PreparedStatement stmt = conn.prepareStatement(
-                    "INSERT INTO ROOMS (name, location, capacity) VALUES (?,?,?);"
+                    "INSERT INTO room (name, location, capacity) VALUES (?,?,?);"
             );
 
             stmt.setString(1,n);
@@ -36,7 +36,7 @@ public class PostRoomHandler implements RouteHandler {
             stmt.execute();
             //Again, if you find an easier way tell me
             PreparedStatement ret = conn.prepareStatement(
-                    "SELECT rid FROM ROOMS WHERE name = ? AND location = ? AND capacity = ?;"
+                    "SELECT rid FROM room WHERE name = ? AND location = ? AND capacity = ?;"
             );
 
             ret.setString(1,n);
@@ -50,7 +50,7 @@ public class PostRoomHandler implements RouteHandler {
             if (desc.isPresent()) {
                 String d = desc.get().get(0);
                 PreparedStatement din = conn.prepareStatement(
-                        "INSERT INTO DESCRIPTION (rid, description) VALUES (?,?);"
+                        "INSERT INTO description (rid, description) VALUES (?,?);"
                 );
                 din.setInt(1,rid);
                 din.setString(2,d);
@@ -58,24 +58,26 @@ public class PostRoomHandler implements RouteHandler {
             }
 
             //Fetch labels, check their IDs
-            List<String> labels = request.getParameter("label");
-            for (String lbl : labels) {
-                PreparedStatement ls = conn.prepareStatement(
-                        "SELECT lid FROM label WHERE name = ?;"
-                );
+            Optional<List<String>> labels = request.getOptionalParameter("label");
+            if (labels.isPresent()) {
+                for (String lbl : labels.get()) {
+                    PreparedStatement ls = conn.prepareStatement(
+                            "SELECT lid FROM label WHERE name = ?;"
+                    );
 
-                ls.setString(1,lbl);
-                ResultSet rls = ls.executeQuery();
-                rls.next();
-                int lid = rls.getInt("lid");
-                //insert rid-lid pairs into ROOM_LABEL
-                PreparedStatement rl = conn.prepareStatement(
-                        "INSERT INTO ROOM_LABEL (lid,rid) VALUES (?,?);"
-                );
+                    ls.setString(1,lbl);
+                    ResultSet rls = ls.executeQuery();
+                    rls.next();
+                    int lid = rls.getInt("lid");
+                    //insert rid-lid pairs into ROOM_LABEL
+                    PreparedStatement rl = conn.prepareStatement(
+                            "INSERT INTO ROOM_LABEL (lid,rid) VALUES (?,?);"
+                    );
 
-                rl.setInt(1,lid);
-                rl.setInt(2,rid);
-                rl.execute();
+                    rl.setInt(1,lid);
+                    rl.setInt(2,rid);
+                    rl.execute();
+                }
             }
 
             return new RouteResponse(new IdentifierView("room",rid));

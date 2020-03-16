@@ -55,12 +55,12 @@ public class GetLabeledRoomsHandler implements RouteHandler {
                 int capacity = res.getInt(4);
                 //Get description from rid
                 PreparedStatement dget = conn.prepareStatement(
-                        "SELECT description FROM DESCRIPTION WHERE rid = ?"
+                        "SELECT description FROM description WHERE rid = ?"
                 );
                 dget.setInt(1, rid);
                 ResultSet drs = dget.executeQuery();
                 String desc = NO_DESCRIPTION;
-                if (drs.first()) {
+                if (drs.next()) {
                     desc = drs.getString("description");
                 }
 

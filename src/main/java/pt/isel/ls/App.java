@@ -55,6 +55,8 @@ public class App {
                 new PostRoomHandler(dataSource));
         router.registerRoute(Method.GET, RouteTemplate.of("/rooms/{rid}?"),
                 new GetRoomsHandler(dataSource));
+        router.registerRoute(Method.GET, RouteTemplate.of("/rooms"),
+                new GetRoomsHandler(dataSource));
 
         // Booking Handlers
         router.registerRoute(Method.POST, RouteTemplate.of("/rooms/{rid}/bookings"),

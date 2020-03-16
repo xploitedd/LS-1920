@@ -50,21 +50,21 @@ public class GetRoomsHandler implements RouteHandler {
             for (int i = 1; i <= size; i++) {
                 columnNames.add(metaData.getColumnName(i));
             }
-
+            columnNames.add("Description");
             Table table = new Table(columnNames.toArray(String[]::new));
             while (res.next()) {
                 int resRid = res.getInt(1);
                 String name = res.getString(2);
                 String location = res.getString(3);
-                int capacity = res.getInt(5);
+                int capacity = res.getInt(4);
                 //Get description from rid
                 PreparedStatement dget = conn.prepareStatement(
-                        "SELECT description FROM DESCRIPTION WHERE rid = ?"
+                        "SELECT description FROM description WHERE rid = ?"
                 );
                 dget.setInt(1, resRid);
                 ResultSet drs = dget.executeQuery();
                 String desc = NO_DESCRIPTION;
-                if (drs.first()) {
+                if (drs.next()) {
                     desc = drs.getString("description");
                 }
 
