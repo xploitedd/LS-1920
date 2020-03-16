@@ -100,7 +100,8 @@ public class RouteTemplate {
      * @return true if a parameter, false otherwise
      */
     private static boolean isParameterSegment(String segment) {
-        return segment.startsWith("{") && segment.endsWith("}") && segment.length() > 2;
+        return segment.startsWith("{") && (segment.endsWith("}") || segment.endsWith("}?"))
+                && segment.length() > 2;
     }
 
     /**

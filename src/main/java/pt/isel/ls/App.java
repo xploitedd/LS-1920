@@ -55,8 +55,6 @@ public class App {
                 new PostRoomHandler(dataSource));
         router.registerRoute(Method.GET, RouteTemplate.of("/rooms/{rid}?"),
                 new GetRoomsHandler(dataSource));
-        router.registerRoute(Method.GET, RouteTemplate.of("/rooms"),
-                new GetRoomsHandler(dataSource));
 
         // Booking Handlers
         router.registerRoute(Method.POST, RouteTemplate.of("/rooms/{rid}/bookings"),
@@ -67,7 +65,7 @@ public class App {
         // User Handlers
         router.registerRoute(Method.POST, RouteTemplate.of("/users"),
                 new PostUserHandler(dataSource));
-        router.registerRoute(Method.GET, RouteTemplate.of("/users/{uid}"),
+        router.registerRoute(Method.GET, RouteTemplate.of("/users/{uid}?"),
                 new GetUserHandler(dataSource));
         router.registerRoute(Method.GET, RouteTemplate.of("/users/{uid}/bookings"),
                 new GetUserBookingsHandler(dataSource));
@@ -87,10 +85,10 @@ public class App {
     private static void startApp() {
         Scanner scanner = new Scanner(System.in);
         try (PrintWriter pw = new PrintWriter(System.out)) {
+            // for needed where to print the user input character
             for ( ; ; ) {
                 System.out.print("> ");
                 if (scanner.hasNext()) {
-                    // TODO: improve this code
                     String line = scanner.nextLine();
                     RouteResponse response = router.executeRoute(line);
                     response.getView().render(pw);

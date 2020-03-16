@@ -7,6 +7,7 @@ public class ExitView implements View {
     @Override
     public void render(PrintWriter writer) {
         writer.println("Closing Application. Bye!");
+        writer.close();
         try {
             Thread.sleep(2000);
             System.exit(0);
