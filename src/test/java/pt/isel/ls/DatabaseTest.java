@@ -2,15 +2,15 @@ package pt.isel.ls;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.postgresql.ds.PGSimpleDataSource;
 
-import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import org.postgresql.ds.PGSimpleDataSource;
+import java.util.Scanner;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -23,10 +23,10 @@ public class DatabaseTest {
 
     private static void executeFile(String filePath) throws SQLException, IOException {
         Connection conn = dataSource.getConnection();
-        BufferedReader br = new BufferedReader(new FileReader(filePath));
-        String line;
-        while ((line = br.readLine()) != null) {
-            conn.prepareStatement(line).execute();
+        Scanner s = new Scanner(new FileReader(filePath));
+        s.useDelimiter(";");
+        while (s.hasNextLine()) {
+            conn.prepareStatement(s.nextLine()).execute();
         }
 
         conn.close();

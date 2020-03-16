@@ -1,4 +1,10 @@
-CREATE TABLE IF NOT EXISTS room (
+drop table if exists room_label;
+drop table if exists booking;
+drop table if exists room;
+drop table if exists "user";
+drop table if exists "label";
+
+CREATE TABLE room (
     rid SERIAL PRIMARY KEY,
     name varchar(50),
     location varchar(50),
@@ -6,23 +12,23 @@ CREATE TABLE IF NOT EXISTS room (
     constraint room_capacity_min_check check (capacity > 1)
 );
 
-CREATE TABLE IF NOT EXISTS DESCRIPTION (
+CREATE TABLE DESCRIPTION (
     rid SERIAL PRIMARY KEY REFERENCES room(rid),
     description varchar(200)
 );
 
-CREATE TABLE IF NOT EXISTS "user" (
+CREATE TABLE "user" (
     uid SERIAL PRIMARY KEY,
     email varchar(64) UNIQUE,
     name varchar(50)
 );
 
-CREATE TABLE IF NOT EXISTS "label" (
+CREATE TABLE "label" (
     lid SERIAL PRIMARY KEY,
     name varchar(50) UNIQUE
 );
 
-CREATE TABLE IF NOT EXISTS booking (
+CREATE TABLE booking (
     bid SERIAL PRIMARY KEY,
     begin TIMESTAMP,
     "end" TIMESTAMP,
@@ -33,7 +39,7 @@ CREATE TABLE IF NOT EXISTS booking (
     constraint booking_end_minute_check check (cast(extract(minute from "end") as decimal) % 10 = 0)
 );
 
-CREATE TABLE IF NOT EXISTS room_label (
+CREATE TABLE room_label (
     lid SERIAL REFERENCES "label"(lid),
     rid SERIAL REFERENCES room(rid)
 );
