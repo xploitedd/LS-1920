@@ -32,7 +32,7 @@ public class PostUserHandler implements RouteHandler {
                     "SELECT uid FROM label WHERE email = ? AND name = ?;"
             );
             ret.setString(1,e);
-            stmt.setString(2,n);
+            ret.setString(2,n);
             ResultSet rs = ret.executeQuery();
             rs.first();
             int uid = rs.getInt("uid");
