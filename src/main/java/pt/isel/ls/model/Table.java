@@ -55,6 +55,7 @@ public class Table {
      * @param values row values
      */
     private void appendRowToBuffer(String... values) {
+        stringBuffer.append("\n");
         for (int i = 0; i < values.length; i++) {
             stringBuffer.append(values[i]);
             if (i + 1 != values.length) {
