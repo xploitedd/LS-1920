@@ -2,7 +2,6 @@ package pt.isel.ls.router;
 
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
@@ -35,24 +34,32 @@ public class Router {
         }
     }
 
-    public RouteResponse executeRoute(Method method, Path path, RequestParameters<List<String>> parameters) {
-        Set<Route> routes = methodRoutes.get(method);
-        for (Route r : routes) {
-            RouteTemplate template = r.getRouteTemplate();
-            Optional<RequestParameters<String>> match = template.match(path);
-            if (match.isPresent()) {
-                try {
+    /**
+     * Receives a string request and executes the corresponding route
+     * Example request: POST /users name=John&email=a@b.c
+     * @param requestString string of the request
+     * @return a RouteResponse with the status
+     */
+    public RouteResponse executeRoute(String requestString) {
+        try {
+            RouteRequest request = RouteRequest.of(requestString);
+            Set<Route> routes = methodRoutes.get(request.getMethod());
+            for (Route r : routes) {
+                RouteTemplate template = r.getRouteTemplate();
+                Optional<HashMap<String, String>> match = template.match(request.getPath());
+                if (match.isPresent()) {
+                    request.setPathParameters(match.get());
                     return r.getHandler()
-                            .execute(new RouteRequest(path, match.get(), parameters));
-                } catch (Throwable throwable) {
-                    return new RouteResponse(new ThrowableView(throwable))
-                            .setStatusCode(500);
+                            .execute(request);
                 }
             }
-        }
 
-        return new RouteResponse(new ThrowableView(new RouteNotFoundException(path)))
-                .setStatusCode(404);
+            return new RouteResponse(new ThrowableView(new RouteNotFoundException(request.getPath())))
+                    .setStatusCode(404);
+        } catch (Throwable throwable) {
+            return new RouteResponse(new ThrowableView(throwable))
+                    .setStatusCode(500);
+        }
     }
 
     public static class Route {

@@ -1,5 +1,7 @@
 package pt.isel.ls.view.console;
 
+import java.io.PrintWriter;
+
 public class MessageView implements View {
 
     private String message;
@@ -9,9 +11,9 @@ public class MessageView implements View {
     }
 
     @Override
-    public void render() {
-        System.out.println("---------------------------------------------------------------------------");
-        System.out.println("\t" + message);
-        System.out.println("---------------------------------------------------------------------------");
+    public void render(PrintWriter writer) {
+        writer.println("---------------------------------------------------------------------------");
+        writer.println("\t" + message);
+        writer.println("---------------------------------------------------------------------------");
     }
 }

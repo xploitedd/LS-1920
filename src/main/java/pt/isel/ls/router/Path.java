@@ -8,14 +8,27 @@ public class Path {
 
     private final String[] pathSegments;
 
+    /**
+     * Creates a new Path with the specified segments
+     * @param pathSegments segments of this path
+     */
     private Path(String[] pathSegments) {
         this.pathSegments = pathSegments;
     }
 
+    /**
+     * Gets the path segments
+     * @return path segmentss
+     */
     public String[] getPathSegments() {
         return pathSegments;
     }
 
+    /**
+     * Parses a path string into a new instance of Path
+     * @param pathString path string to be parsed
+     * @return a new Path instance
+     */
     public static Optional<Path> of(String pathString) {
         if (pathString == null || pathString.isBlank()) {
             return Optional.empty();
@@ -41,4 +54,5 @@ public class Path {
     public String toString() {
         return String.join("/", pathSegments);
     }
+
 }

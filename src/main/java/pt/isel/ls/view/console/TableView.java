@@ -1,5 +1,6 @@
 package pt.isel.ls.view.console;
 
+import java.io.PrintWriter;
 import pt.isel.ls.model.Table;
 
 public class TableView implements View {
@@ -11,8 +12,8 @@ public class TableView implements View {
     }
 
     @Override
-    public void render() {
-        System.out.println(table);
+    public void render(PrintWriter writer) {
+        writer.println(table);
     }
 
 }

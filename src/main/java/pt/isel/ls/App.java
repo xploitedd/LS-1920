@@ -1,6 +1,6 @@
 package pt.isel.ls;
 
-import java.util.Optional;
+import java.io.PrintWriter;
 import java.util.Scanner;
 import org.postgresql.ds.PGSimpleDataSource;
 import pt.isel.ls.handlers.ExitHandler;
@@ -17,7 +17,6 @@ import pt.isel.ls.handlers.PostUserHandler;
 
 import javax.sql.DataSource;
 import pt.isel.ls.router.Method;
-import pt.isel.ls.router.Path;
 import pt.isel.ls.router.RouteResponse;
 import pt.isel.ls.router.RouteTemplate;
 import pt.isel.ls.router.Router;
@@ -35,6 +34,7 @@ public class App {
             System.err.println("Please set the " + DATABASE_CONNECTION_ENV + " environment variable");
             System.exit(1);
         }
+
         dataSource = getDataSource(url);
         router = new Router();
 
@@ -42,6 +42,9 @@ public class App {
         startApp();
     }
 
+    /**
+     * Registers all the routes for this app
+     */
     private static void registerRoutes() {
         // Register All Routes
         router.registerRoute(Method.EXIT, RouteTemplate.of("/"),
@@ -76,30 +79,30 @@ public class App {
                 new GetLabeledRoomsHandler(dataSource));
     }
 
+    /**
+     * Handles console app user interaction
+     */
     private static void startApp() {
         Scanner scanner = new Scanner(System.in);
-        for ( ; ; ) {
-            System.out.print("> ");
-            if (scanner.hasNext()) {
-                try {
+        try (PrintWriter pw = new PrintWriter(System.out)) {
+            for ( ; ; ) {
+                System.out.print("> ");
+                if (scanner.hasNext()) {
                     // TODO: improve this code
-                    System.out.print("> ");
                     String line = scanner.nextLine();
-                    System.out.println();
-                    String[] parts = line.split(" "); //check size of parts to not get arrayOutOfBounds
-                    Method method = Method.valueOf(parts[0]);
-                    Optional<Path> path = Path.of(parts[1]);
-                    if (path.isPresent()) {
-                        RouteResponse response = router.executeRoute(method, path.get(), null);
-                        response.getView().render();
-                    }
-                } catch (IllegalArgumentException ignored) {
-                    System.out.println("Method not allowed");
+                    RouteResponse response = router.executeRoute(line);
+                    response.getView().render(pw);
+                    pw.flush();
                 }
             }
         }
     }
 
+    /**
+     * Gets a new data source from the connection url
+     * @param connectionUrl connection url to retrieve the data source from
+     * @return a new data source
+     */
     private static DataSource getDataSource(String connectionUrl) {
         PGSimpleDataSource dataSource = new PGSimpleDataSource();
         dataSource.setUrl(connectionUrl);

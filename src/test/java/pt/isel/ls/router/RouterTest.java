@@ -1,11 +1,9 @@
 package pt.isel.ls.router;
 
-import java.util.Optional;
 import org.junit.Test;
-import pt.isel.ls.router.RequestParameters.ParameterNotFoundException;
+import pt.isel.ls.router.RouteRequest.ParameterNotFoundException;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 public class RouterTest {
@@ -19,9 +17,7 @@ public class RouterTest {
             return new RouteResponse(null);
         });
 
-        Optional<Path> path = Path.of("/example");
-        assertTrue(path.isPresent());
-        router.executeRoute(Method.GET, path.get(), null);
+        assertEquals(200, router.executeRoute("GET /example").getStatusCode());
     }
 
     @Test
@@ -39,9 +35,7 @@ public class RouterTest {
             return new RouteResponse(null);
         });
 
-        Optional<Path> path = Path.of("/test/abc");
-        assertTrue(path.isPresent());
-        router.executeRoute(Method.GET, path.get(), null);
+        assertEquals(200, router.executeRoute("GET /test/abc").getStatusCode());
     }
 
 }

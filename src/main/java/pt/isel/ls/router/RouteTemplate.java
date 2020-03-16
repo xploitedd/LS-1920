@@ -9,11 +9,22 @@ public class RouteTemplate {
 
     private final ArrayList<TemplateSegment> templateSegments;
 
+    /**
+     * Creates a new RouteTemplate with template segments
+     * @param templateSegments template segments of this template
+     */
     private RouteTemplate(ArrayList<TemplateSegment> templateSegments) {
         this.templateSegments = templateSegments;
     }
 
-    public Optional<RequestParameters<String>> match(Path path) {
+    /**
+     * Matches a path with this template
+     * If it's a match then it will return the path parameters,
+     * otherwise returns empty
+     * @param path path of the request
+     * @return path parameters or empty
+     */
+    public Optional<HashMap<String, String>> match(Path path) {
         HashMap<String, String> pathParameters = new HashMap<>();
         Iterator<TemplateSegment> templateSegmentIterator = templateSegments.iterator();
         for (String segment : path.getPathSegments()) {
@@ -46,9 +57,14 @@ public class RouteTemplate {
             }
         }
 
-        return Optional.of(new RequestParameters<>(pathParameters));
+        return Optional.of(pathParameters);
     }
 
+    /**
+     * Parses a template string into a RouteTemplate
+     * @param routeString template string to be parsed
+     * @return a new instance of RouteTemplate
+     */
     public static RouteTemplate of(String routeString) {
         ArrayList<TemplateSegment> templateSegments = new ArrayList<>();
         String[] segments = RouterUtils.getValidSegments(routeString);
@@ -69,14 +85,29 @@ public class RouteTemplate {
         return new RouteTemplate(templateSegments);
     }
 
+    /**
+     * Gets a segment parameter name
+     * @param segment parameter segment
+     * @return parameter name
+     */
     private static String getParameterName(String segment) {
         return segment.substring(1, segment.indexOf('}'));
     }
 
+    /**
+     * Checks if a segment is a parameter
+     * @param segment segment to be checked
+     * @return true if a parameter, false otherwise
+     */
     private static boolean isParameterSegment(String segment) {
         return segment.startsWith("{") && segment.endsWith("}") && segment.length() > 2;
     }
 
+    /**
+     * Checks if a segment is a obligatory parameter
+     * @param segment segment to be checked
+     * @return true if an obligatory parameter, false otherwise
+     */
     private static boolean isObligatoryParameter(String segment) {
         return !segment.endsWith("}?");
     }
