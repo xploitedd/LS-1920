@@ -6,7 +6,7 @@ CREATE TABLE IF NOT EXISTS room (
     constraint room_capacity_min_check check (capacity > 1)
 );
 
-CREATE TABLE description (
+
 CREATE TABLE IF NOT EXISTS description (
     rid SERIAL PRIMARY KEY REFERENCES room(rid),
     description varchar(200)

@@ -29,7 +29,7 @@ public class PostBookingHandler implements RouteHandler {
             Timestamp b = Timestamp.valueOf(begin);
             Timestamp e = Timestamp.valueOf(end);
             PreparedStatement stmt = conn.prepareStatement(
-                    "INSERT INTO BOOKING (begin,\"end\",rid,uid) VALUES (?,?,?,?);"
+                    "INSERT INTO booking (begin,\"end\",rid,uid) VALUES (?,?,?,?);"
             );
 
             stmt.setTimestamp(1,b);
@@ -39,7 +39,7 @@ public class PostBookingHandler implements RouteHandler {
             stmt.execute();
             // If you find a better way to do this please tell me
             PreparedStatement ret = conn.prepareStatement(
-                    "SELECT bid FROM BOOKING WHERE begin = ? AND end = ? AND rid = ? AND uid = ?;"
+                    "SELECT bid FROM booking WHERE begin = ? AND end = ? AND rid = ? AND uid = ?;"
             );
 
             ret.setTimestamp(1,b);

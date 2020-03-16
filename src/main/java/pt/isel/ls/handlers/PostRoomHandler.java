@@ -71,7 +71,7 @@ public class PostRoomHandler implements RouteHandler {
                     int lid = rls.getInt("lid");
                     //insert rid-lid pairs into ROOM_LABEL
                     PreparedStatement rl = conn.prepareStatement(
-                            "INSERT INTO ROOM_LABEL (lid,rid) VALUES (?,?);"
+                            "INSERT INTO room_label (lid,rid) VALUES (?,?);"
                     );
 
                     rl.setInt(1,lid);
