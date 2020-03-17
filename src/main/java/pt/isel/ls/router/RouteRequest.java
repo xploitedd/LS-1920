@@ -1,5 +1,7 @@
 package pt.isel.ls.router;
 
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -132,6 +134,8 @@ public class RouteRequest {
      */
     private static HashMap<String, List<String>> parseParameters(String parameterSection)
             throws ArrayIndexOutOfBoundsException {
+
+        parameterSection = URLDecoder.decode(parameterSection, StandardCharsets.UTF_8);
         String[] keyValueSections = parameterSection.split("&");
         HashMap<String, List<String>> parameters = new HashMap<>();
         for (String keyValue : keyValueSections) {

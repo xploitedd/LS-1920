@@ -1,13 +1,15 @@
 package pt.isel.ls.model;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
 public class Table {
 
-    private final StringBuffer stringBuffer = new StringBuffer();
+    private final int columnCount;
     private final List<List<String>> rows = new LinkedList<>();
+    private final List<Integer> maxSizes;
 
     /**
      * Creates a new table with the specified columns
@@ -15,7 +17,13 @@ public class Table {
      */
     public Table(String... columnNames) {
         rows.add(Arrays.asList(columnNames));
-        appendRowToBuffer(columnNames);
+
+        this.columnCount = columnNames.length;
+        this.maxSizes = new ArrayList<>();
+
+        for (int i = 0; i < columnCount; i++) {
+            maxSizes.add(columnNames[i].length());
+        }
     }
 
     /**
@@ -24,50 +32,59 @@ public class Table {
      * @throws IllegalArgumentException if row size mismatches the table size
      */
     public void addTableRow(String... values) throws IllegalArgumentException {
-        if (values.length != countColumns()) {
+        if (values.length != columnCount) {
             throw new IllegalArgumentException("Row size is different from Table size!");
         }
 
         rows.add(Arrays.asList(values));
-        appendRowToBuffer(values);
+        checkMaxColumnSize(values);
     }
 
-    /**
-     * Retrieves the column count
-     * @return column count
-     */
-    public int countColumns() {
-        return rows.get(0).size();
-    }
-
-    /**
-     * Retrieves the row count
-     * @return row count
-     */
-    public int countRows() {
-        return rows.size();
-    }
-
-    /**
-     * Appends the specified row to the string buffer
-     * The string buffer is used to obtain a string representation
-     * of the table
-     * @param values row values
-     */
-    private void appendRowToBuffer(String... values) {
-        for (int i = 0; i < values.length; i++) {
-            stringBuffer.append(values[i]);
-            if (i + 1 != values.length) {
-                stringBuffer.append("\t ");
+    private void checkMaxColumnSize(String... newItems) {
+        for (int i = 0; i < columnCount; ++i) {
+            String columnItem = newItems[i];
+            if (columnItem.length() > maxSizes.get(i)) {
+                maxSizes.set(i, columnItem.length());
             }
         }
+    }
 
-        stringBuffer.append("\n");
+    private void appendRow(int row, StringBuffer sb) {
+        for (int i = 0; i < columnCount; i++) {
+            int colMax = maxSizes.get(i);
+            sb.append(String.format("%-" + colMax + "s | ", rows.get(row).get(i)));
+        }
+    }
+
+    private int countHorizontalSize() {
+        int totalCharacters = 0;
+        for (int max : maxSizes) {
+            totalCharacters += max;
+        }
+
+        return totalCharacters + 3 * columnCount;
     }
 
     @Override
     public String toString() {
-        return stringBuffer.toString();
+        int size = countHorizontalSize();
+        String separator = "-".repeat(size);
+        StringBuffer sb = new StringBuffer(separator);
+        sb.append("\n");
+        // print header
+        appendRow(0, sb);
+
+        // print header separator
+        // +3*columnCount because of the " | " printed above
+        sb.append("\n").append("=".repeat(size));
+
+        // print table rows
+        for (int i = 1; i < rows.size(); ++i) {
+            sb.append("\n");
+            appendRow(i, sb);
+        }
+
+        return sb.append("\n").append(separator).toString();
     }
 
 }
