@@ -10,6 +10,7 @@ import java.sql.ResultSet;
 import java.sql.PreparedStatement;
 import java.sql.ResultSetMetaData;
 import java.util.ArrayList;
+import java.util.Optional;
 
 import pt.isel.ls.view.console.TableView;
 
@@ -33,9 +34,9 @@ public class GetRoomsHandler implements RouteHandler {
         try (Connection conn = dataSource.getConnection()) {
             PreparedStatement stmt;
             ResultSet res;
-
-            if (request.getOptionalPathParameter("rid").isPresent()) {
-                int rid = Integer.parseInt(request.getOptionalPathParameter("rid").get());
+            Optional<String> paramRid = request.getOptionalPathParameter("rid");
+            if (paramRid.isPresent()) {
+                int rid = Integer.parseInt(paramRid.get());
                 stmt = conn.prepareStatement("SELECT * FROM room WHERE rid = ?");
                 stmt.setInt(1,rid);
             } else {

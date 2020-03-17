@@ -10,6 +10,7 @@ import java.sql.ResultSet;
 import java.sql.PreparedStatement;
 import java.sql.ResultSetMetaData;
 import java.util.ArrayList;
+import java.util.Optional;
 
 import pt.isel.ls.view.console.TableView;
 
@@ -30,9 +31,16 @@ public class GetUserHandler implements RouteHandler {
     @Override
     public RouteResponse execute(RouteRequest request) throws Throwable {
         try (Connection conn = dataSource.getConnection()) {
-            int uid = Integer.parseInt(request.getPathParameter("uid"));
-            PreparedStatement stmt = conn.prepareStatement("SELECT * FROM \"user\" WHERE uid = ?");
-            stmt.setInt(1, uid);
+            Optional<String> paramUid = request.getOptionalPathParameter("uid");
+            PreparedStatement stmt;
+            if (paramUid.isPresent()) {
+                int uid = Integer.parseInt(paramUid.get());
+                stmt = conn.prepareStatement("SELECT * FROM \"user\" WHERE uid = ?");
+                stmt.setInt(1, uid);
+            } else {
+                stmt = conn.prepareStatement("SELECT * FROM \"user\"");
+            }
+
             ResultSet res = stmt.executeQuery();
 
             ResultSetMetaData metaData = res.getMetaData();
