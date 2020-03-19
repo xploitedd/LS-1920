@@ -1,13 +1,13 @@
 package pt.isel.ls.handlers;
 
+import pt.isel.ls.model.Booking;
 import pt.isel.ls.router.RouteRequest;
 import pt.isel.ls.router.RouteResponse;
+import pt.isel.ls.sql.ConnectionProvider;
+import pt.isel.ls.sql.queries.BookingQueries;
 import pt.isel.ls.view.console.IdentifierView;
 
 import javax.sql.DataSource;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.Timestamp;
 
 public class PostBookingHandler implements RouteHandler {
@@ -20,7 +20,7 @@ public class PostBookingHandler implements RouteHandler {
 
     @Override
     public RouteResponse execute(RouteRequest request) throws Throwable {
-        try (Connection conn = dataSource.getConnection()) {
+        Booking booking = new ConnectionProvider(dataSource).execute(conn -> {
             int rid = Integer.parseInt(request.getPathParameter("rid"));
             int uid = Integer.parseInt(request.getParameter("uid").get(0));
             String begin = request.getParameter("begin").get(0);
@@ -28,28 +28,9 @@ public class PostBookingHandler implements RouteHandler {
             //TODO: Make sure these Strings are TIMESTAMPs
             Timestamp b = Timestamp.valueOf(begin);
             Timestamp e = Timestamp.valueOf(end);
-            PreparedStatement stmt = conn.prepareStatement(
-                    "INSERT INTO booking (begin,\"end\",rid,uid) VALUES (?,?,?,?);"
-            );
+            return new BookingQueries(conn).createNewBooking(rid,uid,b,e);
+        });
 
-            stmt.setTimestamp(1,b);
-            stmt.setTimestamp(2,e);
-            stmt.setInt(3,rid);
-            stmt.setInt(4,uid);
-            stmt.execute();
-            // If you find a better way to do this please tell me
-            PreparedStatement ret = conn.prepareStatement(
-                    "SELECT bid FROM booking WHERE begin = ? AND end = ? AND rid = ? AND uid = ?;"
-            );
-
-            ret.setTimestamp(1,b);
-            ret.setTimestamp(2,e);
-            ret.setInt(3,rid);
-            ret.setInt(4,uid);
-            ResultSet rs = ret.executeQuery();
-            rs.next();
-            int bid = rs.getInt("bid");
-            return new RouteResponse(new IdentifierView("booking",bid));
-        }
+        return new RouteResponse(new IdentifierView("booking", booking.getBid()));
     }
 }

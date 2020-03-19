@@ -24,10 +24,16 @@ public class Room {
         return name;
     }
 
-    public int getCapacity() { return capacity; }
+    public int getCapacity() {
+        return capacity;
+    }
 
-    public String getDescription() { return description; }
+    public String getDescription() {
+        return description;
+    }
 
-    public String getLocation() { return location; }
+    public String getLocation() {
+        return location;
+    }
 
 }
