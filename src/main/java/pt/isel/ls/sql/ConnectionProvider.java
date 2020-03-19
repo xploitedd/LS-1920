@@ -2,7 +2,6 @@ package pt.isel.ls.sql;
 
 import java.sql.Connection;
 import javax.sql.DataSource;
-import pt.isel.ls.model.Model;
 
 public class ConnectionProvider {
 
@@ -12,7 +11,7 @@ public class ConnectionProvider {
         this.dataSource = dataSource;
     }
 
-    public Iterable<Model> execute(Provider queries) throws Throwable {
+    public <U> U execute(Provider<U> queries) throws Throwable {
         try (Connection conn = dataSource.getConnection()) {
             return queries.apply(conn);
         }

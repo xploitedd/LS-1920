@@ -1,6 +1,6 @@
 package pt.isel.ls.model;
 
-public class Label implements Model {
+public class Label {
 
     private final int lid;
     private final String name;

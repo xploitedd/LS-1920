@@ -5,7 +5,7 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
-public class Table implements Model {
+public class Table {
 
     private final int columnCount;
     private final List<List<String>> rows = new LinkedList<>();
