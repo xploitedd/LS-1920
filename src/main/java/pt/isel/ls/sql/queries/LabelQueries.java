@@ -17,12 +17,15 @@ public class LabelQueries extends DatabaseQueries {
         stmt.setString(1, labelName);
         stmt.execute();
 
-        stmt = conn.prepareStatement("SELECT lid FROM label WHERE name = ?;");
-        stmt.setString(1, labelName);
+        return getLabel(labelName);
+    }
+
+    public Label getLabel(String name) throws Throwable {
+        PreparedStatement stmt = conn.prepareStatement("SELECT lid FROM label WHERE name = ?;");
+        stmt.setString(1, name);
         ResultSet rs = stmt.executeQuery();
         rs.next();
-
-        return new Label(rs.getInt("lid"), labelName);
+        return new Label(rs.getInt("lid"), name);
     }
 
     public Iterable<Label> getLabels() throws Throwable {
