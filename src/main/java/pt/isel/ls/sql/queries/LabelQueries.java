@@ -4,6 +4,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.LinkedList;
+import java.util.NoSuchElementException;
+
 import pt.isel.ls.model.Label;
 
 public class LabelQueries extends DatabaseQueries {
@@ -24,7 +26,9 @@ public class LabelQueries extends DatabaseQueries {
         PreparedStatement stmt = conn.prepareStatement("SELECT lid FROM label WHERE name = ?;");
         stmt.setString(1, name);
         ResultSet rs = stmt.executeQuery();
-        rs.next();
+        if (!rs.next()) {
+            throw new NoSuchElementException("Label '" + name + "' not found");
+        }
         return new Label(rs.getInt("lid"), name);
     }
 

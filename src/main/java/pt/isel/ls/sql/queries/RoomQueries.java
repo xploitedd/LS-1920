@@ -55,7 +55,7 @@ public class RoomQueries extends DatabaseQueries {
 
     public Room getRoom(String name, String location, int capacity) throws Throwable {
         PreparedStatement stmt = conn.prepareStatement(
-                "SELECT room.rid, name, location, capacity, description FROM room "
+                "SELECT room.rid, description FROM room "
                         + "FULL JOIN description d on room.rid = d.rid "
                         + "WHERE name = ? AND location = ? AND capacity = ?;"
         );
@@ -66,12 +66,9 @@ public class RoomQueries extends DatabaseQueries {
         ResultSet rs = stmt.executeQuery();
         rs.next();
         int id = rs.getInt("rid");
-        String rsName = rs.getString("name");
-        String rsLocation = rs.getString("location");
-        int rsCapacity = rs.getInt("capacity");
         String desc = rs.getString("description");
 
-        return new Room(id, rsName, rsCapacity, desc, rsLocation);
+        return new Room(id, name, capacity, desc, location);
     }
 
     public Room getRoom(int rid) throws Throwable {
