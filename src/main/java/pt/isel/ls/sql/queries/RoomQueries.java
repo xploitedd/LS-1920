@@ -15,46 +15,49 @@ public class RoomQueries extends DatabaseQueries {
         super(conn);
     }
 
-    public Room createNewRoom(int rid, String name, String location, int capacity, String description, Optional<List<String>> labels) throws Throwable {
-        List<Integer> lids = new LinkedList<>();
-        if (labels.isPresent()) { //Gets List of labels to associate with room
-            for (String lbl : labels.get()) {
-                PreparedStatement ls = conn.prepareStatement(
-                        "SELECT lid FROM label WHERE name = ?;"
-                );
+    public Room createNewRoom(String name, String location, int capacity,
+                              Optional<List<String>> description, Optional<List<String>> labels) throws Throwable {
 
-                ls.setString(1,lbl);
-                ResultSet rls = ls.executeQuery();
-                int lid = -1;
-                if (rls.next()) {
-                    rls.getInt("lid");
-                } else {
-                    throw new IllegalArgumentException("Label '" + lbl + "' not found, aborted creation of room");
-                }
-                lids.add(lid);
+        List<Integer> lids = new LinkedList<>();
+
+        if (labels.isPresent()) { //Gets List of labels to associate with room
+            LabelQueries lblQuery = new LabelQueries(conn);
+            for (String lbl : labels.get()) {
+                lids.add(lblQuery.getLabel(lbl).getLid());
             }
         }
-
+        //Inserts the new Room
         PreparedStatement stmt = conn.prepareStatement(
-                "INSERT INTO room (name, location, capacity) VALUES (?,?,?);"
-        );
+                "INSERT INTO room (name, location, capacity) VALUES (?,?,?);");
 
         stmt.setString(1,name);
         stmt.setString(2,location);
         stmt.setInt(3,capacity);
         stmt.execute();
+        //Verifies if the new Room has been inserted
+        PreparedStatement ret = conn.prepareStatement(
+                "SELECT rid FROM room WHERE name = ? AND location = ? AND capacity = ?;");
 
+        ret.setString(1,name);
+        ret.setString(2,location);
+        ret.setInt(3,capacity);
+
+        ResultSet rs = ret.executeQuery();
+        rs.next();
+        int rid = rs.getInt("rid");
         Room toReturn = getRoom(rid);
 
-        for (int lid : lids) {
-            //insert rid-lid pairs into ROOM_LABEL
-            PreparedStatement rl = conn.prepareStatement(
-                    "INSERT INTO room_label (lid,rid) VALUES (?,?);"
-            );
+        RoomLabelQueries rlQuery = new RoomLabelQueries(conn);
+        rlQuery.addRoomLabel(lids,rid);
 
-            rl.setInt(1,lid);
-            rl.setInt(2,rid);
-            rl.execute();
+        if (description.isPresent()) { //Associate Description with new Room
+            String d = description.get().get(0);
+            PreparedStatement din = conn.prepareStatement(
+                    "INSERT INTO description (rid, description) VALUES (?,?);"
+            );
+            din.setInt(1,rid);
+            din.setString(2,d);
+            din.execute();
         }
 
         return toReturn;
@@ -79,21 +82,22 @@ public class RoomQueries extends DatabaseQueries {
 
     public Iterable<Room> getRooms() throws Throwable {
         PreparedStatement stmt = conn.prepareStatement(
-                "SELECT room.rid, name, location, capacity, description FROM room FULL JOIN description d on room.rid = d.rid;"
+                "SELECT room.rid, name, location, capacity, description "
+                        + "FROM room FULL JOIN description d on room.rid = d.rid;"
         );
         ResultSet rs = stmt.executeQuery();
 
-        LinkedList<Room> results = new LinkedList<>();
+        LinkedList<Room> rooms = new LinkedList<>();
         while (rs.next()) {
             int rid = rs.getInt("rid");
             String name = rs.getString("name");
             String location = rs.getString("location");
             int capacity = rs.getInt("capacity");
             String desc = rs.getString("description");
-            results.add(new Room(rid, name, capacity, desc, location));
+            rooms.add(new Room(rid, name, capacity, desc, location));
         }
 
-        return results;
+        return rooms;
     }
 
 }

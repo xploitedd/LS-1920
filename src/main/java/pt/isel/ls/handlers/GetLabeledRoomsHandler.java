@@ -1,16 +1,14 @@
 package pt.isel.ls.handlers;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
+import pt.isel.ls.model.Room;
 import pt.isel.ls.model.Table;
 import pt.isel.ls.router.RouteRequest;
 import pt.isel.ls.router.RouteResponse;
 
 import javax.sql.DataSource;
-import java.util.ArrayList;
 
+import pt.isel.ls.sql.ConnectionProvider;
+import pt.isel.ls.sql.queries.RoomLabelQueries;
 import pt.isel.ls.view.console.TableView;
 
 public class GetLabeledRoomsHandler implements RouteHandler {
@@ -30,43 +28,18 @@ public class GetLabeledRoomsHandler implements RouteHandler {
 
     @Override
     public RouteResponse execute(RouteRequest request) throws Throwable {
-        try (Connection conn = dataSource.getConnection()) {
-            int lid = Integer.parseInt(request.getPathParameter("lid"));
-            PreparedStatement stmt = conn.prepareStatement(
-                    "SELECT * FROM room WHERE rid IN (SELECT rid FROM room_label WHERE lid = ?)"
-            );
+        int lid = Integer.parseInt(request.getPathParameter("lid"));
 
-            stmt.setInt(1, lid);
-            ResultSet res = stmt.executeQuery();
-            ResultSetMetaData metaData = res.getMetaData();
+        Iterable<Room> rooms = new ConnectionProvider(dataSource)
+                .execute(conn -> new RoomLabelQueries(conn).getLabeledRooms(lid));
 
-            int size = metaData.getColumnCount();
-            ArrayList<String> columnNames = new ArrayList<>(size);
-            for (int i = 1; i <= size; i++) {
-                columnNames.add(metaData.getColumnName(i));
-            }
-            columnNames.add("description");
+        Table table = new Table("RID", "Name", "Location", "Capacity", "Description");
 
-            Table table = new Table(columnNames.toArray(String[]::new));
-            while (res.next()) {
-                int rid = res.getInt(1);
-                String name = res.getString(2);
-                String location = res.getString(3);
-                int capacity = res.getInt(4);
-                //Get description from rid
-                PreparedStatement dget = conn.prepareStatement(
-                        "SELECT description FROM description WHERE rid = ?"
-                );
-                dget.setInt(1, rid);
-                ResultSet drs = dget.executeQuery();
-                String desc = NO_DESCRIPTION;
-                if (drs.next()) {
-                    desc = drs.getString("description");
-                }
-
-                table.addTableRow(Integer.toString(rid), name, location, Integer.toString(capacity), desc);
-            }
-            return new RouteResponse(new TableView(table));
+        for (Room room : rooms) {
+            String desc = room.getDescription();
+            table.addTableRow(String.valueOf(room.getRid()), room.getName(), room.getLocation(),
+                    String.valueOf(room.getCapacity()), desc != null ? desc : "NO DESCRIPTION");
         }
+        return new RouteResponse(new TableView(table));
     }
 }
