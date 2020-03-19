@@ -22,7 +22,7 @@ public class PostUserHandler implements RouteHandler {
         User user = new ConnectionProvider(dataSource).execute(conn -> {
             String name = request.getParameter("name").get(0);
             String email = request.getParameter("email").get(0);
-            return new UserQueries(conn).createNewUser(name,email);
+            return new UserQueries(conn).createNewUser(name, email);
         });
 
         return new RouteResponse(new IdentifierView("user", user.getUid()));

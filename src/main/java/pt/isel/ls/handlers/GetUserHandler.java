@@ -1,18 +1,16 @@
 package pt.isel.ls.handlers;
 
 import pt.isel.ls.model.Table;
+import pt.isel.ls.model.User;
 import pt.isel.ls.router.RouteRequest;
 import pt.isel.ls.router.RouteResponse;
+import pt.isel.ls.sql.ConnectionProvider;
+import pt.isel.ls.sql.queries.UserQueries;
+import pt.isel.ls.view.console.TableView;
 
 import javax.sql.DataSource;
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.PreparedStatement;
-import java.sql.ResultSetMetaData;
 import java.util.ArrayList;
 import java.util.Optional;
-
-import pt.isel.ls.view.console.TableView;
 
 public class GetUserHandler implements RouteHandler {
 
@@ -30,36 +28,24 @@ public class GetUserHandler implements RouteHandler {
      */
     @Override
     public RouteResponse execute(RouteRequest request) throws Throwable {
-        try (Connection conn = dataSource.getConnection()) {
-            Optional<String> paramUid = request.getOptionalPathParameter("uid");
-            PreparedStatement stmt;
-            if (paramUid.isPresent()) {
-                int uid = Integer.parseInt(paramUid.get());
-                stmt = conn.prepareStatement("SELECT * FROM \"user\" WHERE uid = ?");
-                stmt.setInt(1, uid);
-            } else {
-                stmt = conn.prepareStatement("SELECT * FROM \"user\"");
-            }
 
-            ResultSet res = stmt.executeQuery();
+        Iterable<User> iter = new ConnectionProvider(dataSource)
+                .execute(conn -> {
+                    Optional<String> paramUid = request.getOptionalPathParameter("uid");
+                    if (paramUid.isPresent()) {
+                        ArrayList<User> userList = new ArrayList<>(1);
+                        userList.add(new UserQueries(conn).getUser(Integer.parseInt(paramUid.get())));
+                        return userList;
+                    } else {
+                        return new UserQueries(conn).getUsers();
+                    }
+                });
 
-            ResultSetMetaData metaData = res.getMetaData();
-            int size = metaData.getColumnCount();
-            ArrayList<String> columnNames = new ArrayList<>(size);
-            for (int i = 1; i <= size; i++) {
-                columnNames.add(metaData.getColumnName(i));
-            }
-
-            Table table = new Table(columnNames.toArray(String[]::new));
-            while (res.next()) {
-                int resUid = res.getInt(1);
-                String email = res.getString(2);
-                String name = res.getString(3);
-
-                table.addTableRow(Integer.toString(resUid), email, name);
-            }
-
-            return new RouteResponse(new TableView(table));
+        Table table = new Table("User Id", "Name", "Email");
+        for (User user : iter) {
+            table.addTableRow(String.valueOf(user.getUid()), user.getName(), user.getEmail());
         }
+
+        return new RouteResponse(new TableView(table));
     }
 }

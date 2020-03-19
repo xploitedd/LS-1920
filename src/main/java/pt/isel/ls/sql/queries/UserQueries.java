@@ -16,22 +16,32 @@ public class UserQueries extends DatabaseQueries {
         PreparedStatement stmt = conn.prepareStatement(
                 "INSERT INTO \"user\" (email,name) VALUES (?,?);"
         );
-        stmt.setString(1,email);
-        stmt.setString(2,name);
+        stmt.setString(1, email);
+        stmt.setString(2, name);
         stmt.execute();
         return getUser(name, email);
+    }
+
+    public User getUser(int uid) throws Throwable {
+        PreparedStatement ret = conn.prepareStatement(
+                "SELECT name, email FROM \"user\" WHERE uid = ?;"
+        );
+        ret.setInt(1, uid);
+        ResultSet rs = ret.executeQuery();
+        rs.next();
+        return new User(uid, rs.getString("name"), rs.getString("email"));
     }
 
     public User getUser(String name, String email) throws Throwable {
         PreparedStatement ret = conn.prepareStatement(
                 "SELECT uid FROM \"user\" WHERE email = ? AND name = ?;"
         );
-        ret.setString(1,email);
-        ret.setString(2,name);
+        ret.setString(1, email);
+        ret.setString(2, name);
         ResultSet rs = ret.executeQuery();
         rs.next();
         int uid = rs.getInt("uid");
-        return new User(uid,name,email);
+        return new User(uid, name, email);
     }
 
     public Iterable<User> getUsers() throws Throwable {

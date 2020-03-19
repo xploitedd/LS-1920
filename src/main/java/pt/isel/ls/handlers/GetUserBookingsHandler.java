@@ -1,17 +1,14 @@
 package pt.isel.ls.handlers;
 
+import pt.isel.ls.model.Booking;
 import pt.isel.ls.model.Table;
 import pt.isel.ls.router.RouteRequest;
 import pt.isel.ls.router.RouteResponse;
+import pt.isel.ls.sql.ConnectionProvider;
+import pt.isel.ls.sql.queries.BookingQueries;
+import pt.isel.ls.view.console.TableView;
 
 import javax.sql.DataSource;
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.PreparedStatement;
-import java.sql.ResultSetMetaData;
-import java.util.ArrayList;
-
-import pt.isel.ls.view.console.TableView;
 
 public class GetUserBookingsHandler implements RouteHandler {
 
@@ -29,32 +26,19 @@ public class GetUserBookingsHandler implements RouteHandler {
      */
     @Override
     public RouteResponse execute(RouteRequest request) throws Throwable {
-        try (Connection conn = dataSource.getConnection()) {
-            int uid = Integer.parseInt(request.getPathParameter("uid"));
-            PreparedStatement stmt = conn.prepareStatement("SELECT * FROM booking WHERE uid = ?");
-            stmt.setInt(1, uid);
-            ResultSet res = stmt.executeQuery();
+        Iterable<Booking> iter = new ConnectionProvider(dataSource)
+                .execute(conn -> {
+                    int uid = Integer.parseInt(request.getPathParameter("uid"));
+                    return new BookingQueries(conn).getBookings(uid);
+                });
 
-            ResultSetMetaData metaData = res.getMetaData();
-            int size = metaData.getColumnCount();
-            ArrayList<String> columnNames = new ArrayList<>(size);
-            for (int i = 1; i <= size; i++) {
-                columnNames.add(metaData.getColumnName(i));
-            }
-
-            Table table = new Table(columnNames.toArray(String[]::new));
-            while (res.next()) {
-                int bid = res.getInt(1);
-                String begin = res.getTimestamp(2).toString();
-                String end = res.getTimestamp(3).toString();
-                int resRid = res.getInt(4);
-                int resUid = res.getInt(5);
-
-                table.addTableRow(Integer.toString(bid), begin, end, Integer.toString(resRid),
-                        Integer.toString(resUid));
-            }
-
-            return new RouteResponse(new TableView(table));
+        Table table = new Table("Booking Id", "Room Id", "Begin time", "End time");
+        for (Booking booking : iter) {
+            table.addTableRow(String.valueOf(booking.getBid()), String.valueOf(booking.getRid()),
+                    booking.getBegin().toString(), booking.getEnd().toString());
         }
+
+        return new RouteResponse(new TableView(table));
+
     }
 }

@@ -54,4 +54,17 @@ public class BookingQueries extends DatabaseQueries {
         return results;
     }
 
+    public Iterable<Booking> getBookings(int uid) throws Throwable {
+        PreparedStatement ret = conn.prepareStatement(
+                "SELECT * FROM booking WHERE uid = ?"
+        );
+        ret.setInt(1, uid);
+        ResultSet rs = ret.executeQuery();
+        LinkedList<Booking> results = new LinkedList<>();
+        while (rs.next()) {
+            results.add(new Booking(rs.getInt("bid"),rs.getInt("rid"),
+                    rs.getInt("uid"),rs.getTimestamp("begin"),rs.getTimestamp("end")));
+        }
+        return results;
+    }
 }

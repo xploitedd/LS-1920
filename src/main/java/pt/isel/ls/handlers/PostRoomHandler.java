@@ -33,7 +33,7 @@ public class PostRoomHandler implements RouteHandler {
                             "SELECT lid FROM label WHERE name = ?;"
                     );
 
-                    ls.setString(1,lbl);
+                    ls.setString(1, lbl);
                     ResultSet rls = ls.executeQuery();
                     int lid = -1;
                     if (rls.next()) {
@@ -52,18 +52,18 @@ public class PostRoomHandler implements RouteHandler {
                     "INSERT INTO room (name, location, capacity) VALUES (?,?,?);"
             );
 
-            stmt.setString(1,n);
-            stmt.setString(2,l);
-            stmt.setInt(3,c);
+            stmt.setString(1, n);
+            stmt.setString(2, l);
+            stmt.setInt(3, c);
             stmt.execute();
             //Again, if you find an easier way tell me
             PreparedStatement ret = conn.prepareStatement(
                     "SELECT rid FROM room WHERE name = ? AND location = ? AND capacity = ?;"
             );
 
-            ret.setString(1,n);
-            ret.setString(2,l);
-            ret.setInt(3,c);
+            ret.setString(1, n);
+            ret.setString(2, l);
+            ret.setInt(3, c);
             ResultSet rs = ret.executeQuery();
             rs.next();
             int rid = rs.getInt("rid");
@@ -74,8 +74,8 @@ public class PostRoomHandler implements RouteHandler {
                 PreparedStatement din = conn.prepareStatement(
                         "INSERT INTO description (rid, description) VALUES (?,?);"
                 );
-                din.setInt(1,rid);
-                din.setString(2,d);
+                din.setInt(1, rid);
+                din.setString(2, d);
                 din.execute();
             }
 
@@ -85,12 +85,12 @@ public class PostRoomHandler implements RouteHandler {
                         "INSERT INTO room_label (lid,rid) VALUES (?,?);"
                 );
 
-                rl.setInt(1,lid);
-                rl.setInt(2,rid);
+                rl.setInt(1, lid);
+                rl.setInt(2, rid);
                 rl.execute();
             }
 
-            return new RouteResponse(new IdentifierView("room",rid));
+            return new RouteResponse(new IdentifierView("room", rid));
         }
     }
 }
