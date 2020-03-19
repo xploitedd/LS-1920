@@ -35,27 +35,17 @@ public class RoomQueries extends DatabaseQueries {
         stmt.setInt(3,capacity);
         stmt.execute();
         //Verifies if the new Room has been inserted
-        PreparedStatement ret = conn.prepareStatement(
-                "SELECT rid FROM room WHERE name = ? AND location = ? AND capacity = ?;");
-
-        ret.setString(1,name);
-        ret.setString(2,location);
-        ret.setInt(3,capacity);
-
-        ResultSet rs = ret.executeQuery();
-        rs.next();
-        int rid = rs.getInt("rid");
-        Room toReturn = getRoom(rid);
+        Room toReturn = getRoom(name, location, capacity);
 
         RoomLabelQueries rlQuery = new RoomLabelQueries(conn);
-        rlQuery.addRoomLabel(lids,rid);
+        rlQuery.addRoomLabel(lids,toReturn.getRid());
 
         if (description.isPresent()) { //Associate Description with new Room
             String d = description.get().get(0);
             PreparedStatement din = conn.prepareStatement(
                     "INSERT INTO description (rid, description) VALUES (?,?);"
             );
-            din.setInt(1,rid);
+            din.setInt(1,toReturn.getRid());
             din.setString(2,d);
             din.execute();
         }
@@ -63,21 +53,42 @@ public class RoomQueries extends DatabaseQueries {
         return toReturn;
     }
 
+    public Room getRoom(String name, String location, int capacity) throws Throwable {
+        PreparedStatement stmt = conn.prepareStatement(
+                "SELECT room.rid, name, location, capacity, description FROM room "
+                        + "FULL JOIN description d on room.rid = d.rid "
+                        + "WHERE name = ? AND location = ? AND capacity = ?;"
+        );
+        stmt.setString(1, name);
+        stmt.setString(2, location);
+        stmt.setInt(3, capacity);
+
+        ResultSet rs = stmt.executeQuery();
+        rs.next();
+        int id = rs.getInt("rid");
+        String rsName = rs.getString("name");
+        String rsLocation = rs.getString("location");
+        int rsCapacity = rs.getInt("capacity");
+        String desc = rs.getString("description");
+
+        return new Room(id, rsName, rsCapacity, desc, rsLocation);
+    }
+
     public Room getRoom(int rid) throws Throwable {
         PreparedStatement stmt = conn.prepareStatement(
-                "SELECT * FROM room WHERE rid = ?;"
+                "SELECT room.rid, name, location, capacity, description "
+                        + "FROM room FULL JOIN description d on room.rid = d.rid WHERE room.rid = ?;"
         );
         stmt.setInt(1,rid);
 
         ResultSet rs = stmt.executeQuery();
         rs.next();
-        int id = rs.getInt("rid");
         String name = rs.getString("name");
         String location = rs.getString("location");
         int capacity = rs.getInt("capacity");
         String desc = rs.getString("description");
 
-        return new Room(id, name, capacity, desc, location);
+        return new Room(rid, name, capacity, desc, location);
     }
 
     public Iterable<Room> getRooms() throws Throwable {
