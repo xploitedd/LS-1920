@@ -54,7 +54,7 @@ public class BookingQueries extends DatabaseQueries {
         return results;
     }
 
-    public Iterable<Booking> getBookings(int uid) throws Throwable {
+    public Iterable<Booking> getBookingsByUid(int uid) throws Throwable {
         PreparedStatement ret = conn.prepareStatement(
                 "SELECT * FROM booking WHERE uid = ?"
         );
@@ -62,8 +62,22 @@ public class BookingQueries extends DatabaseQueries {
         ResultSet rs = ret.executeQuery();
         LinkedList<Booking> results = new LinkedList<>();
         while (rs.next()) {
-            results.add(new Booking(rs.getInt("bid"),rs.getInt("rid"),
-                    rs.getInt("uid"),rs.getTimestamp("begin"),rs.getTimestamp("end")));
+            results.add(new Booking(rs.getInt("bid"), rs.getInt("rid"),
+                    uid, rs.getTimestamp("begin"), rs.getTimestamp("end")));
+        }
+        return results;
+    }
+
+    public Iterable<Booking> getBookingsByRid(int rid) throws Throwable {
+        PreparedStatement ret = conn.prepareStatement(
+                "SELECT * FROM booking WHERE rid = ?"
+        );
+        ret.setInt(1, rid);
+        ResultSet rs = ret.executeQuery();
+        LinkedList<Booking> results = new LinkedList<>();
+        while (rs.next()) {
+            results.add(new Booking(rs.getInt("bid"), rid,
+                    rs.getInt("uid"), rs.getTimestamp("begin"), rs.getTimestamp("end")));
         }
         return results;
     }

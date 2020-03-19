@@ -29,7 +29,7 @@ public class GetUserBookingsHandler implements RouteHandler {
         Iterable<Booking> iter = new ConnectionProvider(dataSource)
                 .execute(conn -> {
                     int uid = Integer.parseInt(request.getPathParameter("uid"));
-                    return new BookingQueries(conn).getBookings(uid);
+                    return new BookingQueries(conn).getBookingsByUid(uid);
                 });
 
         Table table = new Table("Booking Id", "Room Id", "Begin time", "End time");
