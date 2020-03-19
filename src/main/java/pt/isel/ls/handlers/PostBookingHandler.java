@@ -22,7 +22,7 @@ public class PostBookingHandler implements RouteHandler {
     public RouteResponse execute(RouteRequest request) throws Throwable {
         try (Connection conn = dataSource.getConnection()) {
             int rid = Integer.parseInt(request.getPathParameter("rid"));
-            int uid = Integer.parseInt(request.getPathParameter("rid"));
+            int uid = Integer.parseInt(request.getParameter("uid").get(0));
             String begin = request.getParameter("begin").get(0);
             String end = request.getParameter("end").get(0);
             //TODO: Make sure these Strings are TIMESTAMPs

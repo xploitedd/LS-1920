@@ -8,6 +8,7 @@ import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 
@@ -22,6 +23,27 @@ public class PostRoomHandler implements RouteHandler {
     @Override
     public RouteResponse execute(RouteRequest request) throws Throwable {
         try (Connection conn = dataSource.getConnection()) {
+
+            //Fetch labels, check their IDs
+            Optional<List<String>> labels = request.getOptionalParameter("label");
+            List<Integer> lids = new LinkedList<>();
+            if (labels.isPresent()) {
+                for (String lbl : labels.get()) {
+                    PreparedStatement ls = conn.prepareStatement(
+                            "SELECT lid FROM label WHERE name = ?;"
+                    );
+
+                    ls.setString(1,lbl);
+                    ResultSet rls = ls.executeQuery();
+                    int lid = -1;
+                    if (rls.next()) {
+                        rls.getInt("lid");
+                    } else {
+                        throw new IllegalArgumentException("Label '" + lbl + "' not found, aborted creation of room");
+                    }
+                    lids.add(lid);
+                }
+            }
             String n = request.getParameter("name").get(0);
             int c = Integer.parseInt(request.getParameter("capacity").get(0));
             String l = request.getParameter("location").get(0);
@@ -57,27 +79,15 @@ public class PostRoomHandler implements RouteHandler {
                 din.execute();
             }
 
-            //Fetch labels, check their IDs
-            Optional<List<String>> labels = request.getOptionalParameter("label");
-            if (labels.isPresent()) {
-                for (String lbl : labels.get()) {
-                    PreparedStatement ls = conn.prepareStatement(
-                            "SELECT lid FROM label WHERE name = ?;"
-                    );
+            for (int lid : lids) {
+                //insert rid-lid pairs into ROOM_LABEL
+                PreparedStatement rl = conn.prepareStatement(
+                        "INSERT INTO room_label (lid,rid) VALUES (?,?);"
+                );
 
-                    ls.setString(1,lbl);
-                    ResultSet rls = ls.executeQuery();
-                    rls.next();
-                    int lid = rls.getInt("lid");
-                    //insert rid-lid pairs into ROOM_LABEL
-                    PreparedStatement rl = conn.prepareStatement(
-                            "INSERT INTO room_label (lid,rid) VALUES (?,?);"
-                    );
-
-                    rl.setInt(1,lid);
-                    rl.setInt(2,rid);
-                    rl.execute();
-                }
+                rl.setInt(1,lid);
+                rl.setInt(2,rid);
+                rl.execute();
             }
 
             return new RouteResponse(new IdentifierView("room",rid));
