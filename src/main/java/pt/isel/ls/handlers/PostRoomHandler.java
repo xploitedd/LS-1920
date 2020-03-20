@@ -1,8 +1,8 @@
 package pt.isel.ls.handlers;
 
-import java.util.*;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Optional;
 import pt.isel.ls.model.Label;
 import pt.isel.ls.model.Room;
 import pt.isel.ls.router.RouteRequest;
@@ -36,8 +36,9 @@ public class PostRoomHandler implements RouteHandler {
             List<Label> labels = new LinkedList<>();
             if (optLabels.isPresent()) {
                 LabelQueries labelQueries = new LabelQueries(conn);
-                for (String label : optLabels.get())
+                for (String label : optLabels.get()) {
                     labels.add(labelQueries.getLabel(label));
+                }
             }
 
             return new RoomQueries(conn).createNewRoom(name, location, capacity, desc, labels);
