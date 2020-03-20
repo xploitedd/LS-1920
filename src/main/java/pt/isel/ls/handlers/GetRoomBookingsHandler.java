@@ -26,7 +26,6 @@ public class GetRoomBookingsHandler implements RouteHandler {
      */
     @Override
     public RouteResponse execute(RouteRequest request) throws Throwable {
-
         Iterable<Booking> iter = new ConnectionProvider(dataSource)
                 .execute(conn -> {
                     int rid = Integer.parseInt(request.getPathParameter("rid"));

@@ -13,7 +13,6 @@ import pt.isel.ls.view.console.TableView;
 
 public class GetLabeledRoomsHandler implements RouteHandler {
 
-    private static final String NO_DESCRIPTION = "No Description";
     private DataSource dataSource;
 
     public GetLabeledRoomsHandler(DataSource dataSource) {
@@ -34,12 +33,11 @@ public class GetLabeledRoomsHandler implements RouteHandler {
                 .execute(conn -> new RoomLabelQueries(conn).getLabeledRooms(lid));
 
         Table table = new Table("RID", "Name", "Location", "Capacity", "Description");
-
         for (Room room : rooms) {
-            String desc = room.getDescription();
             table.addTableRow(String.valueOf(room.getRid()), room.getName(), room.getLocation(),
-                    String.valueOf(room.getCapacity()), desc != null ? desc : "NO DESCRIPTION");
+                    String.valueOf(room.getCapacity()), room.getDescription());
         }
+
         return new RouteResponse(new TableView(table));
     }
 }

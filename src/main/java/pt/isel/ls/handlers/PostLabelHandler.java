@@ -19,10 +19,9 @@ public class PostLabelHandler implements RouteHandler {
 
     @Override
     public RouteResponse execute(RouteRequest request) throws Throwable {
-        Label label = new ConnectionProvider(dataSource).execute(conn -> {
-            String labelName = request.getParameter("name").get(0);
-            return new LabelQueries(conn).createNewLabel(labelName);
-        });
+        String labelName = request.getParameter("name").get(0);
+        Label label = new ConnectionProvider(dataSource)
+                .execute(conn -> new LabelQueries(conn).createNewLabel(labelName));
 
         return new RouteResponse(new IdentifierView("label", label.getLid()));
     }

@@ -1,5 +1,6 @@
 package pt.isel.ls.sql.queries;
 
+import pt.isel.ls.model.Label;
 import pt.isel.ls.model.Room;
 
 import java.sql.Connection;
@@ -14,19 +15,17 @@ public class RoomLabelQueries extends DatabaseQueries {
         super(conn);
     }
 
-    public void addRoomLabel(List<Integer> lids, int rid) throws Throwable {
-
-        for (int lid : lids) {
+    public void addRoomLabels(List<Label> labels, int rid) throws Throwable {
+        for (Label label : labels) {
             //insert rid-lid pairs into ROOM_LABEL
             PreparedStatement rl = conn.prepareStatement(
-                    "INSERT INTO room_label (lid,rid) VALUES (?,?);"
+                    "INSERT INTO room_label (lid, rid) VALUES (?, ?);"
             );
 
-            rl.setInt(1,lid);
-            rl.setInt(2,rid);
+            rl.setInt(1, label.getLid());
+            rl.setInt(2, rid);
             rl.execute();
         }
-
     }
 
     public Iterable<Room> getLabeledRooms(int lid) throws Throwable {
@@ -35,10 +34,9 @@ public class RoomLabelQueries extends DatabaseQueries {
         );
 
         stmt.setInt(1, lid);
+
         ResultSet rs = stmt.executeQuery();
-
         LinkedList<Room> rooms = new LinkedList<>();
-
         while (rs.next()) {
             int rid = rs.getInt("rid");
             String name = rs.getString("name");
@@ -50,4 +48,5 @@ public class RoomLabelQueries extends DatabaseQueries {
 
         return rooms;
     }
+
 }

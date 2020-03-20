@@ -14,7 +14,6 @@ import pt.isel.ls.view.console.TableView;
 
 public class GetRoomsHandler implements RouteHandler {
 
-    private static final String NO_DESCRIPTION = "No Description";
     private DataSource dataSource;
 
     public GetRoomsHandler(DataSource dataSource) {
@@ -29,28 +28,22 @@ public class GetRoomsHandler implements RouteHandler {
      */
     @Override
     public RouteResponse execute(RouteRequest request) throws Throwable {
-
         Optional<String> paramRid = request.getOptionalPathParameter("rid");
-        Table table;
+        Table table = new Table("RID", "Name", "Location", "Capacity", "Description");
         if (paramRid.isPresent()) {
-
             int rid = Integer.parseInt(paramRid.get());
             Room room = new ConnectionProvider(dataSource)
                     .execute(conn -> new RoomQueries(conn).getRoom(rid));
-            table = new Table("RID", "Name", "Location", "Capacity", "Description");
-            String desc = room.getDescription();
+
             table.addTableRow(String.valueOf(room.getRid()), room.getName(), room.getLocation(),
-                    String.valueOf(room.getCapacity()), desc != null ? desc : "NO DESCRIPTION");
-
+                    String.valueOf(room.getCapacity()), room.getDescription());
         } else {
-
             Iterable<Room> rooms = new ConnectionProvider(dataSource)
                     .execute(conn -> new RoomQueries(conn).getRooms());
-            table = new Table("RID", "Name", "Location", "Capacity", "Description");
+
             for (Room room : rooms) {
-                String desc = room.getDescription();
                 table.addTableRow(String.valueOf(room.getRid()), room.getName(), room.getLocation(),
-                        String.valueOf(room.getCapacity()), desc != null ? desc : "NO DESCRIPTION");
+                        String.valueOf(room.getCapacity()), room.getDescription());
             }
         }
 

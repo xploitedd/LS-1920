@@ -2,6 +2,8 @@ package pt.isel.ls.model;
 
 public class Room {
 
+    private static final String NO_DESCRIPTION = "No Description";
+
     private final int rid;
     private final String name;
     private final String description;
@@ -29,7 +31,7 @@ public class Room {
     }
 
     public String getDescription() {
-        return description;
+        return description == null ? NO_DESCRIPTION : description;
     }
 
     public String getLocation() {

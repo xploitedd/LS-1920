@@ -14,11 +14,13 @@ public class UserQueries extends DatabaseQueries {
 
     public User createNewUser(String name, String email) throws Throwable {
         PreparedStatement stmt = conn.prepareStatement(
-                "INSERT INTO \"user\" (email,name) VALUES (?,?);"
+                "INSERT INTO \"user\" (email, name) VALUES (?, ?);"
         );
+
         stmt.setString(1, email);
         stmt.setString(2, name);
         stmt.execute();
+
         return getUser(name, email);
     }
 
@@ -26,9 +28,11 @@ public class UserQueries extends DatabaseQueries {
         PreparedStatement ret = conn.prepareStatement(
                 "SELECT name, email FROM \"user\" WHERE uid = ?;"
         );
+
         ret.setInt(1, uid);
         ResultSet rs = ret.executeQuery();
         rs.next();
+
         return new User(uid, rs.getString("name"), rs.getString("email"));
     }
 
@@ -36,18 +40,20 @@ public class UserQueries extends DatabaseQueries {
         PreparedStatement ret = conn.prepareStatement(
                 "SELECT uid FROM \"user\" WHERE email = ? AND name = ?;"
         );
+
         ret.setString(1, email);
         ret.setString(2, name);
         ResultSet rs = ret.executeQuery();
         rs.next();
-        int uid = rs.getInt("uid");
-        return new User(uid, name, email);
+
+        return new User(rs.getInt("uid"), name, email);
     }
 
     public Iterable<User> getUsers() throws Throwable {
         PreparedStatement ret = conn.prepareStatement(
                 "SELECT * FROM \"user\""
         );
+
         ResultSet rs = ret.executeQuery();
         LinkedList<User> results = new LinkedList<>();
         while (rs.next()) {
@@ -56,6 +62,7 @@ public class UserQueries extends DatabaseQueries {
             String email = rs.getString("email");
             results.add(new User(uid, name, email));
         }
+
         return results;
     }
 

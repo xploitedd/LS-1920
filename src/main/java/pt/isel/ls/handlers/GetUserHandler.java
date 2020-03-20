@@ -28,7 +28,6 @@ public class GetUserHandler implements RouteHandler {
      */
     @Override
     public RouteResponse execute(RouteRequest request) throws Throwable {
-
         Iterable<User> iter = new ConnectionProvider(dataSource)
                 .execute(conn -> {
                     Optional<String> paramUid = request.getOptionalPathParameter("uid");
