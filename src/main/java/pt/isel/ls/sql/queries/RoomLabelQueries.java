@@ -30,7 +30,9 @@ public class RoomLabelQueries extends DatabaseQueries {
 
     public Iterable<Room> getLabeledRooms(int lid) throws Throwable {
         PreparedStatement stmt = conn.prepareStatement(
-                "SELECT * FROM room WHERE rid IN (SELECT rid FROM room_label WHERE lid = ?)"
+                "SELECT r.rid, \"name\", location, capacity, description "
+                        + "FROM (room r JOIN description d on r.rid = d.rid) "
+                        + "WHERE r.rid IN (SELECT rid FROM room_label WHERE lid = ?)"
         );
 
         stmt.setInt(1, lid);
@@ -47,6 +49,24 @@ public class RoomLabelQueries extends DatabaseQueries {
         }
 
         return rooms;
+    }
+
+    public Iterable<Label> getRoomLabels(int rid) throws Throwable {
+        PreparedStatement stmt = conn.prepareStatement(
+                "SELECT l.lid, name FROM "
+                        + "(room_label rl JOIN label l on rl.lid = l.lid) WHERE rid = ?"
+        );
+
+        stmt.setInt(1, rid);
+
+        ResultSet rs = stmt.executeQuery();
+        LinkedList<Label> labels = new LinkedList<>();
+        while (rs.next()) {
+            labels.add(new Label(rs.getInt("lid"),
+                    rs.getString("name")));
+        }
+
+        return labels;
     }
 
 }

@@ -4,15 +4,16 @@ import pt.isel.ls.model.Booking;
 import pt.isel.ls.model.Table;
 import pt.isel.ls.router.RouteRequest;
 import pt.isel.ls.router.RouteResponse;
+import pt.isel.ls.router.RouteException;
 import pt.isel.ls.sql.ConnectionProvider;
 import pt.isel.ls.sql.queries.BookingQueries;
 import pt.isel.ls.view.console.TableView;
 
 import javax.sql.DataSource;
 
-public class GetUserBookingsHandler implements RouteHandler {
+public final class GetUserBookingsHandler implements RouteHandler {
 
-    private DataSource dataSource;
+    private final DataSource dataSource;
 
     public GetUserBookingsHandler(DataSource dataSource) {
         this.dataSource = dataSource;
@@ -22,15 +23,13 @@ public class GetUserBookingsHandler implements RouteHandler {
      * Gets bookings booked by a user
      * @param request The route request
      * @return returns a RouteResponse with a tableView for the router
-     * @throws Throwable Sent to the router
+     * @throws RouteException Sent to the router
      */
     @Override
-    public RouteResponse execute(RouteRequest request) throws Throwable {
+    public RouteResponse execute(RouteRequest request) throws RouteException {
+        int uid = request.getPathParameter("uid").toInt();
         Iterable<Booking> iter = new ConnectionProvider(dataSource)
-                .execute(conn -> {
-                    int uid = Integer.parseInt(request.getPathParameter("uid"));
-                    return new BookingQueries(conn).getBookingsByUid(uid);
-                });
+                .execute(conn -> new BookingQueries(conn).getBookingsByUid(uid));
 
         Table table = new Table("Booking Id", "Room Id", "Begin time", "End time");
         for (Booking booking : iter) {

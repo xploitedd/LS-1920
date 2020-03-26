@@ -11,9 +11,9 @@ public class RouteRequest {
 
     private final Method method;
     private final Path path;
-    private final HashMap<String, List<String>> parameters;
+    private final HashMap<String, List<Parameter>> parameters;
 
-    private HashMap<String, String> pathParameters = new HashMap<>();
+    private HashMap<String, Parameter> pathParameters = new HashMap<>();
 
     /**
      * Creates a new instance of RouteRequest, representing a new request
@@ -21,7 +21,7 @@ public class RouteRequest {
      * @param path path of the request
      * @param parameters parameters of the request
      */
-    private RouteRequest(Method method, Path path, HashMap<String, List<String>> parameters) {
+    private RouteRequest(Method method, Path path, HashMap<String, List<Parameter>> parameters) {
         this.method = method;
         this.path = path;
         this.parameters = parameters;
@@ -34,7 +34,7 @@ public class RouteRequest {
      * @return parameter string value
      * @throws ParameterNotFoundException in case the parameter does not exist
      */
-    public String getPathParameter(String parameterName) throws ParameterNotFoundException {
+    public Parameter getPathParameter(String parameterName) throws ParameterNotFoundException {
         return getOptionalPathParameter(parameterName)
                 .orElseThrow(() -> new ParameterNotFoundException(parameterName));
     }
@@ -44,7 +44,7 @@ public class RouteRequest {
      * @param parameterName name of the parameter
      * @return parameter string value
      */
-    public Optional<String> getOptionalPathParameter(String parameterName) {
+    public Optional<Parameter> getOptionalPathParameter(String parameterName) {
         return Optional.ofNullable(pathParameters.get(parameterName));
     }
 
@@ -55,7 +55,7 @@ public class RouteRequest {
      * @return parameter string value
      * @throws ParameterNotFoundException in case the parameter does not exist
      */
-    public List<String> getParameter(String parameterName) throws ParameterNotFoundException {
+    public List<Parameter> getParameter(String parameterName) throws ParameterNotFoundException {
         return getOptionalParameter(parameterName)
                 .orElseThrow(() -> new ParameterNotFoundException(parameterName));
     }
@@ -65,7 +65,7 @@ public class RouteRequest {
      * @param parameterName name of the parameter
      * @return parameter string value
      */
-    public Optional<List<String>> getOptionalParameter(String parameterName) {
+    public Optional<List<Parameter>> getOptionalParameter(String parameterName) {
         return Optional.ofNullable(parameters.get(parameterName));
     }
 
@@ -74,11 +74,9 @@ public class RouteRequest {
      * This method should be used by the Router when the path
      * parameters become available
      * @param pathParameters path parameters map
-     * @return the modified instance
      */
-    public RouteRequest setPathParameters(HashMap<String, String> pathParameters) {
+    public void setPathParameters(HashMap<String, Parameter> pathParameters) {
         this.pathParameters = pathParameters;
-        return this;
     }
 
     /**
@@ -99,21 +97,24 @@ public class RouteRequest {
 
     /**
      * Parses a string request into a new RouteRequest instance
-     * Must only be used by the Router
      * @param request request to be parsed
      * @return a new instance of RouteRequest
-     * @throws RouteRequestParsingException if an error occurs while parsing
+     * @throws RouteException if an error occurs while parsing
      */
-    static RouteRequest of(String request) throws RouteRequestParsingException {
+    public static RouteRequest of(String request) throws RouteException {
         try {
             String[] requestParts = request.split(" ");
+            if (requestParts.length < 2) {
+                throw new RouteException("Path not valid!");
+            }
+
             Method method = Method.valueOf(requestParts[0]);
             Optional<Path> path = Path.of(requestParts[1]);
             if (path.isEmpty()) {
-                throw new Exception("Path not valid!");
+                throw new RouteException("Path not valid!");
             }
 
-            HashMap<String, List<String>> parameters;
+            HashMap<String, List<Parameter>> parameters;
             if (requestParts.length > 2) {
                 parameters = parseParameters(requestParts[2]);
             } else {
@@ -121,8 +122,8 @@ public class RouteRequest {
             }
 
             return new RouteRequest(method, path.get(), parameters);
-        } catch (Throwable throwable) {
-            throw new RouteRequestParsingException(throwable.getMessage());
+        } catch (RouteException routeException) {
+            throw new RouteRequestParsingException(routeException.getMessage());
         }
     }
 
@@ -130,30 +131,37 @@ public class RouteRequest {
      * Parse the parameters of a parameter section
      * @param parameterSection parameter section to be parsed
      * @return parameter map
-     * @throws ArrayIndexOutOfBoundsException if an error occurs
+     * @throws RouteException if an error occurs
      */
-    private static HashMap<String, List<String>> parseParameters(String parameterSection)
-            throws ArrayIndexOutOfBoundsException {
+    private static HashMap<String, List<Parameter>> parseParameters(String parameterSection)
+            throws RouteException {
 
         parameterSection = URLDecoder.decode(parameterSection, StandardCharsets.UTF_8);
         String[] keyValueSections = parameterSection.split("&");
-        HashMap<String, List<String>> parameters = new HashMap<>();
+        HashMap<String, List<Parameter>> parameters = new HashMap<>();
         for (String keyValue : keyValueSections) {
             String[] kvSplit = keyValue.split("=");
+            if (kvSplit.length != 2) {
+                throw new RouteException("Error parsing route parameters!");
+            }
+
             String key = kvSplit[0];
             String value = kvSplit[1];
+            if (key.isBlank() || value.isBlank()) {
+                throw new RouteException("Parameter key or/and value is/are blank");
+            }
 
-            List<String> values = Optional.ofNullable(parameters.get(key))
+            List<Parameter> values = Optional.ofNullable(parameters.get(key))
                     .orElse(new ArrayList<>());
 
-            values.add(value);
+            values.add(new Parameter(value));
             parameters.put(key, values);
         }
 
         return parameters;
     }
 
-    public static class ParameterNotFoundException extends Exception {
+    public static class ParameterNotFoundException extends RouteException {
 
         private ParameterNotFoundException(String parameterName) {
             super("Parameter " + parameterName + " not found!");
@@ -161,7 +169,7 @@ public class RouteRequest {
 
     }
 
-    public static class RouteRequestParsingException extends Exception {
+    public static class RouteRequestParsingException extends RouteException {
 
         private RouteRequestParsingException(String message) {
             super("Error while parsing the route: " + message);

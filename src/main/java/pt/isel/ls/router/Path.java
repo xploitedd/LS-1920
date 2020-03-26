@@ -4,7 +4,7 @@ import java.util.Optional;
 
 public class Path {
 
-    private static final Path root = new Path(new String[0]);
+    private static final Path ROOT = new Path(new String[0]);
 
     private final String[] pathSegments;
 
@@ -34,10 +34,11 @@ public class Path {
             return Optional.empty();
         }
 
+        pathString = pathString.trim();
         /* check if path is root, and if it is we don't need to create another
          object for it */
         if (pathString.equals("/")) {
-            return Optional.of(root);
+            return Optional.of(ROOT);
         }
 
         // path has to start with "/"
@@ -52,7 +53,7 @@ public class Path {
 
     @Override
     public String toString() {
-        return String.join("/", pathSegments);
+        return '/' + String.join("/", pathSegments);
     }
 
 }

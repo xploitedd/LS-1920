@@ -24,8 +24,8 @@ public class RouteTemplate {
      * @param path path of the request
      * @return path parameters or empty
      */
-    public Optional<HashMap<String, String>> match(Path path) {
-        HashMap<String, String> pathParameters = new HashMap<>();
+    public Optional<HashMap<String, Parameter>> match(Path path) {
+        HashMap<String, Parameter> pathParameters = new HashMap<>();
         Iterator<TemplateSegment> templateSegmentIterator = templateSegments.iterator();
         for (String segment : path.getPathSegments()) {
             if (templateSegmentIterator.hasNext()) {
@@ -35,11 +35,13 @@ public class RouteTemplate {
                     if (templateSegment instanceof ParameterTemplateSegment) {
                         // add the parameter to the map
                         ParameterTemplateSegment pts = (ParameterTemplateSegment) templateSegment;
-                        pathParameters.put(pts.segment, segment);
+                        pathParameters.put(pts.segment, new Parameter(segment));
                     }
                 } else {
                     return Optional.empty();
                 }
+            } else {
+                return Optional.empty();
             }
         }
 
@@ -113,6 +115,12 @@ public class RouteTemplate {
         return !segment.endsWith("}?");
     }
 
+    @Override
+    public String toString() {
+        return '/' + String.join("/", templateSegments.stream().map(TemplateSegment::toString)
+                .toArray(CharSequence[]::new));
+    }
+
     private abstract static class TemplateSegment {
 
         protected String segment;
@@ -123,6 +131,10 @@ public class RouteTemplate {
 
         public abstract boolean match(String segment);
 
+        @Override
+        public String toString() {
+            return segment;
+        }
     }
 
     private static class ConstantTemplateSegment extends TemplateSegment {

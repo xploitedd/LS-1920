@@ -7,13 +7,14 @@ import pt.isel.ls.router.RouteResponse;
 
 import javax.sql.DataSource;
 
+import pt.isel.ls.router.RouteException;
 import pt.isel.ls.sql.ConnectionProvider;
 import pt.isel.ls.sql.queries.LabelQueries;
 import pt.isel.ls.view.console.TableView;
 
-public class GetLabelsHandler implements RouteHandler {
+public final class GetLabelsHandler implements RouteHandler {
 
-    private DataSource dataSource;
+    private final DataSource dataSource;
 
     public GetLabelsHandler(DataSource dataSource) {
         this.dataSource = dataSource;
@@ -23,10 +24,10 @@ public class GetLabelsHandler implements RouteHandler {
      * Gets all existing Labels
      * @param request The route request
      * @return returns a RouteResponse with a tableView for the router
-     * @throws Throwable Sent to the router
+     * @throws RouteException Sent to the router
      */
     @Override
-    public RouteResponse execute(RouteRequest request) throws Throwable {
+    public RouteResponse execute(RouteRequest request) throws RouteException {
         Iterable<Label> iter = new ConnectionProvider(dataSource)
                 .execute(conn -> new LabelQueries(conn).getLabels());
 

@@ -6,7 +6,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import pt.isel.ls.handlers.RouteHandler;
-import pt.isel.ls.view.console.ThrowableView;
+import pt.isel.ls.view.console.RouteExceptionView;
 
 /**
  * Router is responsible for routing
@@ -34,32 +34,20 @@ public class Router {
         }
     }
 
-    /**
-     * Receives a string request and executes the corresponding route
-     * Example request: POST /users name=John&email=a@b.c
-     * @param requestString string of the request
-     * @return a RouteResponse with the status
-     */
-    public RouteResponse executeRoute(String requestString) {
-        try {
-            RouteRequest request = RouteRequest.of(requestString);
-            Set<Route> routes = methodRoutes.get(request.getMethod());
-            for (Route r : routes) {
-                RouteTemplate template = r.getRouteTemplate();
-                Optional<HashMap<String, String>> match = template.match(request.getPath());
-                if (match.isPresent()) {
-                    request.setPathParameters(match.get());
-                    return r.getHandler()
-                            .execute(request);
-                }
-            }
 
-            return new RouteResponse(new ThrowableView(new RouteNotFoundException(request.getPath())))
-                    .setStatusCode(404);
-        } catch (Throwable throwable) {
-            return new RouteResponse(new ThrowableView(throwable))
-                    .setStatusCode(500);
+    public RouteHandler getHandler(RouteRequest request) {
+        Set<Route> routes = methodRoutes.get(request.getMethod());
+        for (Route r : routes) {
+            RouteTemplate template = r.getRouteTemplate();
+            Optional<HashMap<String, Parameter>> match = template.match(request.getPath());
+            if (match.isPresent()) {
+                request.setPathParameters(match.get());
+                return r.getHandler();
+            }
         }
+
+        return r -> new RouteResponse(new RouteExceptionView(new RouteNotFoundException(r.getPath())))
+                .setStatusCode(404);
     }
 
     public static class Route {
@@ -102,7 +90,7 @@ public class Router {
 
     }
 
-    private static class RouteNotFoundException extends Exception {
+    private static class RouteNotFoundException extends RouteException {
 
         private RouteNotFoundException(Path path) {
             super("The route " + path + " was not found!");

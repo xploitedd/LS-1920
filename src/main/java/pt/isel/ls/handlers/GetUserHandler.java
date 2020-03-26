@@ -2,8 +2,10 @@ package pt.isel.ls.handlers;
 
 import pt.isel.ls.model.Table;
 import pt.isel.ls.model.User;
+import pt.isel.ls.router.Parameter;
 import pt.isel.ls.router.RouteRequest;
 import pt.isel.ls.router.RouteResponse;
+import pt.isel.ls.router.RouteException;
 import pt.isel.ls.sql.ConnectionProvider;
 import pt.isel.ls.sql.queries.UserQueries;
 import pt.isel.ls.view.console.TableView;
@@ -12,9 +14,9 @@ import javax.sql.DataSource;
 import java.util.ArrayList;
 import java.util.Optional;
 
-public class GetUserHandler implements RouteHandler {
+public final class GetUserHandler implements RouteHandler {
 
-    private DataSource dataSource;
+    private final DataSource dataSource;
 
     public GetUserHandler(DataSource dataSource) {
         this.dataSource = dataSource;
@@ -24,16 +26,16 @@ public class GetUserHandler implements RouteHandler {
      * Gets a specific user
      * @param request The route request
      * @return returns a RouteResponse with a tableView for the router
-     * @throws Throwable Sent to the router
+     * @throws RouteException Sent to the router
      */
     @Override
-    public RouteResponse execute(RouteRequest request) throws Throwable {
+    public RouteResponse execute(RouteRequest request) throws RouteException {
         Iterable<User> iter = new ConnectionProvider(dataSource)
                 .execute(conn -> {
-                    Optional<String> paramUid = request.getOptionalPathParameter("uid");
+                    Optional<Parameter> paramUid = request.getOptionalPathParameter("uid");
                     if (paramUid.isPresent()) {
                         ArrayList<User> userList = new ArrayList<>(1);
-                        userList.add(new UserQueries(conn).getUser(Integer.parseInt(paramUid.get())));
+                        userList.add(new UserQueries(conn).getUser(paramUid.get().toInt()));
                         return userList;
                     } else {
                         return new UserQueries(conn).getUsers();

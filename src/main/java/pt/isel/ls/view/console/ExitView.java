@@ -1,8 +1,9 @@
 package pt.isel.ls.view.console;
 
 import java.io.PrintWriter;
+import pt.isel.ls.router.RouteException;
 
-public class ExitView implements View {
+public final class ExitView implements View {
 
     @Override
     public void render(PrintWriter writer) {
@@ -12,7 +13,8 @@ public class ExitView implements View {
             Thread.sleep(2000);
             System.exit(0);
         } catch (InterruptedException e) {
-            new ThrowableView(e).render(writer);
+            new RouteExceptionView(new RouteException(e.getMessage()))
+                    .render(writer);
         }
     }
 

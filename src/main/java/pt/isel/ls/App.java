@@ -17,18 +17,21 @@ import pt.isel.ls.handlers.PostUserHandler;
 
 import javax.sql.DataSource;
 import pt.isel.ls.router.Method;
+import pt.isel.ls.router.RouteRequest;
 import pt.isel.ls.router.RouteResponse;
 import pt.isel.ls.router.RouteTemplate;
 import pt.isel.ls.router.Router;
+import pt.isel.ls.router.RouteException;
+import pt.isel.ls.view.console.RouteExceptionView;
 
 public class App {
 
     private static final String DATABASE_CONNECTION_ENV = "JDBC_DATABASE_URL";
 
-    private static DataSource dataSource;
-    private static Router router;
+    private DataSource dataSource;
+    private Router router;
 
-    public static void main(String[] args) {
+    private App() {
         String url = System.getenv(DATABASE_CONNECTION_ENV);
         if (url == null) {
             System.err.println("Please set the " + DATABASE_CONNECTION_ENV + " environment variable");
@@ -39,13 +42,17 @@ public class App {
         router = new Router();
 
         registerRoutes();
-        startApp();
+    }
+
+    public static void main(String[] args) {
+        App app = new App();
+        app.startApp();
     }
 
     /**
      * Registers all the routes for this app
      */
-    private static void registerRoutes() {
+    private void registerRoutes() {
         // Register All Routes
         router.registerRoute(Method.EXIT, RouteTemplate.of("/"),
                 new ExitHandler());
@@ -82,7 +89,7 @@ public class App {
     /**
      * Handles console app user interaction
      */
-    private static void startApp() {
+    private void startApp() {
         Scanner scanner = new Scanner(System.in);
         try (PrintWriter pw = new PrintWriter(System.out)) {
             // for needed where to print the user input character
@@ -90,11 +97,25 @@ public class App {
                 System.out.print("> ");
                 if (scanner.hasNext()) {
                     String line = scanner.nextLine();
-                    RouteResponse response = router.executeRoute(line);
+                    RouteRequest request = RouteRequest.of(line);
+
+                    RouteResponse response = router.getHandler(request)
+                            .execute(request);
+
                     response.getView().render(pw);
                     pw.flush();
                 }
             }
+        } catch (RouteException e) {
+            try (PrintWriter pw = new PrintWriter(System.out)) {
+                new RouteExceptionView(e).render(pw);
+            } catch (Exception ex) {
+                // print unexpected exceptions
+                e.printStackTrace();
+            }
+        } catch (Exception e) {
+            // print unexpected exceptions
+            e.printStackTrace();
         }
     }
 
@@ -103,7 +124,7 @@ public class App {
      * @param connectionUrl connection url to retrieve the data source from
      * @return a new data source
      */
-    private static DataSource getDataSource(String connectionUrl) {
+    private DataSource getDataSource(String connectionUrl) {
         PGSimpleDataSource dataSource = new PGSimpleDataSource();
         dataSource.setUrl(connectionUrl);
         return dataSource;
