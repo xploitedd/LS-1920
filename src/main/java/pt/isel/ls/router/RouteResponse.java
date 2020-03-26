@@ -67,12 +67,18 @@ public class RouteResponse {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+
         RouteResponse that = (RouteResponse) o;
-        return statusCode == that.statusCode &&
-                view.equals(that.view) &&
-                contentType.equals(that.contentType);
+        return statusCode == that.statusCode
+                && view.equals(that.view)
+                && contentType.equals(that.contentType);
     }
 
     @Override
