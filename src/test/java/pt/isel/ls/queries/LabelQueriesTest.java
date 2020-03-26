@@ -38,12 +38,8 @@ public class LabelQueriesTest {
         stmt.setString(1,lName);
         ResultSet res = stmt.executeQuery();
 
-        if (res.next()) {
-            Assert.assertEquals(lName, res.getString(1));
-        } else {
-            Assert.fail("Returned Null");
-        }
-
+        Assert.assertTrue(res.next());
+        Assert.assertEquals(lName, res.getString(1));
     }
 
     @Test
@@ -63,12 +59,9 @@ public class LabelQueriesTest {
         qstmt.setString(1, lName);
         ResultSet res = qstmt.executeQuery();
 
-        if (res.next()) {
-            Assert.assertEquals(lName, test.getName());
-            Assert.assertEquals(res.getInt(1), test.getLid());
-        } else {
-            Assert.fail("Did Not Insert");
-        }
+        Assert.assertTrue(res.next());
+        Assert.assertEquals(lName, test.getName());
+        Assert.assertEquals(res.getInt(1), test.getLid());
     }
 
     @Test
@@ -85,7 +78,7 @@ public class LabelQueriesTest {
         Iterable<Label> iter = query.getLabels();
 
         for (Label lbl: iter) {
-            Assert.assertNotNull(lbl.getLid());
+            Assert.assertNotNull(lbl);
             Assert.assertNotNull(lbl.getName());
         }
 

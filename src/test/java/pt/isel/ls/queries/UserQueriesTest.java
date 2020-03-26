@@ -66,9 +66,7 @@ public class UserQueriesTest {
 
         User test = query.getUser(name,mail);
 
-        if (test == null) {
-            Assert.fail("Returned Null");
-        }
+        Assert.assertNotNull(test);
         Assert.assertEquals(name,test.getName());
         Assert.assertEquals(mail, test.getEmail());
     }
@@ -94,11 +92,9 @@ public class UserQueriesTest {
         UserQueries query = new UserQueries(conn);
         User test = query.getUser(res.getInt(1));
 
-        if (test != null) {
-            Assert.assertEquals(name,test.getName());
-            Assert.assertEquals(mail,test.getEmail());
-        } else {
-            Assert.fail("Returned Null");
-        }
+        Assert.assertNotNull(test);
+        Assert.assertEquals(name,test.getName());
+        Assert.assertEquals(mail,test.getEmail());
     }
+    //TODO: Add description tests
 }
