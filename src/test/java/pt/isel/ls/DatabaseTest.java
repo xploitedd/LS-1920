@@ -1,8 +1,8 @@
 package pt.isel.ls;
 
+import javax.sql.DataSource;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.postgresql.ds.PGSimpleDataSource;
 
 import java.io.FileReader;
 import java.io.IOException;
@@ -13,13 +13,11 @@ import java.sql.SQLException;
 import java.util.Scanner;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 public class DatabaseTest {
 
-    private static final String DATABASE_CONNECTION_ENV = "JDBC_TEST_DATABASE_URL";
-    private static final PGSimpleDataSource dataSource = new PGSimpleDataSource();
+    private static final DataSource dataSource = TestDatasource.getDataSource();
 
     private static void executeFile(String filePath) throws SQLException, IOException {
         Connection conn = dataSource.getConnection();
@@ -34,9 +32,6 @@ public class DatabaseTest {
 
     @BeforeClass
     public static void databaseTests_createSchema() throws SQLException, IOException {
-        String url = System.getenv(DATABASE_CONNECTION_ENV);
-        assertNotNull(url);
-        dataSource.setUrl(url);
         executeFile("src/test/sql/createSchema.sql");
         executeFile("src/test/sql/addData.sql");
     }

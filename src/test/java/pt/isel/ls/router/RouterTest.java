@@ -1,5 +1,6 @@
 package pt.isel.ls.router;
 
+import java.util.List;
 import org.junit.Test;
 import pt.isel.ls.router.RouteRequest.ParameterNotFoundException;
 
@@ -36,6 +37,30 @@ public class RouterTest {
         });
 
         assertEquals(200, router.executeRoute("GET /test/abc").getStatusCode());
+    }
+
+    @Test
+    public void testRouteWithParameters() {
+        Router router = new Router();
+        router.registerRoute(Method.GET, RouteTemplate.of("/test"), request -> {
+            try {
+                List<String> a = request.getParameter("a");
+                List<String> b = request.getParameter("b");
+
+                assertEquals(1, a.size());
+                assertEquals(1, b.size());
+
+                assertEquals("b", a.get(0));
+                assertEquals("a", b.get(0));
+
+            } catch (ParameterNotFoundException e) {
+                fail(e.getMessage());
+            }
+
+            return new RouteResponse(null);
+        });
+
+        assertEquals(200, router.executeRoute("GET /test a=b&b=a").getStatusCode());
     }
 
 }
