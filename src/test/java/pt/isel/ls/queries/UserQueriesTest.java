@@ -4,6 +4,7 @@ import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import pt.isel.ls.TestDatasource;
+import pt.isel.ls.model.User;
 import pt.isel.ls.sql.queries.UserQueries;
 
 import javax.sql.DataSource;
@@ -56,7 +57,43 @@ public class UserQueriesTest {
         conn.close();
     }
 
-    public void testGetUser() throws SQLException {
+    @Test
+    public void testGetUserByNameAndEmail() throws Throwable {
         Connection conn = dSource.getConnection();
+        UserQueries query = new UserQueries(conn);
+        String name = "UserTest";
+        String mail = "UserTest@Teste.com";
+        PreparedStatement stmt = conn.prepareStatement("INSERT INTO \"user\" (email, name) VALUES (?, ?);");
+        stmt.setString(1,mail);
+        stmt.setString(2,name);
+        stmt.execute();
+        User test = query.getUser(name,mail);
+        if(test == null) Assert.fail("Returned Null");
+        Assert.assertEquals(name,test.getName());
+        Assert.assertEquals(mail, test.getEmail());
+    }
+
+    @Test
+    public void testGetUserById() throws Throwable {
+        Connection conn = dSource.getConnection();
+        UserQueries query = new UserQueries(conn);
+        String name = "UIDTest";
+        String mail = "UIDTest@Teste.com";
+        PreparedStatement stmt = conn.prepareStatement("INSERT INTO \"user\" (email, name) VALUES (?, ?);");
+        stmt.setString(1,mail);
+        stmt.setString(2,name);
+        stmt.execute();
+        PreparedStatement qstmt = conn.prepareStatement("SELECT uid FROM \"user\" WHERE email = ? AND name = ?;");
+        qstmt.setString(1,mail);
+        qstmt.setString(2,name);
+        ResultSet res = qstmt.executeQuery();
+        res.next();
+        User test = query.getUser(res.getInt(1));
+        if (test != null) {
+            Assert.assertEquals(name,test.getName());
+            Assert.assertEquals(mail,test.getEmail());
+        } else {
+            Assert.fail("Returned Null");
+        }
     }
 }
