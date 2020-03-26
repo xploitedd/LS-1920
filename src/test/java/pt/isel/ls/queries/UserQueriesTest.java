@@ -8,28 +8,18 @@ import pt.isel.ls.model.User;
 import pt.isel.ls.sql.queries.UserQueries;
 
 import javax.sql.DataSource;
-import java.io.FileReader;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Scanner;
+
+import static pt.isel.ls.DatabaseTest.executeFile;
 
 public class UserQueriesTest {
 
     private static final DataSource dSource = TestDatasource.getDataSource();
 
-    private static void executeFile(String filePath) throws SQLException, IOException {
-        Connection conn = dSource.getConnection();
-        Scanner s = new Scanner(new FileReader(filePath));
-        s.useDelimiter(";");
-        while (s.hasNextLine()) {
-            conn.prepareStatement(s.nextLine()).execute();
-        }
-
-        conn.close();
-    }
 
     @BeforeClass
     public static void resetTables() throws SQLException, IOException {

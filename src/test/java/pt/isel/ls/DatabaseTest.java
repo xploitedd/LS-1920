@@ -19,7 +19,7 @@ public class DatabaseTest {
 
     private static final DataSource dataSource = TestDatasource.getDataSource();
 
-    private static void executeFile(String filePath) throws SQLException, IOException {
+    public static void executeFile(String filePath) throws SQLException, IOException {
         Connection conn = dataSource.getConnection();
         Scanner s = new Scanner(new FileReader(filePath));
         s.useDelimiter(";");
