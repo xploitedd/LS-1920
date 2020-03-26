@@ -21,16 +21,15 @@ public class RoomQueriesTest {
 
     private static final DataSource dSource = TestDatasource.getDataSource();
 
+    private final String name = "TestRoom";
+    private final String location = "TestLocation";
+    private final int capacity = 32;
+    //private final String description = "TestDescription";
 
     @BeforeClass
     public static void resetTables() throws SQLException, IOException {
         executeFile("src/test/sql/CreateTables.sql");
     }
-
-    final String name = "TestRoom";
-    final String location = "TestLocation";
-    final int capacity = 32;
-    //final String DESCRIPTION = "TestDescription";
 
     @Test
     public void testCreateNewRoom() throws Throwable {
@@ -50,12 +49,9 @@ public class RoomQueriesTest {
         stmt.setInt(3, capacity);
         ResultSet res = stmt.executeQuery();
 
-        if (res.next()) {
-            Assert.assertEquals(name, res.getString(2));
-            Assert.assertEquals(location, res.getString(3));
-        } else {
-            Assert.fail("ResultSet is Empty");
-        }
+        Assert.assertTrue(res.next());
+        Assert.assertEquals(name, res.getString(2));
+        Assert.assertEquals(location, res.getString(3));
         conn.close();
     }
 
@@ -105,4 +101,5 @@ public class RoomQueriesTest {
         Assert.assertEquals(location, test.getLocation());
         Assert.assertEquals(capacity, test.getCapacity());
     }
+    //TODO: Add description tests
 }

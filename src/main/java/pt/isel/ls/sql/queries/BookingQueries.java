@@ -43,6 +43,20 @@ public class BookingQueries extends DatabaseQueries {
         return new Booking(rs.getInt("bid"), rid, uid, begin, end);
     }
 
+    public Booking getBooking(int bid) throws Throwable {
+        PreparedStatement ret = conn.prepareStatement(
+                "SELECT begin, \"end\", rid, uid FROM booking WHERE bid = ?;"
+        );
+
+        ret.setInt(1, bid);
+
+        ResultSet rs = ret.executeQuery();
+        rs.next();
+
+        return new Booking(bid, rs.getInt("rid"), rs.getInt("uid"),
+                rs.getTimestamp("begin"), rs.getTimestamp("end"));
+    }
+
     public Iterable<Booking> getBookings() throws Throwable {
         PreparedStatement ret = conn.prepareStatement(
                 "SELECT * FROM booking"

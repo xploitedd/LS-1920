@@ -96,5 +96,4 @@ public class UserQueriesTest {
         Assert.assertEquals(name,test.getName());
         Assert.assertEquals(mail,test.getEmail());
     }
-    //TODO: Add description tests
 }
