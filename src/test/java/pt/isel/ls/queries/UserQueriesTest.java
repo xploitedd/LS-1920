@@ -40,14 +40,18 @@ public class UserQueriesTest {
     public void testCreateNewUser() throws Throwable {
         Connection conn = dSource.getConnection();
         UserQueries query = new UserQueries(conn);
+
         final String testUser = "TestUser";
         final String mail = "Teste@Teste.com";
+
         query.createNewUser(testUser, mail);
+
         PreparedStatement stmt = conn.prepareStatement("SELECT name , email "
                 + "FROM \"user\" WHERE name = ? AND email = ?");
         stmt.setString(1, testUser);
         stmt.setString(2, mail);
         ResultSet res = stmt.executeQuery();
+
         if (res.next()) {
             Assert.assertEquals(testUser, res.getString(1));
             Assert.assertEquals(mail, res.getString(2));
@@ -61,14 +65,20 @@ public class UserQueriesTest {
     public void testGetUserByNameAndEmail() throws Throwable {
         Connection conn = dSource.getConnection();
         UserQueries query = new UserQueries(conn);
+
         String name = "UserTest";
         String mail = "UserTest@Teste.com";
+
         PreparedStatement stmt = conn.prepareStatement("INSERT INTO \"user\" (email, name) VALUES (?, ?);");
         stmt.setString(1,mail);
         stmt.setString(2,name);
         stmt.execute();
+
         User test = query.getUser(name,mail);
-        if(test == null) Assert.fail("Returned Null");
+
+        if (test == null) {
+            Assert.fail("Returned Null");
+        }
         Assert.assertEquals(name,test.getName());
         Assert.assertEquals(mail, test.getEmail());
     }
@@ -76,19 +86,24 @@ public class UserQueriesTest {
     @Test
     public void testGetUserById() throws Throwable {
         Connection conn = dSource.getConnection();
-        UserQueries query = new UserQueries(conn);
+
         String name = "UIDTest";
         String mail = "UIDTest@Teste.com";
+
         PreparedStatement stmt = conn.prepareStatement("INSERT INTO \"user\" (email, name) VALUES (?, ?);");
         stmt.setString(1,mail);
         stmt.setString(2,name);
         stmt.execute();
+
         PreparedStatement qstmt = conn.prepareStatement("SELECT uid FROM \"user\" WHERE email = ? AND name = ?;");
         qstmt.setString(1,mail);
         qstmt.setString(2,name);
         ResultSet res = qstmt.executeQuery();
         res.next();
+
+        UserQueries query = new UserQueries(conn);
         User test = query.getUser(res.getInt(1));
+
         if (test != null) {
             Assert.assertEquals(name,test.getName());
             Assert.assertEquals(mail,test.getEmail());
