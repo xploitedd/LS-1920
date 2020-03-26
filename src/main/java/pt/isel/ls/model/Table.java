@@ -2,6 +2,7 @@ package pt.isel.ls.model;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -40,23 +41,7 @@ public class Table {
         checkMaxColumnSize(values);
     }
 
-    private void checkMaxColumnSize(String... newItems) {
-        for (int i = 0; i < columnCount; ++i) {
-            String columnItem = newItems[i];
-            if (columnItem.length() > maxSizes.get(i)) {
-                maxSizes.set(i, columnItem.length());
-            }
-        }
-    }
-
-    private void appendRow(int row, StringBuffer sb) {
-        for (int i = 0; i < columnCount; i++) {
-            int colMax = maxSizes.get(i);
-            sb.append(String.format("%-" + colMax + "s | ", rows.get(row).get(i)));
-        }
-    }
-
-    private int countHorizontalSize() {
+    public int getHorizontalSize() {
         int totalCharacters = 0;
         for (int max : maxSizes) {
             totalCharacters += max;
@@ -65,26 +50,29 @@ public class Table {
         return totalCharacters + 3 * columnCount;
     }
 
-    @Override
-    public String toString() {
-        int size = countHorizontalSize();
-        String separator = "-".repeat(size);
-        StringBuffer sb = new StringBuffer(separator);
-        sb.append("\n");
-        // print header
-        appendRow(0, sb);
+    public int getRowCount() {
+        return rows.size();
+    }
 
-        // print header separator
-        // +3*columnCount because of the " | " printed above
-        sb.append("\n").append("=".repeat(size));
+    public int getColumnCount() {
+        return columnCount;
+    }
 
-        // print table rows
-        for (int i = 1; i < rows.size(); ++i) {
-            sb.append("\n");
-            appendRow(i, sb);
+    public int getColumnSize(int col) {
+        return maxSizes.get(col);
+    }
+
+    public List<String> getRow(int row) {
+        return Collections.unmodifiableList(rows.get(row));
+    }
+
+    private void checkMaxColumnSize(String... newItems) {
+        for (int i = 0; i < columnCount; ++i) {
+            String columnItem = newItems[i];
+            if (columnItem.length() > maxSizes.get(i)) {
+                maxSizes.set(i, columnItem.length());
+            }
         }
-
-        return sb.append("\n").append(separator).toString();
     }
 
 }

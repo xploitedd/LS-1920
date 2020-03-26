@@ -1,5 +1,6 @@
 package pt.isel.ls.router;
 
+import java.util.Objects;
 import pt.isel.ls.view.console.View;
 
 public class RouteResponse {
@@ -62,6 +63,21 @@ public class RouteResponse {
      */
     public View getView() {
         return view;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        RouteResponse that = (RouteResponse) o;
+        return statusCode == that.statusCode &&
+                view.equals(that.view) &&
+                contentType.equals(that.contentType);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(view, contentType, statusCode);
     }
 
 }
