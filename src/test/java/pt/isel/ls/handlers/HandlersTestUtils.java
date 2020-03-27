@@ -19,8 +19,6 @@ public class HandlersTestUtils {
             b.getView().render(pw);
         }
 
-        //System.out.println(sw);
-        //System.out.println(obtained);
         return sw.toString().equals(obtained);
     }
 }
