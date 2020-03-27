@@ -18,11 +18,16 @@ Destacam-se os seguintes aspectos deste modelo:
 
 O modelo conceptual apresenta ainda as seguintes restrições:
 
-* (_include a list of relevant design issues_)
+* ROOM:
+    - o valor capacity não pode ser inferior a 1 
+* BOOKING:
+    - begin e end têm minutos multiplos de 10
+    - o tempo entre begin e end tem de ser superior a 10 minutos
+
     
 ### Modelação física ###
 
-O modelo físico da base de dados está presente em (_link to the SQL script with the schema definition_).
+O modelo físico da base de dados está presente em [ResetTables.sql](../src/main/resources/sql/ResetTables.sql) (apaga as tabelas para recriar se já estiverem lá) e [CreateTables.sql](../src/main/resources/sql/CreateTables.sql) (não faz nada se as tabelas já existirem).
 
 Destacam-se os seguintes aspectos deste modelo:
 
