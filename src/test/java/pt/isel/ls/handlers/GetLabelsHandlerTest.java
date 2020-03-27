@@ -41,7 +41,8 @@ public class GetLabelsHandlerTest {
         stmt.setString(1,name);
         stmt.execute();
 
-        RouteResponse result = new GetLabelsHandler(dSource).execute(null);
+        RouteResponse result = new GetLabelsHandler(dSource)
+                .execute(null);
 
         //Assert.assertEquals(expected, result);
     }

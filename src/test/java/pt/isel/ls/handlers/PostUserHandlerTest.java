@@ -33,7 +33,6 @@ public class PostUserHandlerTest {
 
         RouteResponse result = new PostUserHandler(dSource)
                 .execute(RouteRequest.of("POST /user name=testUser&email=test@user.get"));
-        System.out.println("Banana");
         try (PrintWriter pw = new PrintWriter(System.out)) {
             result.getView().render(pw);
             expected.getView().render(pw);
