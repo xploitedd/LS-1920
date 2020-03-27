@@ -1,5 +1,6 @@
 package pt.isel.ls.handlers;
 
+import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import pt.isel.ls.TestDatasource;
@@ -11,12 +12,12 @@ import pt.isel.ls.view.console.TableView;
 
 import javax.sql.DataSource;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 import static pt.isel.ls.DatabaseTest.executeFile;
+import static pt.isel.ls.handlers.HandlersTestUtils.routeResponseEquals;
 
 public class GetUserHandlerTest {
     private static final DataSource dSource = TestDatasource.getDataSource();
@@ -46,13 +47,7 @@ public class GetUserHandlerTest {
         RouteResponse result = new GetUserHandler(dSource)
                 .execute(RouteRequest.of("GET /users"));
 
-        try (PrintWriter pw = new PrintWriter(System.out)) {
-            result.getView().render(pw);
-            expected.getView().render(pw);
-            pw.flush();
-        }
-
-        //Assert.assertEquals(expected, result);
+        Assert.assertTrue(routeResponseEquals(expected,result));
     }
 
     @Test
@@ -65,13 +60,7 @@ public class GetUserHandlerTest {
         RouteResponse result = new GetUserHandler(dSource)
                 .execute(RouteRequest.of("GET /users/1"));
 
-        try (PrintWriter pw = new PrintWriter(System.out)) {
-            result.getView().render(pw);
-            expected.getView().render(pw);
-            pw.flush();
-        }
-
-        //Assert.assertEquals(expected, result);
+        Assert.assertTrue(routeResponseEquals(expected,result));
     }
 
 }
