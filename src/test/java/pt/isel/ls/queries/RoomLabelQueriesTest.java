@@ -1,7 +1,7 @@
 package pt.isel.ls.queries;
 
 import org.junit.Assert;
-import org.junit.BeforeClass;
+import org.junit.Before;
 import org.junit.Test;
 import pt.isel.ls.TestDatasource;
 import pt.isel.ls.model.Label;
@@ -24,8 +24,8 @@ public class RoomLabelQueriesTest {
     private static final DataSource dSource = TestDatasource.getDataSource();
 
 
-    @BeforeClass
-    public static void resetTables() throws SQLException, IOException {
+    @Before
+    public void resetTables() throws SQLException, IOException {
         executeFile("src/test/sql/CreateTables.sql");
     }
 
@@ -86,16 +86,16 @@ public class RoomLabelQueriesTest {
                 "INSERT INTO room_label (lid, rid) VALUES (?, ?);"
         );
 
-        rl.setInt(1, 2);
-        rl.setInt(2, 2);
+        rl.setInt(1, 1);
+        rl.setInt(2, 1);
         rl.execute();
 
         RoomLabelQueries query = new RoomLabelQueries(conn);
-        Iterable<Label> iter = query.getRoomLabels(2);
+        Iterable<Label> iter = query.getRoomLabels(1);
 
         for (Label lbl: iter) {
             Assert.assertEquals(labelName, lbl.getName());
-            Assert.assertEquals(2,lbl.getLid());
+            Assert.assertEquals(1,lbl.getLid());
         }
     }
 
@@ -119,8 +119,8 @@ public class RoomLabelQueriesTest {
                 "INSERT INTO room_label (lid, rid) VALUES (?, ?);"
         );
 
-        rl.setInt(1, 3);
-        rl.setInt(2, 3);
+        rl.setInt(1, 1);
+        rl.setInt(2, 1);
         rl.execute();
 
         RoomLabelQueries query = new RoomLabelQueries(conn);

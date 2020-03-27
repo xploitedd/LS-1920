@@ -3,24 +3,22 @@ package pt.isel.ls.handlers;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import pt.isel.ls.TestDatasource;
-import pt.isel.ls.model.Table;
 import pt.isel.ls.router.RouteException;
+import pt.isel.ls.router.RouteRequest;
 import pt.isel.ls.router.RouteResponse;
-import pt.isel.ls.view.console.TableView;
+import pt.isel.ls.view.console.IdentifierView;
 
 import javax.sql.DataSource;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 import static pt.isel.ls.DatabaseTest.executeFile;
 
-public class GetLabelsHandlerTest {
+public class PostUserHandlerTest {
 
     private static final DataSource dSource = TestDatasource.getDataSource();
-    private final String name = "TestLabel";
-    private final String lid = "1";
 
     @BeforeClass
     public static void resetTables() throws SQLException, IOException {
@@ -29,21 +27,18 @@ public class GetLabelsHandlerTest {
 
     @Test
     public void testExecute() throws SQLException, RouteException {
-
-        Table table = new Table("Label Id", "Name");
-        table.addTableRow(lid, name);
-
-        RouteResponse expected = new RouteResponse(new TableView(table));
+        RouteResponse expected = new RouteResponse(new IdentifierView("user",1));
 
         Connection conn = dSource.getConnection();
 
-        PreparedStatement stmt = conn.prepareStatement("INSERT INTO label (name) VALUES (?);");
-        stmt.setString(1,name);
-        stmt.execute();
-
-        RouteResponse result = new GetLabelsHandler(dSource).execute(null);
-
+        RouteResponse result = new PostUserHandler(dSource)
+                .execute(RouteRequest.of("POST /user name=testUser&email=test@user.get"));
+        System.out.println("Banana");
+        try (PrintWriter pw = new PrintWriter(System.out)) {
+            result.getView().render(pw);
+            expected.getView().render(pw);
+            pw.flush();
+        }
         //Assert.assertEquals(expected, result);
     }
-
 }
