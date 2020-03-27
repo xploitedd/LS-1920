@@ -23,6 +23,15 @@ public class RoomLabelQueriesTest {
 
     private static final DataSource dSource = TestDatasource.getDataSource();
 
+    private static final String rName = "testRoom";
+    private static final String rLocation = "testLocation";
+    private static final int rCapacity = 2;
+    private static final int rid = 1;
+
+    private static final String lName = "testLabel";
+    private static final int lid = 1;
+
+
 
     @Before
     public void resetTables() throws SQLException, IOException {
@@ -33,37 +42,33 @@ public class RoomLabelQueriesTest {
     public void testAddRoomLabels() throws Throwable {
         Connection conn = dSource.getConnection();
 
-        String labelName = "TestingLabel";
-        Label test = new Label(1, labelName);
+        Label test = new Label(1, lName);
         List<Label> list = new LinkedList<>();
         list.add(test);
 
         PreparedStatement stmt = conn.prepareStatement("INSERT INTO label (name) VALUES (?);");
-        stmt.setString(1, labelName);
+        stmt.setString(1, lName);
         stmt.execute();
 
         PreparedStatement rstmt = conn.prepareStatement("INSERT INTO room (name, location, capacity)"
                 + " VALUES (?, ?, ?);");
-        rstmt.setString(1, "test");
-        rstmt.setString(2, "Sei la");
-        rstmt.setInt(3, 2);
+        rstmt.setString(1, rName);
+        rstmt.setString(2, rLocation);
+        rstmt.setInt(3, rCapacity);
         rstmt.execute();
 
         RoomLabelQueries query = new RoomLabelQueries(conn);
-        query.addRoomLabels(list,1);
+        query.addRoomLabels(list,rid);
 
         PreparedStatement lstmt = conn.prepareStatement(
                 "SELECT l.lid, name FROM "
                         + "(room_label rl JOIN label l on rl.lid = l.lid) WHERE rid = ?"
         );
-        lstmt.setInt(1,1);
+        lstmt.setInt(1,rid);
         ResultSet res = lstmt.executeQuery();
 
-        if (res.next()) {
-            Assert.assertEquals(1,res.getInt(1));
-        } else {
-            Assert.fail("Empty");
-        }
+        Assert.assertTrue(res.next());
+        Assert.assertEquals(lid,res.getInt(1));
     }
 
     @Test
@@ -72,30 +77,29 @@ public class RoomLabelQueriesTest {
 
         PreparedStatement rstmt = conn.prepareStatement("INSERT INTO room (name, location, capacity)"
                 + " VALUES (?, ?, ?);");
-        rstmt.setString(1, "test1");
-        rstmt.setString(2, "Sei la");
-        rstmt.setInt(3, 2);
+        rstmt.setString(1, rName);
+        rstmt.setString(2, rLocation);
+        rstmt.setInt(3, rCapacity);
         rstmt.execute();
 
-        String labelName = "TestingLabel1";
         PreparedStatement stmt = conn.prepareStatement("INSERT INTO label (name) VALUES (?);");
-        stmt.setString(1, labelName);
+        stmt.setString(1, lName);
         stmt.execute();
 
         PreparedStatement rl = conn.prepareStatement(
                 "INSERT INTO room_label (lid, rid) VALUES (?, ?);"
         );
 
-        rl.setInt(1, 1);
-        rl.setInt(2, 1);
+        rl.setInt(1, lid);
+        rl.setInt(2, rid);
         rl.execute();
 
         RoomLabelQueries query = new RoomLabelQueries(conn);
-        Iterable<Label> iter = query.getRoomLabels(1);
+        Iterable<Label> iter = query.getRoomLabels(rid);
 
         for (Label lbl: iter) {
-            Assert.assertEquals(labelName, lbl.getName());
-            Assert.assertEquals(1,lbl.getLid());
+            Assert.assertEquals(lName, lbl.getName());
+            Assert.assertEquals(lid,lbl.getLid());
         }
     }
 
@@ -105,32 +109,31 @@ public class RoomLabelQueriesTest {
 
         PreparedStatement rstmt = conn.prepareStatement("INSERT INTO room (name, location, capacity)"
                 + " VALUES (?, ?, ?);");
-        rstmt.setString(1, "test2");
-        rstmt.setString(2, "Sei la");
-        rstmt.setInt(3, 2);
+        rstmt.setString(1, rName);
+        rstmt.setString(2, rLocation);
+        rstmt.setInt(3, rCapacity);
         rstmt.execute();
 
-        String labelName = "TestingLabel2";
         PreparedStatement stmt = conn.prepareStatement("INSERT INTO label (name) VALUES (?);");
-        stmt.setString(1, labelName);
+        stmt.setString(1, lName);
         stmt.execute();
 
         PreparedStatement rl = conn.prepareStatement(
                 "INSERT INTO room_label (lid, rid) VALUES (?, ?);"
         );
 
-        rl.setInt(1, 1);
-        rl.setInt(2, 1);
+        rl.setInt(1, lid);
+        rl.setInt(2, rid);
         rl.execute();
 
         RoomLabelQueries query = new RoomLabelQueries(conn);
-        Iterable<Room> iter = query.getLabeledRooms(3);
+        Iterable<Room> iter = query.getLabeledRooms(lid);
 
         for (Room room: iter) {
-            Assert.assertEquals("test2", room.getName());
-            Assert.assertEquals(3,room.getRid());
-            Assert.assertEquals("Sei la",room.getLocation());
-            Assert.assertEquals(2,room.getCapacity());
+            Assert.assertEquals(rName, room.getName());
+            Assert.assertEquals(rid,room.getRid());
+            Assert.assertEquals(rLocation,room.getLocation());
+            Assert.assertEquals(rCapacity,room.getCapacity());
         }
     }
 }
