@@ -24,7 +24,7 @@ public class RoomQueriesTest {
     private final String name = "TestRoom";
     private final String location = "TestLocation";
     private final int capacity = 32;
-    //private final String description = "TestDescription";
+    private final String description = "TestDescription";
 
     @BeforeClass
     public static void resetTables() throws SQLException, IOException {
@@ -101,5 +101,28 @@ public class RoomQueriesTest {
         Assert.assertEquals(location, test.getLocation());
         Assert.assertEquals(capacity, test.getCapacity());
     }
-    //TODO: Add description tests
+
+    @Test
+    public void testCreateNewRoomWithDescription() throws Throwable {
+        Connection conn = dSource.getConnection();
+        RoomQueries query = new RoomQueries(conn);
+
+
+
+        query.createNewRoom(name, location, capacity,description,new LinkedList<>());
+
+        PreparedStatement stmt = conn.prepareStatement(
+                "SELECT description FROM room "
+                        + "FULL JOIN description d on room.rid = d.rid "
+                        + "WHERE name = ? AND location = ? AND capacity = ?;"
+        );
+        stmt.setString(1, name);
+        stmt.setString(2, location);
+        stmt.setInt(3, capacity);
+        ResultSet res = stmt.executeQuery();
+
+        Assert.assertTrue(res.next());
+        Assert.assertEquals(description, res.getString(1));
+        conn.close();
+    }
 }
