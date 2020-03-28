@@ -1,7 +1,6 @@
 package pt.isel.ls.view.console;
 
 import java.io.PrintWriter;
-import java.util.List;
 import pt.isel.ls.model.Table;
 
 public class TableView implements View {

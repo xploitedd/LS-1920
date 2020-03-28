@@ -64,7 +64,7 @@ public class RoomQueries extends DatabaseQueries {
      * @return the requested room
      * @throws Throwable any exception that occurs
      */
-    private Room getRoom(String name, String location, int capacity) throws Throwable {
+    public Room getRoom(String name, String location, int capacity) throws Throwable {
         PreparedStatement stmt = conn.prepareStatement(
                 "SELECT room.rid, description FROM room "
                         + "FULL JOIN description d on room.rid = d.rid "

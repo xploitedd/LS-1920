@@ -36,7 +36,16 @@ public class BookingQueries extends DatabaseQueries {
         return getBooking(rid, uid, begin, end);
     }
 
-    private Booking getBooking(int rid, int uid, Timestamp begin, Timestamp end) throws Throwable {
+    /**
+     * Get Booking by parameters
+     * @param rid room id of the booking
+     * @param uid user id of the booking
+     * @param begin begin timestamp
+     * @param end end timestamp
+     * @return a Booking
+     * @throws Throwable any exception that occurs
+     */
+    public Booking getBooking(int rid, int uid, Timestamp begin, Timestamp end) throws Throwable {
         PreparedStatement ret = conn.prepareStatement(
                 "SELECT bid FROM booking WHERE begin = ? AND \"end\" = ? AND rid = ? AND uid = ?;"
         );
@@ -51,7 +60,13 @@ public class BookingQueries extends DatabaseQueries {
 
         return new Booking(rs.getInt("bid"), rid, uid, begin, end);
     }
-  
+
+    /**
+     * Get booking by id
+     * @param bid id of the booking
+     * @return a Booking
+     * @throws Throwable any exception that occurs
+     */
     public Booking getBooking(int bid) throws Throwable {
         PreparedStatement ret = conn.prepareStatement(
                 "SELECT begin, \"end\", rid, uid FROM booking WHERE bid = ?;"

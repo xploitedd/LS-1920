@@ -56,7 +56,7 @@ public class UserQueries extends DatabaseQueries {
      * @return an User
      * @throws Throwable any exception that occurs
      */
-    private User getUser(String name, String email) throws Throwable {
+    public User getUser(String name, String email) throws Throwable {
         PreparedStatement ret = conn.prepareStatement(
                 "SELECT uid FROM \"user\" WHERE email = ? AND name = ?;"
         );
