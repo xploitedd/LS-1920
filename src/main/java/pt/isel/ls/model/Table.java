@@ -7,6 +7,10 @@ import java.util.List;
 
 public class Table {
 
+    private static final String COLUMN_SEPARATOR = "┃";
+    private static final String TOP_BOTTOM_BORDER = "─";
+    private static final String TABLE_DESCRIPTION_SEPARATOR = "━";
+
     private final int columnCount;
     private final List<List<String>> rows = new LinkedList<>();
     private final List<Integer> maxSizes;
@@ -52,7 +56,7 @@ public class Table {
             totalCharacters += max;
         }
 
-        return totalCharacters + 3 * columnCount;
+        return totalCharacters + 3 * columnCount - 2;
     }
 
     /**
@@ -82,21 +86,23 @@ public class Table {
         int columnCount = this.rows.get(0).size();
         for (int i = 0; i < columnCount; i++) {
             int colMax = maxSizes.get(i);
-            sb.append(String.format("%-" + colMax + "s | ", rows.get(i)));
+            String separator = i + 1 == columnCount ? "" : COLUMN_SEPARATOR + " ";
+            sb.append(String.format("%-" + colMax + "s " + separator,
+                    rows.get(i)));
         }
     }
 
     @Override
     public String toString() {
         int horizontalSize = getHorizontalSize();
-        String separator = "-".repeat(horizontalSize);
+        String separator = TOP_BOTTOM_BORDER.repeat(horizontalSize);
         StringBuffer sb = new StringBuffer(separator);
         sb.append("\n");
         // print header
         appendRow(0, sb);
 
         // print header separator
-        sb.append("\n").append("=".repeat(horizontalSize));
+        sb.append("\n").append(TABLE_DESCRIPTION_SEPARATOR.repeat(horizontalSize));
 
         // print table rows
         for (int i = 1; i < rows.size(); ++i) {
