@@ -13,6 +13,15 @@ public class BookingQueries extends DatabaseQueries {
         super(conn);
     }
 
+    /**
+     * Creates a new Booking
+     * @param rid id of the room for the booking
+     * @param uid user id of the booking owner
+     * @param begin begin instant of the booking
+     * @param end end instant of the booking
+     * @return the booking that was created
+     * @throws Throwable any exception that occurs
+     */
     public Booking createNewBooking(int rid, int uid, Timestamp begin, Timestamp end) throws Throwable {
         PreparedStatement stmt = conn.prepareStatement(
                 "INSERT INTO booking (begin, \"end\", rid, uid) VALUES (?, ?, ?, ?);"
@@ -27,7 +36,7 @@ public class BookingQueries extends DatabaseQueries {
         return getBooking(rid, uid, begin, end);
     }
 
-    public Booking getBooking(int rid, int uid, Timestamp begin, Timestamp end) throws Throwable {
+    private Booking getBooking(int rid, int uid, Timestamp begin, Timestamp end) throws Throwable {
         PreparedStatement ret = conn.prepareStatement(
                 "SELECT bid FROM booking WHERE begin = ? AND \"end\" = ? AND rid = ? AND uid = ?;"
         );
@@ -42,7 +51,7 @@ public class BookingQueries extends DatabaseQueries {
 
         return new Booking(rs.getInt("bid"), rid, uid, begin, end);
     }
-
+  
     public Booking getBooking(int bid) throws Throwable {
         PreparedStatement ret = conn.prepareStatement(
                 "SELECT begin, \"end\", rid, uid FROM booking WHERE bid = ?;"
@@ -57,6 +66,11 @@ public class BookingQueries extends DatabaseQueries {
                 rs.getTimestamp("begin"), rs.getTimestamp("end"));
     }
 
+    /**
+     * Retrieve all Bookings
+     * @return all Bookings
+     * @throws Throwable any exception that occurs
+     */
     public Iterable<Booking> getBookings() throws Throwable {
         PreparedStatement ret = conn.prepareStatement(
                 "SELECT * FROM booking"
@@ -73,6 +87,12 @@ public class BookingQueries extends DatabaseQueries {
         return results;
     }
 
+    /**
+     * Get all bookings that have the specified owner
+     * @param uid user id of the owner
+     * @return bookings owned by uid
+     * @throws Throwable any exception that occurs
+     */
     public Iterable<Booking> getBookingsByUid(int uid) throws Throwable {
         PreparedStatement ret = conn.prepareStatement(
                 "SELECT * FROM booking WHERE uid = ?"
@@ -90,6 +110,12 @@ public class BookingQueries extends DatabaseQueries {
         return results;
     }
 
+    /**
+     * Get all bookings occurring in a room
+     * @param rid room where the bookings are occurring
+     * @return bookings with room rid
+     * @throws Throwable any exception that occurs
+     */
     public Iterable<Booking> getBookingsByRid(int rid) throws Throwable {
         PreparedStatement ret = conn.prepareStatement(
                 "SELECT * FROM booking WHERE rid = ?"

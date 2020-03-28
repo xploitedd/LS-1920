@@ -14,6 +14,12 @@ public class LabelQueries extends DatabaseQueries {
         super(conn);
     }
 
+    /**
+     * Create a new Label
+     * @param labelName name of the label to be created
+     * @return the created label
+     * @throws Throwable any exception that occurs
+     */
     public Label createNewLabel(String labelName) throws Throwable {
         PreparedStatement stmt = conn.prepareStatement("INSERT INTO label (name) VALUES (?);");
         stmt.setString(1, labelName);
@@ -22,6 +28,12 @@ public class LabelQueries extends DatabaseQueries {
         return getLabel(labelName);
     }
 
+    /**
+     * Get a label by name
+     * @param name name of the label
+     * @return associated label
+     * @throws Throwable any exception that occurs
+     */
     public Label getLabel(String name) throws Throwable {
         PreparedStatement stmt = conn.prepareStatement("SELECT lid FROM label WHERE name = ?;");
         stmt.setString(1, name);
@@ -32,6 +44,11 @@ public class LabelQueries extends DatabaseQueries {
         return new Label(rs.getInt("lid"), name);
     }
 
+    /**
+     * Get all labels
+     * @return every label available
+     * @throws Throwable any exception that occurs
+     */
     public Iterable<Label> getLabels() throws Throwable {
         PreparedStatement stmt = conn.prepareStatement("SELECT * FROM label");
         ResultSet rs = stmt.executeQuery();

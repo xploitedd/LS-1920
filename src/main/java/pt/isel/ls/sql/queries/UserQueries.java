@@ -12,6 +12,13 @@ public class UserQueries extends DatabaseQueries {
         super(conn);
     }
 
+    /**
+     * Creates a new User
+     * @param name name of the user
+     * @param email email of the user
+     * @return the created user
+     * @throws Throwable any exception that occurs
+     */
     public User createNewUser(String name, String email) throws Throwable {
         PreparedStatement stmt = conn.prepareStatement(
                 "INSERT INTO \"user\" (email, name) VALUES (?, ?);"
@@ -24,6 +31,12 @@ public class UserQueries extends DatabaseQueries {
         return getUser(name, email);
     }
 
+    /**
+     * Get User by uid
+     * @param uid id of the user
+     * @return an User
+     * @throws Throwable any exception that occurs
+     */
     public User getUser(int uid) throws Throwable {
         PreparedStatement ret = conn.prepareStatement(
                 "SELECT name, email FROM \"user\" WHERE uid = ?;"
@@ -36,7 +49,14 @@ public class UserQueries extends DatabaseQueries {
         return new User(uid, rs.getString("name"), rs.getString("email"));
     }
 
-    public User getUser(String name, String email) throws Throwable {
+    /**
+     * Get user by name and email
+     * @param name name of the user
+     * @param email email of the user
+     * @return an User
+     * @throws Throwable any exception that occurs
+     */
+    private User getUser(String name, String email) throws Throwable {
         PreparedStatement ret = conn.prepareStatement(
                 "SELECT uid FROM \"user\" WHERE email = ? AND name = ?;"
         );
@@ -49,6 +69,11 @@ public class UserQueries extends DatabaseQueries {
         return new User(rs.getInt("uid"), name, email);
     }
 
+    /**
+     * Get all users
+     * @return all users
+     * @throws Throwable any exception that occurs
+     */
     public Iterable<User> getUsers() throws Throwable {
         PreparedStatement ret = conn.prepareStatement(
                 "SELECT * FROM \"user\""
