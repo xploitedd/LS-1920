@@ -34,7 +34,12 @@ public class Router {
         }
     }
 
-
+    /**
+     * Retrieve the handler for the specified request
+     * @param request route request
+     * @return handler associated with the specified request or
+     * if not found the default 404 handler
+     */
     public RouteHandler getHandler(RouteRequest request) {
         Set<Route> routes = methodRoutes.get(request.getMethod());
         for (Route r : routes) {
@@ -55,15 +60,28 @@ public class Router {
         private RouteTemplate routeTemplate;
         private RouteHandler handler;
 
+        /**
+         * Creates a new Route
+         * @param routeTemplate Template of this route
+         * @param handler Handler of this route
+         */
         private Route(RouteTemplate routeTemplate, RouteHandler handler) {
             this.routeTemplate = routeTemplate;
             this.handler = handler;
         }
 
+        /**
+         * Get Route Template
+         * @return Route Template
+         */
         public RouteTemplate getRouteTemplate() {
             return routeTemplate;
         }
 
+        /**
+         * Get Route Handler
+         * @return Route Handler
+         */
         public RouteHandler getHandler() {
             return handler;
         }

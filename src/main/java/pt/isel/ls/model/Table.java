@@ -41,6 +41,12 @@ public class Table {
         checkMaxColumnSize(values);
     }
 
+    /**
+     * Get table horizontal size
+     * Horizontal size is defined as the number of characters
+     * necessary to represent the table horizontally
+     * @return horizontal size
+     */
     public int getHorizontalSize() {
         int totalCharacters = 0;
         for (int max : maxSizes) {
@@ -50,22 +56,14 @@ public class Table {
         return totalCharacters + 3 * columnCount;
     }
 
-    public int getRowCount() {
-        return rows.size();
-    }
-
-    public int getColumnCount() {
-        return columnCount;
-    }
-
-    public int getColumnSize(int col) {
-        return maxSizes.get(col);
-    }
-
-    public List<String> getRow(int row) {
-        return Collections.unmodifiableList(rows.get(row));
-    }
-
+    /**
+     * Updates the maximum column size for each column
+     *
+     * Maximum column size is defined as the maximum number
+     * of characters needed to represent a column without
+     * wrapping content
+     * @param newItems the row that was added
+     */
     private void checkMaxColumnSize(String... newItems) {
         for (int i = 0; i < columnCount; ++i) {
             String columnItem = newItems[i];
@@ -73,6 +71,41 @@ public class Table {
                 maxSizes.set(i, columnItem.length());
             }
         }
+    }
+
+    /**
+     * Appends a row to a specified StringBuffer
+     * @param row row to be appended
+     * @param sb StringBuffer where to append the row
+     */
+    private void appendRow(int row, StringBuffer sb) {
+        List<String> rows = this.rows.get(row);
+        int columnCount = this.rows.get(0).size();
+        for (int i = 0; i < columnCount; i++) {
+            int colMax = maxSizes.get(i);
+            sb.append(String.format("%-" + colMax + "s | ", rows.get(i)));
+        }
+    }
+
+    @Override
+    public String toString() {
+        int horizontalSize = getHorizontalSize();
+        String separator = "-".repeat(horizontalSize);
+        StringBuffer sb = new StringBuffer(separator);
+        sb.append("\n");
+        // print header
+        appendRow(0, sb);
+
+        // print header separator
+        sb.append("\n").append("=".repeat(horizontalSize));
+
+        // print table rows
+        for (int i = 1; i < rows.size(); ++i) {
+            sb.append("\n");
+            appendRow(i, sb);
+        }
+
+        return sb.append("\n").append(separator).toString();
     }
 
 }

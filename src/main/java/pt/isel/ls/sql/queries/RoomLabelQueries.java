@@ -15,6 +15,12 @@ public class RoomLabelQueries extends DatabaseQueries {
         super(conn);
     }
 
+    /**
+     * Associate labels to a room
+     * @param labels labels to be associated
+     * @param rid room that will receive the labels
+     * @throws Throwable any exception that occurs
+     */
     public void addRoomLabels(List<Label> labels, int rid) throws Throwable {
         for (Label label : labels) {
             //insert rid-lid pairs into ROOM_LABEL
@@ -28,6 +34,12 @@ public class RoomLabelQueries extends DatabaseQueries {
         }
     }
 
+    /**
+     * Get all rooms that have a specified label
+     * @param lid label to filter for
+     * @return all rooms with the label
+     * @throws Throwable any exception that occurs
+     */
     public Iterable<Room> getLabeledRooms(int lid) throws Throwable {
         PreparedStatement stmt = conn.prepareStatement(
                 "SELECT r.rid, \"name\", location, capacity, description "
@@ -51,6 +63,12 @@ public class RoomLabelQueries extends DatabaseQueries {
         return rooms;
     }
 
+    /**
+     * Get all labels that are associated to a room
+     * @param rid room containing the labels
+     * @return all labels that are on a room
+     * @throws Throwable any exception that occurs
+     */
     public Iterable<Label> getRoomLabels(int rid) throws Throwable {
         PreparedStatement stmt = conn.prepareStatement(
                 "SELECT l.lid, name FROM "

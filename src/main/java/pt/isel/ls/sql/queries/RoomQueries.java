@@ -15,6 +15,16 @@ public class RoomQueries extends DatabaseQueries {
         super(conn);
     }
 
+    /**
+     * Creates a new Room
+     * @param name name of the room
+     * @param location location of the room
+     * @param capacity capacity of the room
+     * @param description room description (optional)
+     * @param labels list of room labels
+     * @return the created room
+     * @throws Throwable any exception that occurs
+     */
     public Room createNewRoom(String name, String location, int capacity,
                               String description, List<Label> labels) throws Throwable {
 
@@ -46,12 +56,21 @@ public class RoomQueries extends DatabaseQueries {
         return toReturn;
     }
 
-    public Room getRoom(String name, String location, int capacity) throws Throwable {
+    /**
+     * Get a room by name, location and capacity
+     * @param name name of the room
+     * @param location location of the room
+     * @param capacity capacity of the room
+     * @return the requested room
+     * @throws Throwable any exception that occurs
+     */
+    private Room getRoom(String name, String location, int capacity) throws Throwable {
         PreparedStatement stmt = conn.prepareStatement(
                 "SELECT room.rid, description FROM room "
                         + "FULL JOIN description d on room.rid = d.rid "
                         + "WHERE name = ? AND location = ? AND capacity = ?;"
         );
+
         stmt.setString(1, name);
         stmt.setString(2, location);
         stmt.setInt(3, capacity);
@@ -64,6 +83,12 @@ public class RoomQueries extends DatabaseQueries {
         return new Room(id, name, capacity, desc, location);
     }
 
+    /**
+     * Get Room by rid
+     * @param rid id of the room
+     * @return a Room
+     * @throws Throwable any exception that occurs
+     */
     public Room getRoom(int rid) throws Throwable {
         PreparedStatement stmt = conn.prepareStatement(
                 "SELECT room.rid, name, location, capacity, description "
@@ -83,6 +108,11 @@ public class RoomQueries extends DatabaseQueries {
         return new Room(rid, name, capacity, desc, location);
     }
 
+    /**
+     * Get all Rooms
+     * @return all Rooms
+     * @throws Throwable any exception that occurs
+     */
     public Iterable<Room> getRooms() throws Throwable {
         PreparedStatement stmt = conn.prepareStatement(
                 "SELECT room.rid, name, location, capacity, description "

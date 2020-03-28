@@ -1,6 +1,7 @@
 package pt.isel.ls.sql;
 
 import java.sql.Connection;
+import java.sql.SQLException;
 import javax.sql.DataSource;
 import pt.isel.ls.router.RouteException;
 
@@ -14,7 +15,15 @@ public class ConnectionProvider {
 
     public <U> U execute(Provider<U> queries) throws RouteException {
         try (Connection conn = dataSource.getConnection()) {
-            return queries.apply(conn);
+            conn.setAutoCommit(false);
+            try {
+                U res = queries.apply(conn);
+                conn.commit();
+                return res;
+            } catch (SQLException e) {
+                conn.rollback();
+                throw new RouteException(e.getMessage());
+            }
         } catch (Throwable e) {
             throw new RouteException(e.getMessage());
         }
