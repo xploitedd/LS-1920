@@ -43,7 +43,7 @@ public class RoomLabelQueries extends DatabaseQueries {
     public Iterable<Room> getLabeledRooms(int lid) throws Throwable {
         PreparedStatement stmt = conn.prepareStatement(
                 "SELECT r.rid, \"name\", location, capacity, description "
-                        + "FROM (room r JOIN description d on r.rid = d.rid) "
+                        + "FROM (room r FULL JOIN description d on r.rid = d.rid) "
                         + "WHERE r.rid IN (SELECT rid FROM room_label WHERE lid = ?)"
         );
 
