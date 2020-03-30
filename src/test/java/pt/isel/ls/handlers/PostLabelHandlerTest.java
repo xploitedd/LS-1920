@@ -16,7 +16,7 @@ import java.sql.SQLException;
 import static pt.isel.ls.DatabaseTest.executeFile;
 import static pt.isel.ls.handlers.HandlersTestUtils.routeResponseEquals;
 
-public class PostUserHandlerTest {
+public class PostLabelHandlerTest {
 
     private static final DataSource dSource = TestDatasource.getDataSource();
 
@@ -26,11 +26,11 @@ public class PostUserHandlerTest {
     }
 
     @Test
-    public void testExecute() throws RouteException {
-        RouteResponse expected = new RouteResponse(new IdentifierView("user",1));
+    public void testExecute() throws SQLException, RouteException {
+        RouteResponse expected = new RouteResponse(new IdentifierView("label",1));
 
-        RouteResponse result = new PostUserHandler(dSource)
-                .execute(RouteRequest.of("POST /user name=testUser&email=test@user.post"));
+        RouteResponse result = new PostLabelHandler(dSource)
+                .execute(RouteRequest.of("POST /label name=testLabel.post"));
 
         Assert.assertTrue(routeResponseEquals(expected,result));
     }

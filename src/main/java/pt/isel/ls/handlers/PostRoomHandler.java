@@ -28,7 +28,7 @@ public final class PostRoomHandler implements RouteHandler {
     public RouteResponse execute(RouteRequest request) throws RouteException {
         Optional<List<Parameter>> optLabels = request.getOptionalParameter("label");
         String desc = request.getOptionalParameter("description")
-                .map(Object::toString).orElse(null);;
+                .map(Object::toString).orElse(null);
 
         String name = request.getParameter("name").get(0).toString();
         int capacity = request.getParameter("capacity").get(0).toInt();

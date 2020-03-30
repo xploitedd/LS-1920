@@ -11,7 +11,6 @@ import pt.isel.ls.view.console.IdentifierView;
 
 import javax.sql.DataSource;
 import java.io.IOException;
-import java.sql.Connection;
 import java.sql.SQLException;
 
 import static pt.isel.ls.DatabaseTest.executeFile;
@@ -27,13 +26,11 @@ public class PostRoomHandlerTest {
     }
 
     @Test
-    public void testExecute() throws SQLException, RouteException {
+    public void testExecute() throws RouteException {
         RouteResponse expected = new RouteResponse(new IdentifierView("room",1));
 
-        Connection conn = dSource.getConnection();
-
         RouteResponse result = new PostRoomHandler(dSource)
-                .execute(RouteRequest.of("POST /room name=testRoom&location=testLocation&capacity=44"));
+                .execute(RouteRequest.of("POST /rooms name=testRoom&location=testLocation&capacity=44"));
 
         Assert.assertTrue(routeResponseEquals(expected,result));
     }

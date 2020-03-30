@@ -25,6 +25,19 @@ public class Parameter {
         }
     }
 
+    /**
+     * Tries to convert this parameter to a long
+     * @return a long representation of this parameter
+     * @throws RouteException if there was an error converting to long
+     */
+    public long toLong() throws RouteException {
+        try {
+            return Long.parseLong(value);
+        } catch (NumberFormatException e) {
+            throw new RouteException("Invalid conversion to long. Value: " + value);
+        }
+    }
+
     @Override
     public String toString() {
         return value;

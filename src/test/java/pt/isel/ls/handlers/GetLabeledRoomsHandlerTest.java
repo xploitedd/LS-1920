@@ -71,7 +71,7 @@ public class GetLabeledRoomsHandlerTest {
         HashMap<String, Parameter> map = new HashMap<>();
         map.put("lid", new Parameter("1"));
 
-        RouteRequest testRequest = RouteRequest.of("GET /labels/1/rooms)");
+        RouteRequest testRequest = RouteRequest.of("GET /labels/1/rooms");
         testRequest.setPathParameters(map);
         RouteResponse result = new GetLabeledRoomsHandler(dSource)
                 .execute(testRequest);
