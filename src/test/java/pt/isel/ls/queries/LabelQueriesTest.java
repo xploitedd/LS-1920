@@ -3,7 +3,7 @@ package pt.isel.ls.queries;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import pt.isel.ls.TestDatasource;
+import pt.isel.ls.DatasourceUtils;
 import pt.isel.ls.model.Label;
 import pt.isel.ls.sql.queries.LabelQueries;
 
@@ -14,15 +14,13 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import static pt.isel.ls.DatabaseTest.executeFile;
-
 public class LabelQueriesTest {
 
-    private static final DataSource dSource = TestDatasource.getDataSource();
+    private static final DataSource dSource = DatasourceUtils.getDataSource();
 
     @BeforeClass
     public static void resetTables() throws SQLException, IOException {
-        executeFile("src/test/sql/CreateTables.sql");
+        DatasourceUtils.executeFile(dSource, "src/test/resources/sql/CreateTables.sql");
     }
 
     @Test
@@ -40,6 +38,7 @@ public class LabelQueriesTest {
 
         Assert.assertTrue(res.next());
         Assert.assertEquals(lName, res.getString(1));
+        conn.close();
     }
 
     @Test
@@ -62,6 +61,7 @@ public class LabelQueriesTest {
         Assert.assertTrue(res.next());
         Assert.assertEquals(lName, test.getName());
         Assert.assertEquals(res.getInt(1), test.getLid());
+        conn.close();
     }
 
     @Test
@@ -82,5 +82,6 @@ public class LabelQueriesTest {
             Assert.assertNotNull(lbl.getName());
         }
 
+        conn.close();
     }
 }

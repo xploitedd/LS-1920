@@ -1,6 +1,6 @@
 package pt.isel.ls.model;
 
-public class Room {
+public final class Room {
 
     private static final String NO_DESCRIPTION = "No Description";
 

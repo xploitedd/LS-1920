@@ -3,7 +3,7 @@ package pt.isel.ls.queries;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import pt.isel.ls.TestDatasource;
+import pt.isel.ls.DatasourceUtils;
 import pt.isel.ls.model.Room;
 import pt.isel.ls.sql.queries.RoomQueries;
 
@@ -15,11 +15,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.LinkedList;
 
-import static pt.isel.ls.DatabaseTest.executeFile;
-
 public class RoomQueriesTest {
 
-    private static final DataSource dSource = TestDatasource.getDataSource();
+    private static final DataSource dSource = DatasourceUtils.getDataSource();
 
     private final String name = "TestRoom";
     private final String location = "TestLocation";
@@ -28,7 +26,7 @@ public class RoomQueriesTest {
 
     @BeforeClass
     public static void resetTables() throws SQLException, IOException {
-        executeFile("src/test/sql/CreateTables.sql");
+        DatasourceUtils.executeFile(dSource, "src/test/resources/sql/CreateTables.sql");
     }
 
     @Test
@@ -36,9 +34,7 @@ public class RoomQueriesTest {
         Connection conn = dSource.getConnection();
         RoomQueries query = new RoomQueries(conn);
 
-
-
-        query.createNewRoom(name, location, capacity,null,new LinkedList<>());
+        query.createNewRoom(name, location, capacity,null, new LinkedList<>());
 
         PreparedStatement stmt = conn.prepareStatement(
                 "SELECT rid, name, location, capacity FROM room"
@@ -72,6 +68,7 @@ public class RoomQueriesTest {
         Assert.assertEquals(name,test.getName());
         Assert.assertEquals(location, test.getLocation());
         Assert.assertEquals(capacity, test.getCapacity());
+        conn.close();
     }
 
     @Test
@@ -100,14 +97,13 @@ public class RoomQueriesTest {
         Assert.assertEquals(name,test.getName());
         Assert.assertEquals(location, test.getLocation());
         Assert.assertEquals(capacity, test.getCapacity());
+        conn.close();
     }
 
     @Test
     public void testCreateNewRoomWithDescription() throws Throwable {
         Connection conn = dSource.getConnection();
         RoomQueries query = new RoomQueries(conn);
-
-
 
         query.createNewRoom(name, location, capacity,description,new LinkedList<>());
 
@@ -125,4 +121,5 @@ public class RoomQueriesTest {
         Assert.assertEquals(description, res.getString(1));
         conn.close();
     }
+
 }

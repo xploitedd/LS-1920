@@ -1,7 +1,7 @@
 package pt.isel.ls.router;
 
 import java.util.Objects;
-import pt.isel.ls.view.console.View;
+import pt.isel.ls.view.View;
 
 public class RouteResponse {
 

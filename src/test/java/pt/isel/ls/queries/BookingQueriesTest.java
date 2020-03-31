@@ -3,7 +3,7 @@ package pt.isel.ls.queries;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import pt.isel.ls.TestDatasource;
+import pt.isel.ls.DatasourceUtils;
 import pt.isel.ls.model.Booking;
 import pt.isel.ls.sql.queries.BookingQueries;
 import pt.isel.ls.sql.queries.RoomQueries;
@@ -17,11 +17,9 @@ import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.LinkedList;
 
-import static pt.isel.ls.DatabaseTest.executeFile;
-
 public class BookingQueriesTest {
 
-    private static final DataSource dSource = TestDatasource.getDataSource();
+    private static final DataSource dSource = DatasourceUtils.getDataSource();
 
     private static int userID;
     private static int roomID;
@@ -30,7 +28,7 @@ public class BookingQueriesTest {
 
     @BeforeClass
     public static void init() throws Throwable {
-        executeFile("src/test/sql/CreateTables.sql");
+        DatasourceUtils.executeFile(dSource, "src/test/resources/sql/CreateTables.sql");
         Connection conn = dSource.getConnection();
         UserQueries testUser = new UserQueries(conn);
         userID = testUser.createNewUser("TestUser","user@testing.booking").getUid();
@@ -45,8 +43,6 @@ public class BookingQueriesTest {
     public void testCreateNewBooking() throws Throwable {
         Connection conn = dSource.getConnection();
         BookingQueries query = new BookingQueries(conn);
-
-
 
         query.createNewBooking(roomID, userID, begin, end);
 
@@ -89,6 +85,7 @@ public class BookingQueriesTest {
         Assert.assertEquals(userID, test.getUid());
         Assert.assertEquals(begin, test.getBegin());
         Assert.assertEquals(end, test.getEnd());
+        conn.close();
     }
 
     @Test
@@ -124,6 +121,7 @@ public class BookingQueriesTest {
         Assert.assertEquals(userID, test.getUid());
         Assert.assertEquals(begin, test.getBegin());
         Assert.assertEquals(end, test.getEnd());
+        conn.close();
     }
-    //TODO: Add more tests
+
 }

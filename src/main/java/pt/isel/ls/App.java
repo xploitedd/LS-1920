@@ -22,13 +22,14 @@ import pt.isel.ls.router.RouteResponse;
 import pt.isel.ls.router.RouteTemplate;
 import pt.isel.ls.router.Router;
 import pt.isel.ls.router.RouteException;
-import pt.isel.ls.view.console.RouteExceptionView;
+import pt.isel.ls.sql.ConnectionProvider;
+import pt.isel.ls.view.RouteExceptionView;
 
 public class App {
 
     private static final String DATABASE_CONNECTION_ENV = "JDBC_DATABASE_URL";
 
-    private DataSource dataSource;
+    private ConnectionProvider connProvider;
     private Router router;
 
     private App() {
@@ -38,8 +39,8 @@ public class App {
             System.exit(1);
         }
 
-        dataSource = getDataSource(url);
-        router = new Router();
+        this.connProvider = new ConnectionProvider(getDataSource(url));
+        this.router = new Router();
 
         registerRoutes();
     }
@@ -59,31 +60,31 @@ public class App {
 
         // Room Handlers
         router.registerRoute(Method.POST, RouteTemplate.of("/rooms"),
-                new PostRoomHandler(dataSource));
+                new PostRoomHandler(connProvider));
         router.registerRoute(Method.GET, RouteTemplate.of("/rooms/{rid}?"),
-                new GetRoomsHandler(dataSource));
+                new GetRoomsHandler(connProvider));
 
         // Booking Handlers
         router.registerRoute(Method.POST, RouteTemplate.of("/rooms/{rid}/bookings"),
-                new PostBookingHandler(dataSource));
+                new PostBookingHandler(connProvider));
         router.registerRoute(Method.GET, RouteTemplate.of("/rooms/{rid}/bookings/{bid}?"),
-                new GetRoomBookingsHandler(dataSource));
+                new GetRoomBookingsHandler(connProvider));
 
         // User Handlers
         router.registerRoute(Method.POST, RouteTemplate.of("/users"),
-                new PostUserHandler(dataSource));
+                new PostUserHandler(connProvider));
         router.registerRoute(Method.GET, RouteTemplate.of("/users/{uid}?"),
-                new GetUserHandler(dataSource));
+                new GetUserHandler(connProvider));
         router.registerRoute(Method.GET, RouteTemplate.of("/users/{uid}/bookings"),
-                new GetUserBookingsHandler(dataSource));
+                new GetUserBookingsHandler(connProvider));
 
         // Label Handlers
         router.registerRoute(Method.POST, RouteTemplate.of("/labels"),
-                new PostLabelHandler(dataSource));
+                new PostLabelHandler(connProvider));
         router.registerRoute(Method.GET, RouteTemplate.of("/labels"),
-                new GetLabelsHandler(dataSource));
+                new GetLabelsHandler(connProvider));
         router.registerRoute(Method.GET, RouteTemplate.of("/labels/{lid}/rooms"),
-                new GetLabeledRoomsHandler(dataSource));
+                new GetLabeledRoomsHandler(connProvider));
     }
 
     /**

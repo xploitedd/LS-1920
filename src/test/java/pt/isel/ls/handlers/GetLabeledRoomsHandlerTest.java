@@ -3,13 +3,14 @@ package pt.isel.ls.handlers;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import pt.isel.ls.TestDatasource;
+import pt.isel.ls.DatasourceUtils;
 import pt.isel.ls.model.Table;
 import pt.isel.ls.router.Parameter;
 import pt.isel.ls.router.RouteException;
 import pt.isel.ls.router.RouteRequest;
 import pt.isel.ls.router.RouteResponse;
-import pt.isel.ls.view.console.TableView;
+import pt.isel.ls.sql.ConnectionProvider;
+import pt.isel.ls.view.TableView;
 
 import javax.sql.DataSource;
 import java.io.IOException;
@@ -18,12 +19,11 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.HashMap;
 
-import static pt.isel.ls.DatabaseTest.executeFile;
 import static pt.isel.ls.handlers.HandlersTestUtils.routeResponseEquals;
 
 public class GetLabeledRoomsHandlerTest {
 
-    private static final DataSource dSource = TestDatasource.getDataSource();
+    private static final DataSource dSource = DatasourceUtils.getDataSource();
     private static final String name = "TestLabel";
     private static final String lid = "1";
 
@@ -35,7 +35,7 @@ public class GetLabeledRoomsHandlerTest {
 
     @BeforeClass
     public static void resetTables() throws SQLException, IOException {
-        executeFile("src/test/sql/CreateTables.sql");
+        DatasourceUtils.executeFile(dSource, "src/test/resources/sql/CreateTables.sql");
 
         Connection conn = dSource.getConnection();
 
@@ -58,11 +58,11 @@ public class GetLabeledRoomsHandlerTest {
         rl.setInt(1, 1);
         rl.setInt(2, 1);
         rl.execute();
+        conn.close();
     }
 
     @Test
     public void testExecute() throws SQLException, RouteException {
-
         Table table = new Table("RID", "Name", "Location", "Capacity", "Description");
         table.addTableRow(Integer.toString(rid), name, location, capacity, desc);
 
@@ -73,7 +73,7 @@ public class GetLabeledRoomsHandlerTest {
 
         RouteRequest testRequest = RouteRequest.of("GET /labels/1/rooms");
         testRequest.setPathParameters(map);
-        RouteResponse result = new GetLabeledRoomsHandler(dSource)
+        RouteResponse result = new GetLabeledRoomsHandler(new ConnectionProvider(dSource))
                 .execute(testRequest);
 
         Assert.assertTrue(routeResponseEquals(expected,result));

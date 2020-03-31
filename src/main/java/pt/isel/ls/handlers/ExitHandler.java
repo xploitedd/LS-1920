@@ -2,7 +2,7 @@ package pt.isel.ls.handlers;
 
 import pt.isel.ls.router.RouteRequest;
 import pt.isel.ls.router.RouteResponse;
-import pt.isel.ls.view.console.ExitView;
+import pt.isel.ls.view.ExitView;
 
 public class ExitHandler implements RouteHandler {
     /**

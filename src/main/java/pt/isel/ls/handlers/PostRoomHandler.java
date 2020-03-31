@@ -12,16 +12,14 @@ import pt.isel.ls.router.RouteException;
 import pt.isel.ls.sql.ConnectionProvider;
 import pt.isel.ls.sql.queries.LabelQueries;
 import pt.isel.ls.sql.queries.RoomQueries;
-import pt.isel.ls.view.console.IdentifierView;
-
-import javax.sql.DataSource;
+import pt.isel.ls.view.IdentifierView;
 
 public final class PostRoomHandler implements RouteHandler {
 
-    private final DataSource dataSource;
+    private final ConnectionProvider provider;
 
-    public PostRoomHandler(DataSource dataSource) {
-        this.dataSource = dataSource;
+    public PostRoomHandler(ConnectionProvider provider) {
+        this.provider = provider;
     }
 
     @Override
@@ -34,7 +32,7 @@ public final class PostRoomHandler implements RouteHandler {
         int capacity = request.getParameter("capacity").get(0).toInt();
         String location = request.getParameter("location").get(0).toString();
 
-        Room inserted = new ConnectionProvider(dataSource).execute(conn -> {
+        Room inserted = provider.execute(conn -> {
             List<Label> labels = new LinkedList<>();
             if (optLabels.isPresent()) {
                 LabelQueries labelQueries = new LabelQueries(conn);

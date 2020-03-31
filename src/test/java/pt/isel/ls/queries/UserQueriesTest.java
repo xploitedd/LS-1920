@@ -3,7 +3,7 @@ package pt.isel.ls.queries;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import pt.isel.ls.TestDatasource;
+import pt.isel.ls.DatasourceUtils;
 import pt.isel.ls.model.User;
 import pt.isel.ls.sql.queries.UserQueries;
 
@@ -14,16 +14,13 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import static pt.isel.ls.DatabaseTest.executeFile;
-
 public class UserQueriesTest {
 
-    private static final DataSource dSource = TestDatasource.getDataSource();
-
+    private static final DataSource dSource = DatasourceUtils.getDataSource();
 
     @BeforeClass
     public static void resetTables() throws SQLException, IOException {
-        executeFile("src/test/sql/CreateTables.sql");
+        DatasourceUtils.executeFile(dSource, "src/test/resources/sql/CreateTables.sql");
     }
 
     @Test

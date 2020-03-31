@@ -1,6 +1,6 @@
 package pt.isel.ls.model;
 
-public class User {
+public final class User {
 
     private final int uid;
     private final String name;

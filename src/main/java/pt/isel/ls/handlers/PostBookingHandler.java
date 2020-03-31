@@ -6,17 +6,16 @@ import pt.isel.ls.router.RouteRequest;
 import pt.isel.ls.router.RouteResponse;
 import pt.isel.ls.sql.ConnectionProvider;
 import pt.isel.ls.sql.queries.BookingQueries;
-import pt.isel.ls.view.console.IdentifierView;
+import pt.isel.ls.view.IdentifierView;
 
-import javax.sql.DataSource;
 import java.sql.Timestamp;
 
 public final class PostBookingHandler implements RouteHandler {
 
-    private final DataSource dataSource;
+    private final ConnectionProvider provider;
 
-    public PostBookingHandler(DataSource dataSource) {
-        this.dataSource = dataSource;
+    public PostBookingHandler(ConnectionProvider provider) {
+        this.provider = provider;
     }
 
     @Override
@@ -28,8 +27,8 @@ public final class PostBookingHandler implements RouteHandler {
         Timestamp b = new Timestamp(begin);
         Timestamp e = new Timestamp(end);
 
-        Booking booking = new ConnectionProvider(dataSource)
-                .execute(conn -> new BookingQueries(conn).createNewBooking(rid,uid,b,e));
+        Booking booking = provider.execute(conn ->
+                new BookingQueries(conn).createNewBooking(rid, uid, b, e));
 
         return new RouteResponse(new IdentifierView("booking", booking.getBid()));
     }

@@ -3,7 +3,7 @@ package pt.isel.ls.queries;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import pt.isel.ls.TestDatasource;
+import pt.isel.ls.DatasourceUtils;
 import pt.isel.ls.model.Label;
 import pt.isel.ls.model.Room;
 import pt.isel.ls.sql.queries.RoomLabelQueries;
@@ -17,11 +17,9 @@ import java.sql.SQLException;
 import java.util.LinkedList;
 import java.util.List;
 
-import static pt.isel.ls.DatabaseTest.executeFile;
-
 public class RoomLabelQueriesTest {
 
-    private static final DataSource dSource = TestDatasource.getDataSource();
+    private static final DataSource dSource = DatasourceUtils.getDataSource();
 
     private static final String rName = "testRoom";
     private static final String rLocation = "testLocation";
@@ -31,11 +29,9 @@ public class RoomLabelQueriesTest {
     private static final String lName = "testLabel";
     private static final int lid = 1;
 
-
-
     @Before
     public void resetTables() throws SQLException, IOException {
-        executeFile("src/test/sql/CreateTables.sql");
+        DatasourceUtils.executeFile(dSource,"src/test/resources/sql/CreateTables.sql");
     }
 
     @Test
@@ -69,6 +65,7 @@ public class RoomLabelQueriesTest {
 
         Assert.assertTrue(res.next());
         Assert.assertEquals(lid,res.getInt(1));
+        conn.close();
     }
 
     @Test
@@ -101,6 +98,8 @@ public class RoomLabelQueriesTest {
             Assert.assertEquals(lName, lbl.getName());
             Assert.assertEquals(lid,lbl.getLid());
         }
+
+        conn.close();
     }
 
     @Test
@@ -135,5 +134,7 @@ public class RoomLabelQueriesTest {
             Assert.assertEquals(rLocation,room.getLocation());
             Assert.assertEquals(rCapacity,room.getCapacity());
         }
+
+        conn.close();
     }
 }

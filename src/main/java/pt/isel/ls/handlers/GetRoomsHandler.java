@@ -7,21 +7,20 @@ import pt.isel.ls.router.Parameter;
 import pt.isel.ls.router.RouteRequest;
 import pt.isel.ls.router.RouteResponse;
 
-import javax.sql.DataSource;
 import java.util.Optional;
 
 import pt.isel.ls.router.RouteException;
 import pt.isel.ls.sql.ConnectionProvider;
 import pt.isel.ls.sql.queries.RoomLabelQueries;
 import pt.isel.ls.sql.queries.RoomQueries;
-import pt.isel.ls.view.console.TableView;
+import pt.isel.ls.view.TableView;
 
 public final class GetRoomsHandler implements RouteHandler {
 
-    private final DataSource dataSource;
+    private final ConnectionProvider provider;
 
-    public GetRoomsHandler(DataSource dataSource) {
-        this.dataSource = dataSource;
+    public GetRoomsHandler(ConnectionProvider provider) {
+        this.provider = provider;
     }
 
     /**
@@ -37,18 +36,18 @@ public final class GetRoomsHandler implements RouteHandler {
         if (paramRid.isPresent()) {
             table = new Table("RID", "Name", "Location", "Capacity", "Description", "Labels");
             int rid = paramRid.get().toInt();
-            Room room = new ConnectionProvider(dataSource)
-                    .execute(conn -> new RoomQueries(conn).getRoom(rid));
+            Room room = provider.execute(conn ->
+                    new RoomQueries(conn).getRoom(rid));
 
-            Iterable<Label> labels = new ConnectionProvider(dataSource)
-                    .execute(conn -> new RoomLabelQueries(conn).getRoomLabels(rid));
+            Iterable<Label> labels = provider.execute(conn ->
+                    new RoomLabelQueries(conn).getRoomLabels(rid));
 
             table.addTableRow(String.valueOf(room.getRid()), room.getName(), room.getLocation(),
                     String.valueOf(room.getCapacity()), room.getDescription(), labels.toString());
         } else {
             table = new Table("RID", "Name", "Location", "Capacity", "Description");
-            Iterable<Room> rooms = new ConnectionProvider(dataSource)
-                    .execute(conn -> new RoomQueries(conn).getRooms());
+            Iterable<Room> rooms = provider.execute(conn ->
+                    new RoomQueries(conn).getRooms());
 
             for (Room room : rooms) {
                 table.addTableRow(String.valueOf(room.getRid()), room.getName(), room.getLocation(),

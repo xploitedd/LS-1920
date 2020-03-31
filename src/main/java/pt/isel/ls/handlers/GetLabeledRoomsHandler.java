@@ -4,20 +4,17 @@ import pt.isel.ls.model.Room;
 import pt.isel.ls.model.Table;
 import pt.isel.ls.router.RouteRequest;
 import pt.isel.ls.router.RouteResponse;
-
-import javax.sql.DataSource;
-
 import pt.isel.ls.router.RouteException;
 import pt.isel.ls.sql.ConnectionProvider;
 import pt.isel.ls.sql.queries.RoomLabelQueries;
-import pt.isel.ls.view.console.TableView;
+import pt.isel.ls.view.TableView;
 
 public final class GetLabeledRoomsHandler implements RouteHandler {
 
-    private final DataSource dataSource;
+    private final ConnectionProvider provider;
 
-    public GetLabeledRoomsHandler(DataSource dataSource) {
-        this.dataSource = dataSource;
+    public GetLabeledRoomsHandler(ConnectionProvider provider) {
+        this.provider = provider;
     }
     /**
      * Gets all of the rooms with a certain label
@@ -30,8 +27,8 @@ public final class GetLabeledRoomsHandler implements RouteHandler {
     public RouteResponse execute(RouteRequest request) throws RouteException {
         int lid = request.getPathParameter("lid").toInt();
 
-        Iterable<Room> rooms = new ConnectionProvider(dataSource)
-                .execute(conn -> new RoomLabelQueries(conn).getLabeledRooms(lid));
+        Iterable<Room> rooms = provider.execute(conn ->
+                new RoomLabelQueries(conn).getLabeledRooms(lid));
 
         Table table = new Table("RID", "Name", "Location", "Capacity", "Description");
         for (Room room : rooms) {

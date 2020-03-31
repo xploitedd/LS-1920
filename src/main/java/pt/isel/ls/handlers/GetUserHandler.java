@@ -8,18 +8,17 @@ import pt.isel.ls.router.RouteResponse;
 import pt.isel.ls.router.RouteException;
 import pt.isel.ls.sql.ConnectionProvider;
 import pt.isel.ls.sql.queries.UserQueries;
-import pt.isel.ls.view.console.TableView;
+import pt.isel.ls.view.TableView;
 
-import javax.sql.DataSource;
 import java.util.ArrayList;
 import java.util.Optional;
 
 public final class GetUserHandler implements RouteHandler {
 
-    private final DataSource dataSource;
+    private final ConnectionProvider provider;
 
-    public GetUserHandler(DataSource dataSource) {
-        this.dataSource = dataSource;
+    public GetUserHandler(ConnectionProvider provider) {
+        this.provider = provider;
     }
 
     /**
@@ -30,17 +29,16 @@ public final class GetUserHandler implements RouteHandler {
      */
     @Override
     public RouteResponse execute(RouteRequest request) throws RouteException {
-        Iterable<User> iter = new ConnectionProvider(dataSource)
-                .execute(conn -> {
-                    Optional<Parameter> paramUid = request.getOptionalPathParameter("uid");
-                    if (paramUid.isPresent()) {
-                        ArrayList<User> userList = new ArrayList<>(1);
-                        userList.add(new UserQueries(conn).getUser(paramUid.get().toInt()));
-                        return userList;
-                    } else {
-                        return new UserQueries(conn).getUsers();
-                    }
-                });
+        Iterable<User> iter = provider.execute(conn -> {
+            Optional<Parameter> paramUid = request.getOptionalPathParameter("uid");
+            if (paramUid.isPresent()) {
+                ArrayList<User> userList = new ArrayList<>(1);
+                userList.add(new UserQueries(conn).getUser(paramUid.get().toInt()));
+                return userList;
+            } else {
+                return new UserQueries(conn).getUsers();
+            }
+        });
 
         Table table = new Table("User Id", "Name", "Email");
         for (User user : iter) {

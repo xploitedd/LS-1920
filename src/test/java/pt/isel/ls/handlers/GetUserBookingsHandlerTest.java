@@ -3,13 +3,14 @@ package pt.isel.ls.handlers;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import pt.isel.ls.TestDatasource;
+import pt.isel.ls.DatasourceUtils;
 import pt.isel.ls.model.Table;
 import pt.isel.ls.router.Parameter;
 import pt.isel.ls.router.RouteException;
 import pt.isel.ls.router.RouteRequest;
 import pt.isel.ls.router.RouteResponse;
-import pt.isel.ls.view.console.TableView;
+import pt.isel.ls.sql.ConnectionProvider;
+import pt.isel.ls.view.TableView;
 
 import javax.sql.DataSource;
 import java.io.IOException;
@@ -20,11 +21,11 @@ import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 
-import static pt.isel.ls.DatabaseTest.executeFile;
 import static pt.isel.ls.handlers.HandlersTestUtils.routeResponseEquals;
 
 public class GetUserBookingsHandlerTest {
-    private static final DataSource dSource = TestDatasource.getDataSource();
+
+    private static final DataSource dSource = DatasourceUtils.getDataSource();
     private static final int uid = 1;
     private static final int rid = 1;
     private static final int bid = 1;
@@ -41,7 +42,7 @@ public class GetUserBookingsHandlerTest {
 
     @BeforeClass
     public static void resetTables() throws SQLException, IOException {
-        executeFile("src/test/sql/CreateTables.sql");
+        DatasourceUtils.executeFile(dSource, "src/test/resources/sql/CreateTables.sql");
         Connection conn = dSource.getConnection();
 
         PreparedStatement stmt = conn.prepareStatement(
@@ -66,11 +67,11 @@ public class GetUserBookingsHandlerTest {
         bstmt.setInt(3, rid);
         bstmt.setInt(4, uid);
         bstmt.execute();
+        conn.close();
     }
 
     @Test
     public void testExecute() throws RouteException {
-
         Table table = new Table("Booking Id", "Room Id", "Begin time", "End time");
         table.addTableRow(Integer.toString(bid), Integer.toString(uid), bTime.toString(),eTime.toString());
 
@@ -81,7 +82,7 @@ public class GetUserBookingsHandlerTest {
         testRequest.setPathParameters(map);
         
         RouteResponse expected = new RouteResponse(new TableView(table));
-        RouteResponse result = new GetUserBookingsHandler(dSource)
+        RouteResponse result = new GetUserBookingsHandler(new ConnectionProvider(dSource))
                 .execute(testRequest);
 
         Assert.assertTrue(routeResponseEquals(expected,result));

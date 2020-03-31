@@ -6,7 +6,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import pt.isel.ls.handlers.RouteHandler;
-import pt.isel.ls.view.console.RouteExceptionView;
+import pt.isel.ls.view.RouteExceptionView;
 
 /**
  * Router is responsible for routing

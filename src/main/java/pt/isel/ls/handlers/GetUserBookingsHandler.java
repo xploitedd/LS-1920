@@ -7,16 +7,14 @@ import pt.isel.ls.router.RouteResponse;
 import pt.isel.ls.router.RouteException;
 import pt.isel.ls.sql.ConnectionProvider;
 import pt.isel.ls.sql.queries.BookingQueries;
-import pt.isel.ls.view.console.TableView;
-
-import javax.sql.DataSource;
+import pt.isel.ls.view.TableView;
 
 public final class GetUserBookingsHandler implements RouteHandler {
 
-    private final DataSource dataSource;
+    private final ConnectionProvider provider;
 
-    public GetUserBookingsHandler(DataSource dataSource) {
-        this.dataSource = dataSource;
+    public GetUserBookingsHandler(ConnectionProvider provider) {
+        this.provider = provider;
     }
 
     /**
@@ -28,8 +26,8 @@ public final class GetUserBookingsHandler implements RouteHandler {
     @Override
     public RouteResponse execute(RouteRequest request) throws RouteException {
         int uid = request.getPathParameter("uid").toInt();
-        Iterable<Booking> iter = new ConnectionProvider(dataSource)
-                .execute(conn -> new BookingQueries(conn).getBookingsByUid(uid));
+        Iterable<Booking> iter = provider.execute(conn ->
+                new BookingQueries(conn).getBookingsByUid(uid));
 
         Table table = new Table("Booking Id", "Room Id", "Begin time", "End time");
         for (Booking booking : iter) {

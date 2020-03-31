@@ -1,4 +1,4 @@
-package pt.isel.ls.view.console;
+package pt.isel.ls.view;
 
 import java.io.PrintWriter;
 import pt.isel.ls.model.Table;

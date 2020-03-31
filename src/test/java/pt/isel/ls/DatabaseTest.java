@@ -4,36 +4,23 @@ import javax.sql.DataSource;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import java.io.FileReader;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Scanner;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 public class DatabaseTest {
 
-    private static final DataSource dataSource = TestDatasource.getDataSource();
-
-    public static void executeFile(String filePath) throws SQLException, IOException {
-        Connection conn = dataSource.getConnection();
-        Scanner s = new Scanner(new FileReader(filePath));
-        s.useDelimiter(";");
-        while (s.hasNextLine()) {
-            conn.prepareStatement(s.nextLine()).execute();
-        }
-
-        conn.close();
-    }
+    private static final DataSource dataSource = DatasourceUtils.getDataSource();
 
     @BeforeClass
     public static void databaseTests_createSchema() throws SQLException, IOException {
-        executeFile("src/test/sql/createSchema.sql");
-        executeFile("src/test/sql/addData.sql");
+        DatasourceUtils.executeFile(dataSource, "src/test/resources/sql/createSchema.sql");
+        DatasourceUtils.executeFile(dataSource, "src/test/resources/sql/addData.sql");
     }
 
     @Test
