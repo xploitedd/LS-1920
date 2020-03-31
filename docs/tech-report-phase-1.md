@@ -68,7 +68,7 @@ que para além da informação sobre o request, como o `Path`, contém métodos
 para obter parâmetros de *path* (e.g `/user/{uid}`, onde `uid` é o parâmetro) 
 e parâmetros do *request* em sí (e.g `?name=Jose`). Adicionalmente,
 os parâmetros podem ser opcionais ou obrigatórios, sendo que se forem
-obrigatórios e não estiverem presentes uma exceção `ParameterNotFoundException`.
+obrigatórios e não estiverem presentes é lançada uma exceção `ParameterNotFoundException`.
 
 Enquanto que os parâmetros do *path* são processados durante o processo
 de *routing*, os parâmetros do *request* são processados pela classe
@@ -112,7 +112,7 @@ por avaliar se um determinado `Path` observa este *template* (método `match`).
 
 Para transformar uma `String` num novo *template* é necessário primeiramente
 dividir a *string* em vários segmentos (secções do `Path` delimitadas por `/`).
-Com todos os segmentos é decido se o segmento é constante `ConstantTemplateSegment` (o nome do segmento
+Com todos os segmentos é decidido se o segmento é constante `ConstantTemplateSegment` (o nome do segmento
 deve corresponder sempre, e.g `users`) ou se este é variável `VariableTemplateSegment` (o nome do segmento pode variar
 consoante o pedido, e.g `{uid}`). Nos segmentos variáveis ainda há opção para
 que um segmento variável seja opcional e para ser deste tipo é preciso cumprir o seguinte
