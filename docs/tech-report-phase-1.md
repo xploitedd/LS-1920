@@ -98,9 +98,9 @@ contrário um *handler* padrão (*handler* de 404) é passado ao *caller*.
 ##### Método do Request
 
 Nesta fase do trabalho apenas foram necessários 3 métodos:
-- `EXIT` que destina-se a terminar a aplicação
+- `EXIT` que termina a aplicação
 - `GET` que tem como objectivo ir procurar dados à fonte de dados
-- `POST` que destina-se a inserir novos dados na fonte de dados da aplicação
+- `POST` que tem como objectivo inserir novos dados na fonte de dados da aplicação
 
 ##### Template da Route
 
@@ -135,19 +135,19 @@ no `TemplateSegment`.
 Para analizar um possível `match` são percorridos todos os segmentos do *path*
 ao mesmo tempo que são percorridos os segmentos do *template*, avaliando
 um-a-um. Caso haja segmentos a menos (excepto opcionais), ou segmentos a mais, no `Path` então
-o `match` retorna vazio. Caso contrário e um `match` ocorra um mapa com os parâmetros de
+o `match` retorna vazio. Caso contrário e um `match` ocorra, um mapa com os parâmetros de
 `Path` é retornado.
 
 É de notar que **todos os valores dos parâmetros** são encapsulados através da classe
 `Parameter` que tem métodos para transformar estes valores (em `String`) noutros
-tipos.
+tipos (`int` e `long`).
 
 ### Gestão de ligações
 
 (_describe how connections are created, used and disposed_, namely its relation with transaction scopes).
 
 Caso algum *handler* necessite de realizar pedidos ao *data source* corrente
-da aplicação então esse mesmo *handler* deverá conter um constructor público
+da aplicação, esse mesmo *handler* deverá conter um constructor público
 no qual recebe uma classe do tipo `ConnectionProvider`.
 
 ### Acesso a dados
