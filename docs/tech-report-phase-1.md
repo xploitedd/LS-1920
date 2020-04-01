@@ -140,25 +140,43 @@ o `match` retorna vazio. Caso contrário e um `match` ocorra, um mapa com os par
 
 É de notar que **todos os valores dos parâmetros** são encapsulados através da classe
 `Parameter` que tem métodos para transformar estes valores (em `String`) noutros
-tipos (`int` e `long`).
+tipos (`int` e `long`, por exemplo).
 
 ### Gestão de ligações
 
-(_describe how connections are created, used and disposed_, namely its relation with transaction scopes).
+Para a gestão das ligações existe a classe `ConnectionProvider` que recebe no seu constructor a fonte de
+dados. Todo o processamento transacional é tratado através do método `execute` desta classe que recebe
+como parâmetro o bloco transacional a ser processado na forma da interface funcional `Provider`.
+
+Para além do processamento transacional, a classe `ConnectionProvider` gere também o tempo de vida de
+cada conexão à base de dados, sendo que este deve ser o mesmo que o tempo de vida de cada transação.
 
 Caso algum *handler* necessite de realizar pedidos ao *data source* corrente
 da aplicação, esse mesmo *handler* deverá conter um constructor público
-no qual recebe uma classe do tipo `ConnectionProvider`.
+no qual recebe uma classe do tipo `ConnectionProvider`. Cada método do *handler* poderá assim
+realizar *queries* transacionais à fonte de dados presente no `ConnectionProvider`.
 
 ### Acesso a dados
 
-(_describe any created classes to help on data access_).
+Para realizar o acesso a dados (obter e inserir informação na fonte de dados) existem classes de
+*queries* no package `pt.isel.ls.sql.queries`. Cada classe de *queries* representa uma parte do modelo
+de dados, isto é, para cada modelo relacional da base de dados deve existir uma classe de *queries* que
+operá sob o modelo.
 
-(_identify any non-trivial used SQL statements_).
+Todas as classes de *queries* deve extender a classe abstracta `DatabaseQueries`. Esta classe abstracta
+obriga a que cada momento de criação de uma nova classe deste tipo tenha de receber pelo constructor
+uma instância de `Connection` (que será obtida através do uso do `ConnectionProvider` nos *handlers*).
 
 ### Processamento de erros
 
-(_describe how errors are handled and communicated to the application user_).
+Todos os erros são lançados através de exceções e estas exceções lançadas durante o decorrer da aplicação
+são todas tratadas na classe `App`. Caso a exceção tenha como fonte causas internas ou expectáveis então
+uma `View` com a descrição do erro será apresentada ao utilizador. Caso a exceção tenha como origem a má
+configuração do ambiente onde a aplicação está a correr, o *stack trace* da mesma será apresentado ao
+utilizador para que este possa partilhar/resolver.
+
+As exceções expectáveis pela aplicação deverão ser *wrapped* na classe `RouteException`, ou seja, a exceção
+original não passa para o método chamador, mas sim a `RouteException` que contém informação sobre o erro.
 
 ## Avaliação crítica
 
