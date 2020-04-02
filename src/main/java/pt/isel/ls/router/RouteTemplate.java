@@ -1,5 +1,8 @@
 package pt.isel.ls.router;
 
+import pt.isel.ls.router.request.Parameter;
+import pt.isel.ls.router.request.Path;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;

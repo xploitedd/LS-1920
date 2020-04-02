@@ -1,5 +1,8 @@
 package pt.isel.ls;
 
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.util.Scanner;
 import org.postgresql.ds.PGSimpleDataSource;
@@ -16,14 +19,17 @@ import pt.isel.ls.handlers.PostRoomHandler;
 import pt.isel.ls.handlers.PostUserHandler;
 
 import javax.sql.DataSource;
-import pt.isel.ls.router.Method;
-import pt.isel.ls.router.RouteRequest;
-import pt.isel.ls.router.RouteResponse;
+
+import pt.isel.ls.router.request.HeaderType;
+import pt.isel.ls.router.request.Method;
+import pt.isel.ls.router.request.RouteRequest;
+import pt.isel.ls.router.response.RouteResponse;
 import pt.isel.ls.router.RouteTemplate;
 import pt.isel.ls.router.Router;
-import pt.isel.ls.router.RouteException;
+import pt.isel.ls.router.response.RouteException;
 import pt.isel.ls.sql.ConnectionProvider;
 import pt.isel.ls.view.RouteExceptionView;
+import pt.isel.ls.view.ViewType;
 
 public class App {
 
@@ -92,31 +98,40 @@ public class App {
      */
     private void startApp() {
         Scanner scanner = new Scanner(System.in);
-        try (PrintWriter pw = new PrintWriter(System.out)) {
-            // for needed where to print the user input character
-            for ( ; ; ) {
-                System.out.print("> ");
-                if (scanner.hasNext()) {
-                    String line = scanner.nextLine();
+        // for needed where to print the user input character
+        for ( ; ; ) {
+            System.out.print("> ");
+            if (scanner.hasNext()) {
+                String line = scanner.nextLine();
+                // TODO: optimize this code and cleanup
+                OutputStream output = System.out;
+                ViewType viewType = null;
+                try {
                     RouteRequest request = RouteRequest.of(line);
+                    viewType = ViewType.of(request.getHeaderValue(HeaderType.Accept)
+                            .orElse(null));
 
+                    output = request.getHeaderValue(HeaderType.FileName)
+                            .map(f -> {
+                                try {
+                                    return new FileOutputStream(f);
+                                } catch (FileNotFoundException e) {
+                                    return System.out;
+                                }
+                            }).orElse(System.out);
+
+                    PrintWriter pw = new PrintWriter(output);
                     RouteResponse response = router.getHandler(request)
                             .execute(request);
 
-                    response.getView().render(pw);
+                    response.getView().render(viewType, pw);
+                    pw.flush();
+                } catch (RouteException e) {
+                    PrintWriter pw = new PrintWriter(output);
+                    new RouteExceptionView(e).render(viewType, pw);
                     pw.flush();
                 }
             }
-        } catch (RouteException e) {
-            try (PrintWriter pw = new PrintWriter(System.out)) {
-                new RouteExceptionView(e).render(pw);
-            } catch (Exception ex) {
-                // print unexpected exceptions
-                e.printStackTrace();
-            }
-        } catch (Exception e) {
-            // print unexpected exceptions
-            e.printStackTrace();
         }
     }
 

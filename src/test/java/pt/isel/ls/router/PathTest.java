@@ -2,6 +2,7 @@ package pt.isel.ls.router;
 
 import java.util.Optional;
 import org.junit.Test;
+import pt.isel.ls.router.request.Path;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotSame;

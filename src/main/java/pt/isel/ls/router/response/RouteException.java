@@ -1,4 +1,4 @@
-package pt.isel.ls.router;
+package pt.isel.ls.router.response;
 
 public class RouteException extends Exception {
 

@@ -2,7 +2,12 @@ package pt.isel.ls.router;
 
 import java.util.List;
 import org.junit.Test;
-import pt.isel.ls.router.RouteRequest.ParameterNotFoundException;
+import pt.isel.ls.router.request.Method;
+import pt.isel.ls.router.request.Parameter;
+import pt.isel.ls.router.request.RouteRequest;
+import pt.isel.ls.router.request.RouteRequest.ParameterNotFoundException;
+import pt.isel.ls.router.response.RouteException;
+import pt.isel.ls.router.response.RouteResponse;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
