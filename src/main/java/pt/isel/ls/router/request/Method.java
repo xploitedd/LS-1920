@@ -1,4 +1,4 @@
-package pt.isel.ls.router;
+package pt.isel.ls.router.request;
 
 public enum Method {
 

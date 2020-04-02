@@ -2,9 +2,9 @@ package pt.isel.ls.handlers;
 
 import pt.isel.ls.model.Label;
 import pt.isel.ls.model.Table;
-import pt.isel.ls.router.RouteRequest;
-import pt.isel.ls.router.RouteResponse;
-import pt.isel.ls.router.RouteException;
+import pt.isel.ls.router.request.RouteRequest;
+import pt.isel.ls.router.response.RouteResponse;
+import pt.isel.ls.router.response.RouteException;
 import pt.isel.ls.sql.ConnectionProvider;
 import pt.isel.ls.sql.queries.LabelQueries;
 import pt.isel.ls.view.TableView;

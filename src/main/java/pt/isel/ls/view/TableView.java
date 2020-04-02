@@ -3,7 +3,7 @@ package pt.isel.ls.view;
 import java.io.PrintWriter;
 import pt.isel.ls.model.Table;
 
-public class TableView implements View {
+public class TableView extends View {
 
     private Table table;
 
@@ -12,7 +12,7 @@ public class TableView implements View {
     }
 
     @Override
-    public void render(PrintWriter writer) {
+    public void renderText(PrintWriter writer) {
         writer.println(table);
     }
 

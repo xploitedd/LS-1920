@@ -1,5 +1,6 @@
 drop table if exists room_label;
 drop table if exists booking;
+drop table if exists description;
 drop table if exists room;
 drop table if exists "user";
 drop table if exists "label";
@@ -12,7 +13,7 @@ CREATE TABLE room (
     constraint room_capacity_min_check check (capacity > 1)
 );
 
-CREATE TABLE DESCRIPTION (
+CREATE TABLE description (
     rid SERIAL PRIMARY KEY REFERENCES room(rid),
     description varchar(200)
 );

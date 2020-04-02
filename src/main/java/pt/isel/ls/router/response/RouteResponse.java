@@ -1,4 +1,4 @@
-package pt.isel.ls.router;
+package pt.isel.ls.router.response;
 
 import java.util.Objects;
 import pt.isel.ls.view.View;

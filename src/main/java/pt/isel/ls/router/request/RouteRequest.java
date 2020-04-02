@@ -1,4 +1,7 @@
-package pt.isel.ls.router;
+package pt.isel.ls.router.request;
+
+import pt.isel.ls.router.RouterUtils;
+import pt.isel.ls.router.response.RouteException;
 
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
@@ -12,6 +15,7 @@ public class RouteRequest {
     private final Method method;
     private final Path path;
     private final HashMap<String, List<Parameter>> parameters;
+    private final HashMap<HeaderType, String> headers;
 
     private HashMap<String, Parameter> pathParameters = new HashMap<>();
 
@@ -21,10 +25,18 @@ public class RouteRequest {
      * @param path path of the request
      * @param parameters parameters of the request
      */
-    private RouteRequest(Method method, Path path, HashMap<String, List<Parameter>> parameters) {
+    private RouteRequest(Method method, Path path,
+                         HashMap<String, List<Parameter>> parameters,
+                         HashMap<HeaderType, String> headers) {
+
         this.method = method;
         this.path = path;
         this.parameters = parameters;
+        this.headers = headers;
+    }
+
+    public Optional<String> getHeaderValue(HeaderType type) {
+        return Optional.ofNullable(headers.get(type));
     }
 
     /**
@@ -114,14 +126,24 @@ public class RouteRequest {
                 throw new RouteException("Path not valid!");
             }
 
-            HashMap<String, List<Parameter>> parameters;
+            Optional<HashMap<String, List<Parameter>>> parameters = Optional.empty();
+            Optional<HashMap<HeaderType, String>> headers = Optional.empty();
+
+            // if headers are present
             if (requestParts.length > 2) {
-                parameters = parseParameters(requestParts[2]);
-            } else {
-                parameters = new HashMap<>();
+                // if parameters are present
+                if (requestParts.length > 3) {
+                    headers = Optional.of(parseHeaders(requestParts[2]));
+                    parameters = Optional.of(parseParameters(requestParts[3]));
+                } else {
+                    // if there are only 3 request parts then we assume the request did not include headers
+                    // TODO: maybe check if it's headers or parameters???
+                    parameters = Optional.of(parseParameters(requestParts[2]));
+                }
             }
 
-            return new RouteRequest(method, path.get(), parameters);
+            return new RouteRequest(method, path.get(),
+                    parameters.orElseGet(HashMap::new), headers.orElseGet(HashMap::new));
         } catch (RouteException routeException) {
             throw new RouteRequestParsingException(routeException.getMessage());
         }
@@ -136,29 +158,34 @@ public class RouteRequest {
     private static HashMap<String, List<Parameter>> parseParameters(String parameterSection)
             throws RouteException {
 
-        parameterSection = URLDecoder.decode(parameterSection, StandardCharsets.UTF_8);
-        String[] keyValueSections = parameterSection.split("&");
+        parameterSection = decodeSection(parameterSection);
         HashMap<String, List<Parameter>> parameters = new HashMap<>();
-        for (String keyValue : keyValueSections) {
-            String[] kvSplit = keyValue.split("=");
-            if (kvSplit.length != 2) {
-                throw new RouteException("Error parsing route parameters!");
-            }
-
-            String key = kvSplit[0];
-            String value = kvSplit[1];
-            if (key.isBlank() || value.isBlank()) {
-                throw new RouteException("Parameter key or/and value is/are blank");
-            }
-
+        RouterUtils.forEachKeyValue(parameterSection, "&", "=", (key, value) -> {
             List<Parameter> values = Optional.ofNullable(parameters.get(key))
                     .orElse(new ArrayList<>());
 
             values.add(new Parameter(value));
             parameters.put(key, values);
-        }
+        });
 
         return parameters;
+    }
+
+    private static HashMap<HeaderType, String> parseHeaders(String headerSection)
+            throws RouteException {
+
+        headerSection = decodeSection(headerSection);
+        HashMap<HeaderType, String> headers = new HashMap<>();
+        RouterUtils.forEachKeyValue(headerSection, "\\|", ":", (key, value) -> {
+            HeaderType type = HeaderType.of(key);
+            headers.put(type, value);
+        });
+
+        return headers;
+    }
+
+    private static String decodeSection(String section) {
+        return URLDecoder.decode(section, StandardCharsets.UTF_8);
     }
 
     public static class ParameterNotFoundException extends RouteException {

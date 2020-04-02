@@ -3,7 +3,7 @@ package pt.isel.ls.sql;
 import java.sql.Connection;
 import java.sql.SQLException;
 import javax.sql.DataSource;
-import pt.isel.ls.router.RouteException;
+import pt.isel.ls.router.response.RouteException;
 
 public class ConnectionProvider {
 
