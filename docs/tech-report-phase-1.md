@@ -158,8 +158,8 @@ realizar *queries* transacionais à fonte de dados presente no `ConnectionProvid
 
 Para realizar o acesso a dados (obter e inserir informação na fonte de dados) existem classes de
 *queries* no package `pt.isel.ls.sql.queries`. Cada classe de *queries* representa uma parte do modelo
-de dados, isto é, para cada modelo relacional da base de dados deve existir uma classe de *queries* que
-operá sob o modelo.
+de dados, isto é, para cada relação da base de dados deve existir uma classe de *queries* que
+operará sob esta relação.
 
 Todas as classes de *queries* deve extender a classe abstracta `DatabaseQueries`. Esta classe abstracta
 obriga a que cada momento de criação de uma nova classe deste tipo tenha de receber pelo constructor
