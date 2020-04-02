@@ -14,7 +14,9 @@ O seguinte diagrama apresenta a modelo entidade-associação para a informação
 
 Destacam-se os seguintes aspectos deste modelo:
 
-* (_include a list of relevant design issues_)
+- É necessária a existência de uma entidade fraca `DESCRIPTION` dado que as salas podem ou não ter 
+descrição (*nullable*) e de modo a evitar a presença de valores *null* em `ROOM` optou-se pela criação
+da nova entidade
 
 O modelo conceptual apresenta ainda as seguintes restrições:
 
@@ -28,10 +30,6 @@ O modelo conceptual apresenta ainda as seguintes restrições:
 ### Modelação física ###
 
 O modelo físico da base de dados está presente em [ResetTables.sql](../src/main/resources/sql/ResetTables.sql) (apaga as tabelas para recriar se já estiverem lá) e [CreateTables.sql](../src/main/resources/sql/CreateTables.sql) (não faz nada se as tabelas já existirem).
-
-Destacam-se os seguintes aspectos deste modelo:
-
-* (_include a list of relevant design issues_)
 
 ## Organização do software
 
@@ -180,6 +178,8 @@ original não passa para o método chamador, mas sim a `RouteException` que cont
 
 ## Avaliação crítica
 
-(_enumerate the functionality that is not concluded and the identified defects_)
+Nesta fase foram realizados todos os objectivos propostos pelo enunciado da mesma.
 
-(_identify improvements to be made on the next phase_)
+Pretendem-se ainda melhorar os seguintes aspectos:
+- API de construção de *queries sql* (ver [JDBI Fluent API](http://jdbi.org/#_fluent_api) por exemplo)
+- Adicionar outro tipo de exceções (derivadas ou não de `RouteException`)
