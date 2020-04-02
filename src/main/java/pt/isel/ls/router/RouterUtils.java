@@ -19,7 +19,7 @@ public class RouterUtils {
                 .toArray(String[]::new);
     }
 
-    public static <T, R> void forEachKeyValue(
+    public static void forEachKeyValue(
             String sections,
             String sectionSeparator,
             String kvSeparator,
