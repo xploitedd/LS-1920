@@ -6,6 +6,7 @@ import java.sql.ResultSet;
 import java.sql.Timestamp;
 import java.util.LinkedList;
 import pt.isel.ls.model.Booking;
+import pt.isel.ls.router.response.RouteException;
 
 public class BookingQueries extends DatabaseQueries {
 
@@ -23,6 +24,16 @@ public class BookingQueries extends DatabaseQueries {
      * @throws Throwable any exception that occurs
      */
     public Booking createNewBooking(int rid, int uid, Timestamp begin, Timestamp end) throws Throwable {
+        // check overlapping bookings
+        Iterable<Booking> roomBookings = getBookingsByRid(rid);
+        for (Booking b : roomBookings) {
+            // s1 -> b.getBegin(), s2 -> begin, e1 -> b.getEnd()
+            // s2 >= s1 && s2 < e1
+            if (begin.getTime() >= b.getBegin().getTime() && end.getTime() < b.getEnd().getTime()) {
+                throw new RouteException("The new booking overlaps another booking!");
+            }
+        }
+
         PreparedStatement stmt = conn.prepareStatement(
                 "INSERT INTO booking (begin, \"end\", rid, uid) VALUES (?, ?, ?, ?);"
         );
