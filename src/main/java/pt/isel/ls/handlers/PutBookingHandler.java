@@ -26,9 +26,9 @@ public class PutBookingHandler implements RouteHandler {
      */
     @Override
     public RouteResponse execute(RouteRequest request) throws RouteException {
-        int rid = Integer.parseInt(request.getPathParameter("rid").toString());
-        int bid = Integer.parseInt(request.getPathParameter("bid").toString());
-        int newUid = Integer.parseInt(request.getParameter("uid").get(0).toString());
+        int rid = request.getPathParameter("rid").toInt();
+        int bid = request.getPathParameter("bid").toInt();
+        int newUid = request.getParameter("uid").get(0).toInt();
         long newBegin = request.getParameter("begin").get(0).toLong();
         long duration = request.getParameter("duration").get(0).toLong();
         Timestamp newB = new Timestamp(newBegin);
