@@ -33,7 +33,6 @@ public class PutBookingHandlerTest {
     private static final String rname = "TestLabel";
     private static final String location = "ISEL";
     private static final String capacity = "250";
-    private static final String desc = "No Description";
 
     private static final String uname = "Egas";
     private static final String mail = "Egas@Moniz.com";
