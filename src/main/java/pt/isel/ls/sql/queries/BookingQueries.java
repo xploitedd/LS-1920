@@ -161,9 +161,7 @@ public class BookingQueries extends DatabaseQueries {
         return results;
     }
 
-    public Booking editBooking(int rid, int bid, int newUid, Timestamp newBegin, long duration) throws SQLException {
-        Timestamp newEnd = new Timestamp(newBegin.getTime() + duration);
-
+    public Booking editBooking(int rid, int bid, int newUid, Timestamp newBegin, Timestamp newEnd) throws SQLException {
         PreparedStatement update = conn.prepareStatement(
                 "UPDATE booking SET uid = ?, begin = ?, \"end\" = ? WHERE bid = ?"
         );
@@ -180,4 +178,13 @@ public class BookingQueries extends DatabaseQueries {
         return booking;
     }
 
+    //returns how many rows were deleted, should be 0 or 1
+    public int deleteBooking(int rid, int bid) throws SQLException {
+        PreparedStatement del = conn.prepareStatement(
+                "DELETE * FROM booking WHERE rid = ? AND bid = ?;"
+        );
+        del.setInt(1,rid);
+        del.setInt(2,bid);
+        return del.executeUpdate();
+    }
 }

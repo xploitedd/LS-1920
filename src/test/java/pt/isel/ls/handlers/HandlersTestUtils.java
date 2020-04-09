@@ -20,7 +20,6 @@ public class HandlersTestUtils {
         try (PrintWriter pw = new PrintWriter(sw)) {
             b.getView().render(ViewType.TEXT, pw);
         }
-
         return sw.toString().equals(obtained);
     }
 }

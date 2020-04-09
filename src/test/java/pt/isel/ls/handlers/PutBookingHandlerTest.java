@@ -70,7 +70,7 @@ public class PutBookingHandlerTest {
     @Test
     public void testExecute() throws RouteException, IOException {
         long b = Timestamp.valueOf(LocalDateTime.of(2020,12,12,10,10)).getTime();
-        long d = Timestamp.valueOf(LocalDateTime.of(2020,12,12,10,50)).getTime();
+        long d = 40 * 60 * 1000;
 
         HashMap<String, Parameter> map = new HashMap<>();
         map.put("rid", new Parameter("1"));
@@ -82,7 +82,7 @@ public class PutBookingHandlerTest {
         RouteResponse result = new PutBookingHandler(new ConnectionProvider(dSource))
                 .execute(testRequest);
 
-        RouteResponse expected = new RouteResponse(new IdentifierView("Updated booking",1));
+        RouteResponse expected = new RouteResponse(new IdentifierView("updated", "booking",1));
         Assert.assertTrue(routeResponseEquals(expected,result));
     }
 }

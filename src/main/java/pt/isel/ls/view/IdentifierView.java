@@ -6,4 +6,8 @@ public class IdentifierView extends MessageView {
         super("Successfully created " + name + " with unique identifier " + id);
     }
 
+    public IdentifierView(String action, String name, int id) {
+        super("Successfully " + action + " " + name + " with unique identifier " + id);
+    }
+
 }

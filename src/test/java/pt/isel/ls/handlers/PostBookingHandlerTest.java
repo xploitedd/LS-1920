@@ -40,8 +40,8 @@ public class PostBookingHandlerTest {
         HashMap<String, Parameter> map = new HashMap<>();
         map.put("rid", new Parameter("1"));
         long b = Timestamp.valueOf(LocalDateTime.of(2020,12,12,10,10)).getTime();
-        long e = Timestamp.valueOf(LocalDateTime.of(2020,12,12,10,50)).getTime();
-        RouteRequest testRequest = RouteRequest.of("POST /rooms/1/bookings uid=1&begin=" + b + "&end=" + e);
+        long e = 40 * 60 * 1000; //40 minutes in ms
+        RouteRequest testRequest = RouteRequest.of("POST /rooms/1/bookings uid=1&begin=" + b + "&duration=" + e);
         testRequest.setPathParameters(map);
         RouteResponse result = new PostBookingHandler(new ConnectionProvider(dSource))
                 .execute(testRequest);
