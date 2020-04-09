@@ -4,6 +4,9 @@ public enum Method {
 
     GET,
     POST,
-    EXIT
+    EXIT,
+    OPTION,
+    PUT,
+    DELETE
 
 }
