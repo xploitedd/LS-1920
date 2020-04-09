@@ -14,7 +14,9 @@ O seguinte diagrama apresenta a modelo entidade-associação para a informação
 
 Destacam-se os seguintes aspectos deste modelo:
 
-* (_include a list of relevant design issues_)
+- É necessária a existência de uma entidade fraca `DESCRIPTION` dado que as salas podem ou não ter 
+descrição (*nullable*) e de modo a evitar a presença de valores *null* em `ROOM` optou-se pela criação
+da nova entidade
 
 O modelo conceptual apresenta ainda as seguintes restrições:
 
@@ -28,10 +30,6 @@ O modelo conceptual apresenta ainda as seguintes restrições:
 ### Modelação física ###
 
 O modelo físico da base de dados está presente em [ResetTables.sql](../src/main/resources/sql/ResetTables.sql) (apaga as tabelas para recriar se já estiverem lá) e [CreateTables.sql](../src/main/resources/sql/CreateTables.sql) (não faz nada se as tabelas já existirem).
-
-Destacam-se os seguintes aspectos deste modelo:
-
-* (_include a list of relevant design issues_)
 
 ## Organização do software
 
@@ -98,9 +96,9 @@ contrário um *handler* padrão (*handler* de 404) é passado ao *caller*.
 ##### Método do Request
 
 Nesta fase do trabalho apenas foram necessários 3 métodos:
-- `EXIT` que destina-se a terminar a aplicação
+- `EXIT` que termina a aplicação
 - `GET` que tem como objectivo ir procurar dados à fonte de dados
-- `POST` que destina-se a inserir novos dados na fonte de dados da aplicação
+- `POST` que tem como objectivo inserir novos dados na fonte de dados da aplicação
 
 ##### Template da Route
 
@@ -135,33 +133,53 @@ no `TemplateSegment`.
 Para analizar um possível `match` são percorridos todos os segmentos do *path*
 ao mesmo tempo que são percorridos os segmentos do *template*, avaliando
 um-a-um. Caso haja segmentos a menos (excepto opcionais), ou segmentos a mais, no `Path` então
-o `match` retorna vazio. Caso contrário e um `match` ocorra um mapa com os parâmetros de
+o `match` retorna vazio. Caso contrário e um `match` ocorra, um mapa com os parâmetros de
 `Path` é retornado.
 
 É de notar que **todos os valores dos parâmetros** são encapsulados através da classe
 `Parameter` que tem métodos para transformar estes valores (em `String`) noutros
-tipos.
+tipos (`int` e `long`, por exemplo).
 
 ### Gestão de ligações
 
-(_describe how connections are created, used and disposed_, namely its relation with transaction scopes).
+Para a gestão das ligações existe a classe `ConnectionProvider` que recebe no seu constructor a fonte de
+dados. Todo o processamento transacional é tratado através do método `execute` desta classe que recebe
+como parâmetro o bloco transacional a ser processado na forma da interface funcional `Provider`.
+
+Para além do processamento transacional, a classe `ConnectionProvider` gere também o tempo de vida de
+cada conexão à base de dados, sendo que este deve ser o mesmo que o tempo de vida de cada transação.
 
 Caso algum *handler* necessite de realizar pedidos ao *data source* corrente
-da aplicação então esse mesmo *handler* deverá conter um constructor público
-no qual recebe uma classe do tipo `ConnectionProvider`.
+da aplicação, esse mesmo *handler* deverá conter um constructor público
+no qual recebe uma classe do tipo `ConnectionProvider`. Cada método do *handler* poderá assim
+realizar *queries* transacionais à fonte de dados presente no `ConnectionProvider`.
 
 ### Acesso a dados
 
-(_describe any created classes to help on data access_).
+Para realizar o acesso a dados (obter e inserir informação na fonte de dados) existem classes de
+*queries* no package `pt.isel.ls.sql.queries`. Cada classe de *queries* representa uma parte do modelo
+de dados, isto é, para cada relação da base de dados deve existir uma classe de *queries* que
+operará sob esta relação.
 
-(_identify any non-trivial used SQL statements_).
+Todas as classes de *queries* deve extender a classe abstracta `DatabaseQueries`. Esta classe abstracta
+obriga a que cada momento de criação de uma nova classe deste tipo tenha de receber pelo constructor
+uma instância de `Connection` (que será obtida através do uso do `ConnectionProvider` nos *handlers*).
 
 ### Processamento de erros
 
-(_describe how errors are handled and communicated to the application user_).
+Todos os erros são lançados através de exceções e estas exceções lançadas durante o decorrer da aplicação
+são todas tratadas na classe `App`. Caso a exceção tenha como fonte causas internas ou expectáveis então
+uma `View` com a descrição do erro será apresentada ao utilizador. Caso a exceção tenha como origem a má
+configuração do ambiente onde a aplicação está a correr, o *stack trace* da mesma será apresentado ao
+utilizador para que este possa partilhar/resolver.
+
+As exceções expectáveis pela aplicação deverão ser *wrapped* na classe `RouteException`, ou seja, a exceção
+original não passa para o método chamador, mas sim a `RouteException` que contém informação sobre o erro.
 
 ## Avaliação crítica
 
-(_enumerate the functionality that is not concluded and the identified defects_)
+Nesta fase foram realizados todos os objectivos propostos pelo enunciado da mesma.
 
-(_identify improvements to be made on the next phase_)
+Pretendem-se ainda melhorar os seguintes aspectos:
+- API de construção de *queries sql* (ver [JDBI Fluent API](http://jdbi.org/#_fluent_api) por exemplo)
+- Adicionar outro tipo de exceções (derivadas ou não de `RouteException`)

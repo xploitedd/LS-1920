@@ -2,7 +2,7 @@ package pt.isel.ls.view;
 
 import java.io.PrintWriter;
 
-public class MessageView implements View {
+public class MessageView extends View {
 
     private String message;
 
@@ -11,9 +11,10 @@ public class MessageView implements View {
     }
 
     @Override
-    public void render(PrintWriter writer) {
+    public void renderText(PrintWriter writer) {
         writer.println("---------------------------------------------------------------------------");
         writer.println("\t" + message);
         writer.println("---------------------------------------------------------------------------");
     }
+
 }

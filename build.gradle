@@ -16,6 +16,8 @@ dependencies {
     testCompile fileTree(dir: 'vendor/test', include: '*.jar')
 }
 
+compileJava.options.encoding = 'UTF-8'
+
 jar {
     from {
         configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }

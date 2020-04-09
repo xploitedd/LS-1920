@@ -4,9 +4,9 @@ import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import pt.isel.ls.DatasourceUtils;
-import pt.isel.ls.router.RouteException;
-import pt.isel.ls.router.RouteRequest;
-import pt.isel.ls.router.RouteResponse;
+import pt.isel.ls.router.response.RouteException;
+import pt.isel.ls.router.request.RouteRequest;
+import pt.isel.ls.router.response.RouteResponse;
 import pt.isel.ls.sql.ConnectionProvider;
 import pt.isel.ls.view.IdentifierView;
 

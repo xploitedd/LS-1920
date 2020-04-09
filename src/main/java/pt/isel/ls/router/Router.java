@@ -6,6 +6,12 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import pt.isel.ls.handlers.RouteHandler;
+import pt.isel.ls.router.request.Method;
+import pt.isel.ls.router.request.Parameter;
+import pt.isel.ls.router.request.Path;
+import pt.isel.ls.router.request.RouteRequest;
+import pt.isel.ls.router.response.RouteException;
+import pt.isel.ls.router.response.RouteResponse;
 import pt.isel.ls.view.RouteExceptionView;
 
 /**

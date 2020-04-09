@@ -1,4 +1,6 @@
-package pt.isel.ls.router;
+package pt.isel.ls.router.request;
+
+import pt.isel.ls.router.response.RouteException;
 
 public class Parameter {
 

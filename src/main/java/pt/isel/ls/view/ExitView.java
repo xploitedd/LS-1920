@@ -1,12 +1,12 @@
 package pt.isel.ls.view;
 
 import java.io.PrintWriter;
-import pt.isel.ls.router.RouteException;
+import pt.isel.ls.router.response.RouteException;
 
-public final class ExitView implements View {
+public final class ExitView extends View {
 
     @Override
-    public void render(PrintWriter writer) {
+    public void renderText(PrintWriter writer) {
         writer.println("Closing Application. Bye!");
         writer.close();
         try {
@@ -14,7 +14,7 @@ public final class ExitView implements View {
             System.exit(0);
         } catch (InterruptedException e) {
             new RouteExceptionView(new RouteException(e.getMessage()))
-                    .render(writer);
+                    .renderText(writer);
         }
     }
 
