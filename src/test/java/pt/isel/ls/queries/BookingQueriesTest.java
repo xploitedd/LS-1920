@@ -123,5 +123,4 @@ public class BookingQueriesTest {
         Assert.assertEquals(end, test.getEnd());
         conn.close();
     }
-
 }

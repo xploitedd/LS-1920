@@ -3,6 +3,7 @@ package pt.isel.ls.sql.queries;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.LinkedList;
 import pt.isel.ls.model.Booking;
@@ -158,6 +159,25 @@ public class BookingQueries extends DatabaseQueries {
         }
 
         return results;
+    }
+
+    public Booking editBooking(int rid, int bid, int newUid, Timestamp newBegin, long duration) throws SQLException {
+        Timestamp newEnd = new Timestamp(newBegin.getTime() + duration);
+
+        PreparedStatement update = conn.prepareStatement(
+                "UPDATE booking SET uid = ?, begin = ?, \"end\" = ? WHERE bid = ?"
+        );
+        update.setInt(1, newUid);
+        update.setTimestamp(2, newBegin);
+        update.setTimestamp(3, newEnd);
+        update.setInt(4, bid);
+        int rowCount = update.executeUpdate();
+
+        Booking booking = null;
+        if (rowCount > 0) {
+            booking = new Booking(bid, rid, newUid, newBegin, newEnd);
+        }
+        return booking;
     }
 
 }
