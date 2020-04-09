@@ -1,28 +1,32 @@
 package pt.isel.ls.dsl.elements;
 
-public abstract class Element {
+import java.io.IOException;
+import java.io.Writer;
 
-    protected Element[] children;
+public abstract class Element extends Node {
 
-    public Element(Element... children) {
+    protected Node[] children;
+
+    public Element(Node... children) {
         this.children = children;
     }
 
-    protected abstract String getElementName();
+    @Override
+    public void write(Writer writer) throws IOException {
+        writer.write(getOpeningTag());
+        for (Node n : children) {
+            n.write(writer);
+        }
 
-    protected String getOpeningTag() {
-        return "<" + getElementName() + ">";
-    }
-
-    protected String getClosingTag() {
-        return "</" + getElementName() + ">";
+        writer.write(getClosingTag());
+        writer.flush();
     }
 
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder(getOpeningTag());
-        for (Element c : children) {
-            sb.append(c.toString());
+        for (Node n : children) {
+            sb.append(n.toString());
         }
 
         return sb.append(getClosingTag()).toString();
