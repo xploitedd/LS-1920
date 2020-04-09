@@ -68,7 +68,7 @@ public class PutBookingHandlerTest {
     }
 
     @Test
-    public void testExecute() throws RouteException {
+    public void testExecute() throws RouteException, IOException {
         long b = Timestamp.valueOf(LocalDateTime.of(2020,12,12,10,10)).getTime();
         long d = Timestamp.valueOf(LocalDateTime.of(2020,12,12,10,50)).getTime();
 
