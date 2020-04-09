@@ -1,6 +1,6 @@
 package pt.isel.ls.dsl.elements;
 
-public class HElement extends TextElement {
+public class HElement extends TextNode {
 
     private int headerLevel;
 
@@ -10,7 +10,7 @@ public class HElement extends TextElement {
     }
 
     @Override
-    protected String getElementName() {
+    protected String getNodeName() {
         return "h" + headerLevel;
     }
 

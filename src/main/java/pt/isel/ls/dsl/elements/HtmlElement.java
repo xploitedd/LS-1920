@@ -7,7 +7,7 @@ public class HtmlElement extends Element {
     }
 
     @Override
-    protected String getElementName() {
+    protected String getNodeName() {
         return "html";
     }
 

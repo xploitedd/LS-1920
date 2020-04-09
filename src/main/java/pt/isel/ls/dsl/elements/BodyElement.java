@@ -2,12 +2,12 @@ package pt.isel.ls.dsl.elements;
 
 public class BodyElement extends Element {
 
-    public BodyElement(Element... children) {
+    public BodyElement(Node... children) {
         super(children);
     }
 
     @Override
-    protected String getElementName() {
+    protected String getNodeName() {
         return "body";
     }
 

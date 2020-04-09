@@ -1,5 +1,7 @@
 package pt.isel.ls.dsl;
 
+import java.io.IOException;
+import java.io.StringWriter;
 import org.junit.Test;
 import pt.isel.ls.dsl.elements.Element;
 
@@ -14,7 +16,7 @@ import static pt.isel.ls.dsl.Dsl.title;
 public class DslTest {
 
     @Test
-    public void testResultingHtml() {
+    public void testResultingHtml() throws IOException {
         Element html =
                 html(
                         head(
@@ -29,7 +31,9 @@ public class DslTest {
         String parsedHtml = "<html><head><title>Hello World!</title></head>"
                 + "<body><h1>Hello World!</h1><h2>This is a subtitle</h2></body></html>";
 
-        assertEquals(parsedHtml, html.toString());
+        StringWriter writer = new StringWriter();
+        html.write(writer);
+        assertEquals(parsedHtml, writer.toString());
     }
 
 }
