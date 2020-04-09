@@ -6,6 +6,9 @@ import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.util.Scanner;
 import org.postgresql.ds.PGSimpleDataSource;
+
+import javax.sql.DataSource;
+
 import pt.isel.ls.handlers.ExitHandler;
 import pt.isel.ls.handlers.GetLabeledRoomsHandler;
 import pt.isel.ls.handlers.GetLabelsHandler;
@@ -17,9 +20,7 @@ import pt.isel.ls.handlers.PostBookingHandler;
 import pt.isel.ls.handlers.PostLabelHandler;
 import pt.isel.ls.handlers.PostRoomHandler;
 import pt.isel.ls.handlers.PostUserHandler;
-
-import javax.sql.DataSource;
-
+import pt.isel.ls.handlers.PutBookingHandler;
 import pt.isel.ls.router.request.HeaderType;
 import pt.isel.ls.router.request.Method;
 import pt.isel.ls.router.request.RouteRequest;
@@ -75,6 +76,8 @@ public class App {
                 new PostBookingHandler(connProvider));
         router.registerRoute(Method.GET, RouteTemplate.of("/rooms/{rid}/bookings/{bid}?"),
                 new GetRoomBookingsHandler(connProvider));
+        router.registerRoute(Method.PUT, RouteTemplate.of("/rooms/{rid}/bookings/{bid}"),
+                new PutBookingHandler(connProvider));
 
         // User Handlers
         router.registerRoute(Method.POST, RouteTemplate.of("/users"),
