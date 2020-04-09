@@ -71,7 +71,7 @@ public class GetUserBookingsHandlerTest {
     }
 
     @Test
-    public void testExecute() throws RouteException {
+    public void testExecute() throws RouteException, IOException {
         Table table = new Table("Booking Id", "Room Id", "Begin time", "End time");
         table.addTableRow(Integer.toString(bid), Integer.toString(uid), bTime.toString(),eTime.toString());
 

@@ -1,7 +1,8 @@
-package pt.isel.ls.dsl.elements;
+package pt.isel.ls.dsl.text;
 
 import java.io.IOException;
 import java.io.Writer;
+import pt.isel.ls.dsl.Node;
 
 public abstract class TextNode extends Node {
 

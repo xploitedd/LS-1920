@@ -34,7 +34,7 @@ public class PostBookingHandlerTest {
     }
 
     @Test
-    public void testExecute() throws RouteException {
+    public void testExecute() throws RouteException, IOException {
         RouteResponse expected = new RouteResponse(new IdentifierView("booking",1));
 
         HashMap<String, Parameter> map = new HashMap<>();

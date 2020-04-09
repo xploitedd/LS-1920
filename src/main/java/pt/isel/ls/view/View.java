@@ -1,6 +1,15 @@
 package pt.isel.ls.view;
 
+import java.io.IOException;
 import java.io.PrintWriter;
+import pt.isel.ls.dsl.Node;
+import pt.isel.ls.dsl.elements.Element;
+
+import static pt.isel.ls.dsl.Dsl.body;
+import static pt.isel.ls.dsl.Dsl.head;
+import static pt.isel.ls.dsl.Dsl.html;
+import static pt.isel.ls.dsl.Dsl.p;
+import static pt.isel.ls.dsl.Dsl.title;
 
 public abstract class View {
 
@@ -9,17 +18,23 @@ public abstract class View {
      * @param type render type
      * @param writer writer where to render this view
      */
-    public final void render(ViewType type, PrintWriter writer) {
+    public final void render(ViewType type, PrintWriter writer) throws IOException {
         if (type == ViewType.HTML) {
-            renderHtml(writer);
+            Element html =
+                    html(
+                            head(title("Placeholder Title")),
+                            body(getHtmlBody())
+                    );
+
+            html.write(writer);
+            writer.println();
         } else {
             renderText(writer);
         }
     }
 
-    protected void renderHtml(PrintWriter writer) {
-        // by default renderHtml renders in text mode
-        renderText(writer);
+    protected Node getHtmlBody() {
+        return p("No html representation available!");
     }
 
     protected abstract void renderText(PrintWriter writer);

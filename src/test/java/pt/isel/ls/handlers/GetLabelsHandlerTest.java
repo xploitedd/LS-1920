@@ -30,7 +30,7 @@ public class GetLabelsHandlerTest {
     }
 
     @Test
-    public void testExecute() throws SQLException, RouteException {
+    public void testExecute() throws SQLException, RouteException, IOException {
         Table table = new Table("Label Id", "Name");
         table.addTableRow(lid, name);
 

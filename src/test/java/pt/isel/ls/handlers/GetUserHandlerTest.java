@@ -38,7 +38,7 @@ public class GetUserHandlerTest {
     }
 
     @Test
-    public void testExecuteGetUsers() throws RouteException {
+    public void testExecuteGetUsers() throws RouteException, IOException {
         Table table = new Table("User Id", "Name", "Email");
         table.addTableRow(uid, name, mail);
 
@@ -51,7 +51,7 @@ public class GetUserHandlerTest {
     }
 
     @Test
-    public void testExecuteGetUser() throws RouteException {
+    public void testExecuteGetUser() throws RouteException, IOException {
         Table table = new Table("User Id", "Name", "Email");
         table.addTableRow(uid, name, mail);
 

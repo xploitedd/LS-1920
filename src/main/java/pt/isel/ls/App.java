@@ -2,6 +2,7 @@ package pt.isel.ls;
 
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.util.Scanner;
@@ -29,7 +30,7 @@ import pt.isel.ls.router.RouteTemplate;
 import pt.isel.ls.router.Router;
 import pt.isel.ls.router.response.RouteException;
 import pt.isel.ls.sql.ConnectionProvider;
-import pt.isel.ls.view.RouteExceptionView;
+import pt.isel.ls.view.ExceptionView;
 import pt.isel.ls.view.ViewType;
 
 public class App {
@@ -54,7 +55,13 @@ public class App {
 
     public static void main(String[] args) {
         App app = new App();
-        app.startApp();
+
+        try {
+            app.startApp();
+        } catch (IOException e) {
+            // handle unexpected exceptions
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -99,7 +106,7 @@ public class App {
     /**
      * Handles console app user interaction
      */
-    private void startApp() {
+    private void startApp() throws IOException {
         Scanner scanner = new Scanner(System.in);
         // for needed where to print the user input character
         for ( ; ; ) {
@@ -129,9 +136,9 @@ public class App {
 
                     response.getView().render(viewType, pw);
                     pw.flush();
-                } catch (RouteException e) {
+                } catch (RouteException | IOException e) {
                     PrintWriter pw = new PrintWriter(output);
-                    new RouteExceptionView(e).render(viewType, pw);
+                    new ExceptionView(e).render(viewType, pw);
                     pw.flush();
                 }
             }

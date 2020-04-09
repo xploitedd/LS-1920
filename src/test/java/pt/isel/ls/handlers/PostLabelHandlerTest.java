@@ -26,7 +26,7 @@ public class PostLabelHandlerTest {
     }
 
     @Test
-    public void testExecute() throws SQLException, RouteException {
+    public void testExecute() throws RouteException, IOException {
         RouteResponse expected = new RouteResponse(new IdentifierView("label",1));
 
         RouteResponse result = new PostLabelHandler(new ConnectionProvider(dSource))

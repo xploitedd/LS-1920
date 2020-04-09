@@ -11,7 +11,7 @@ public class MessageView extends View {
     }
 
     @Override
-    public void renderText(PrintWriter writer) {
+    protected void renderText(PrintWriter writer) {
         writer.println("---------------------------------------------------------------------------");
         writer.println("\t" + message);
         writer.println("---------------------------------------------------------------------------");

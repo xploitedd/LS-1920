@@ -1,4 +1,4 @@
-package pt.isel.ls.dsl.elements;
+package pt.isel.ls.dsl;
 
 import java.io.IOException;
 import java.io.Writer;

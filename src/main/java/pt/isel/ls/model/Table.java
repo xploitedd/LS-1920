@@ -2,8 +2,10 @@ package pt.isel.ls.model;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Stream;
 
 public class Table {
 
@@ -42,6 +44,14 @@ public class Table {
 
         rows.add(Arrays.asList(values));
         checkMaxColumnSize(values);
+    }
+
+    public Stream<String> getHeader() {
+        return rows.get(0).stream();
+    }
+
+    public Stream<Stream<String>> getRowsStream() {
+        return rows.stream().skip(1).map(Collection::stream);
     }
 
     /**

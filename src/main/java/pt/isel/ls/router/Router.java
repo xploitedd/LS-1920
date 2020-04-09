@@ -12,7 +12,7 @@ import pt.isel.ls.router.request.Path;
 import pt.isel.ls.router.request.RouteRequest;
 import pt.isel.ls.router.response.RouteException;
 import pt.isel.ls.router.response.RouteResponse;
-import pt.isel.ls.view.RouteExceptionView;
+import pt.isel.ls.view.ExceptionView;
 
 /**
  * Router is responsible for routing
@@ -57,7 +57,7 @@ public class Router {
             }
         }
 
-        return r -> new RouteResponse(new RouteExceptionView(new RouteNotFoundException(r.getPath())))
+        return r -> new RouteResponse(new ExceptionView(new RouteNotFoundException(r.getPath())))
                 .setStatusCode(404);
     }
 

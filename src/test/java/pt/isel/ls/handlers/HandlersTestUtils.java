@@ -1,5 +1,6 @@
 package pt.isel.ls.handlers;
 
+import java.io.IOException;
 import pt.isel.ls.router.response.RouteResponse;
 import pt.isel.ls.view.ViewType;
 
@@ -8,7 +9,7 @@ import java.io.StringWriter;
 
 public class HandlersTestUtils {
 
-    static boolean routeResponseEquals(RouteResponse a, RouteResponse b) {
+    static boolean routeResponseEquals(RouteResponse a, RouteResponse b) throws IOException {
         StringWriter sw = new StringWriter();
         String obtained;
         try (PrintWriter pw = new PrintWriter(sw)) {

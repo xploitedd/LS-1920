@@ -43,7 +43,7 @@ public class GetRoomsHandlerTest {
     }
 
     @Test
-    public void testExecuteAllRooms() throws SQLException, RouteException {
+    public void testExecuteAllRooms() throws RouteException, IOException {
         Table table = new Table("RID", "Name", "Location", "Capacity", "Description");
         table.addTableRow(rid, name, location, capacity, desc);
 
@@ -56,7 +56,7 @@ public class GetRoomsHandlerTest {
     }
 
     @Test
-    public void testExecuteGetRoom() throws RouteException {
+    public void testExecuteGetRoom() throws RouteException, IOException {
         Table table = new Table("RID", "Name", "Location", "Capacity", "Description");
         table.addTableRow(rid, name, location, capacity, desc);
 

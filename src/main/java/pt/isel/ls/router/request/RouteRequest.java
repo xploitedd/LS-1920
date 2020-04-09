@@ -136,9 +136,12 @@ public class RouteRequest {
                     headers = Optional.of(parseHeaders(requestParts[2]));
                     parameters = Optional.of(parseParameters(requestParts[3]));
                 } else {
-                    // if there are only 3 request parts then we assume the request did not include headers
-                    // TODO: maybe check if it's headers or parameters???
-                    parameters = Optional.of(parseParameters(requestParts[2]));
+                    // use try-catch to verify if the third request part are the parameters or the headers
+                    try {
+                        parameters = Optional.of(parseParameters(requestParts[2]));
+                    } catch (RouteException e) {
+                        headers = Optional.of(parseHeaders(requestParts[2]));
+                    }
                 }
             }
 

@@ -26,7 +26,7 @@ public class PostUserHandlerTest {
     }
 
     @Test
-    public void testExecute() throws RouteException {
+    public void testExecute() throws RouteException, IOException {
         RouteResponse expected = new RouteResponse(new IdentifierView("user",1));
 
         RouteResponse result = new PostUserHandler(new ConnectionProvider(dSource))

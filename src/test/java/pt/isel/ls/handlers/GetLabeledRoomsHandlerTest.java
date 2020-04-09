@@ -62,7 +62,7 @@ public class GetLabeledRoomsHandlerTest {
     }
 
     @Test
-    public void testExecute() throws SQLException, RouteException {
+    public void testExecute() throws RouteException, IOException {
         Table table = new Table("RID", "Name", "Location", "Capacity", "Description");
         table.addTableRow(Integer.toString(rid), name, location, capacity, desc);
 

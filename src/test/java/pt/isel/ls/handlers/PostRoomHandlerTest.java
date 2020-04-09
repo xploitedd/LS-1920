@@ -26,7 +26,7 @@ public class PostRoomHandlerTest {
     }
 
     @Test
-    public void testExecute() throws RouteException {
+    public void testExecute() throws RouteException, IOException {
         RouteResponse expected = new RouteResponse(new IdentifierView("room",1));
 
         RouteResponse result = new PostRoomHandler(new ConnectionProvider(dSource))

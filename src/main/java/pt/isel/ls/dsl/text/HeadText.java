@@ -1,10 +1,10 @@
-package pt.isel.ls.dsl.elements;
+package pt.isel.ls.dsl.text;
 
-public class HElement extends TextNode {
+public class HeadText extends TextNode {
 
     private int headerLevel;
 
-    public HElement(int headerLevel, String text) {
+    public HeadText(int headerLevel, String text) {
         super(text);
         this.headerLevel = headerLevel;
     }
