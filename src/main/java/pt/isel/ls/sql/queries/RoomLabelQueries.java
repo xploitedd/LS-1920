@@ -22,16 +22,19 @@ public class RoomLabelQueries extends DatabaseQueries {
      * @throws Throwable any exception that occurs
      */
     public void addRoomLabels(List<Label> labels, int rid) throws Throwable {
+        if (labels.size() == 0) {
+            return;
+        }
+        String insertStatement = "INSERT INTO room_label (lid, rid) VALUES (?, ?)"
+                + ", (?, ?)".repeat(labels.size() - 1) + ';';
+        PreparedStatement rl = conn.prepareStatement(insertStatement);
+        int i = 0;
         for (Label label : labels) {
             //insert rid-lid pairs into ROOM_LABEL
-            PreparedStatement rl = conn.prepareStatement(
-                    "INSERT INTO room_label (lid, rid) VALUES (?, ?);"
-            );
-
-            rl.setInt(1, label.getLid());
-            rl.setInt(2, rid);
-            rl.execute();
+            rl.setInt(++i, label.getLid());
+            rl.setInt(++i, rid);
         }
+        rl.execute();
     }
 
     /**
