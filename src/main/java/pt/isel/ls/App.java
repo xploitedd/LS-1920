@@ -15,6 +15,7 @@ import pt.isel.ls.handlers.GetLabeledRoomsHandler;
 import pt.isel.ls.handlers.GetLabelsHandler;
 import pt.isel.ls.handlers.GetRoomBookingsHandler;
 import pt.isel.ls.handlers.GetRoomsHandler;
+import pt.isel.ls.handlers.GetTimeHandler;
 import pt.isel.ls.handlers.GetUserBookingsHandler;
 import pt.isel.ls.handlers.GetUserHandler;
 import pt.isel.ls.handlers.PostBookingHandler;
@@ -71,6 +72,8 @@ public class App {
         // Register All Routes
         router.registerRoute(Method.EXIT, RouteTemplate.of("/"),
                 new ExitHandler());
+        router.registerRoute(Method.GET, RouteTemplate.of("/time"),
+                new GetTimeHandler());
 
         // Room Handlers
         router.registerRoute(Method.POST, RouteTemplate.of("/rooms"),
@@ -84,6 +87,8 @@ public class App {
         router.registerRoute(Method.GET, RouteTemplate.of("/rooms/{rid}/bookings/{bid}?"),
                 new GetRoomBookingsHandler(connProvider));
         router.registerRoute(Method.PUT, RouteTemplate.of("/rooms/{rid}/bookings/{bid}"),
+                new PutBookingHandler(connProvider));
+        router.registerRoute(Method.DELETE, RouteTemplate.of("/rooms/{rid}/bookings/{bid}"),
                 new PutBookingHandler(connProvider));
 
         // User Handlers
