@@ -7,7 +7,7 @@ import pt.isel.ls.DatasourceUtils;
 import pt.isel.ls.model.Table;
 import pt.isel.ls.router.response.RouteException;
 import pt.isel.ls.router.request.RouteRequest;
-import pt.isel.ls.router.response.RouteResponse;
+import pt.isel.ls.router.response.HandlerResponse;
 import pt.isel.ls.sql.ConnectionProvider;
 import pt.isel.ls.view.TableView;
 
@@ -47,9 +47,9 @@ public class GetRoomsHandlerTest {
         Table table = new Table("RID", "Name", "Location", "Capacity", "Description");
         table.addTableRow(rid, name, location, capacity, desc);
 
-        RouteResponse expected = new RouteResponse(new TableView(table));
+        HandlerResponse expected = new HandlerResponse(new TableView(table));
 
-        RouteResponse result = new GetRoomsHandler(new ConnectionProvider(dSource))
+        HandlerResponse result = new GetRoomsHandler(new ConnectionProvider(dSource))
                 .execute(RouteRequest.of("GET /rooms"));
 
         Assert.assertTrue(routeResponseEquals(expected,result));
@@ -60,9 +60,9 @@ public class GetRoomsHandlerTest {
         Table table = new Table("RID", "Name", "Location", "Capacity", "Description");
         table.addTableRow(rid, name, location, capacity, desc);
 
-        RouteResponse expected = new RouteResponse(new TableView(table));
+        HandlerResponse expected = new HandlerResponse(new TableView(table));
 
-        RouteResponse result = new GetRoomsHandler(new ConnectionProvider(dSource))
+        HandlerResponse result = new GetRoomsHandler(new ConnectionProvider(dSource))
                 .execute(RouteRequest.of("GET /rooms/1"));
 
         Assert.assertTrue(routeResponseEquals(expected,result));

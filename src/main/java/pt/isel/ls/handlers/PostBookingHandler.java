@@ -3,7 +3,7 @@ package pt.isel.ls.handlers;
 import pt.isel.ls.model.Booking;
 import pt.isel.ls.router.response.RouteException;
 import pt.isel.ls.router.request.RouteRequest;
-import pt.isel.ls.router.response.RouteResponse;
+import pt.isel.ls.router.response.HandlerResponse;
 import pt.isel.ls.sql.ConnectionProvider;
 import pt.isel.ls.sql.queries.BookingQueries;
 import pt.isel.ls.view.IdentifierView;
@@ -19,7 +19,7 @@ public final class PostBookingHandler implements RouteHandler {
     }
 
     @Override
-    public RouteResponse execute(RouteRequest request) throws RouteException {
+    public HandlerResponse execute(RouteRequest request) throws RouteException {
         int rid = request.getPathParameter("rid").toInt();
         int uid = request.getParameter("uid").get(0).toInt();
         long b = request.getParameter("begin").get(0).toLong();
@@ -31,6 +31,6 @@ public final class PostBookingHandler implements RouteHandler {
         Booking booking = provider.execute(conn ->
                 new BookingQueries(conn).createNewBooking(rid, uid, begin, end));
 
-        return new RouteResponse(new IdentifierView("booking", booking.getBid()));
+        return new HandlerResponse(new IdentifierView("booking", booking.getBid()));
     }
 }

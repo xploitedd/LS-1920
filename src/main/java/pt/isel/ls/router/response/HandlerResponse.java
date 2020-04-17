@@ -3,7 +3,7 @@ package pt.isel.ls.router.response;
 import java.util.Objects;
 import pt.isel.ls.view.View;
 
-public class RouteResponse {
+public class HandlerResponse {
 
     private final View view;
     private String contentType;
@@ -13,7 +13,7 @@ public class RouteResponse {
      * Creates a new RouteResponse with a view
      * @param view view associated with this response
      */
-    public RouteResponse(View view) {
+    public HandlerResponse(View view) {
         this.view = view;
         this.contentType = "application/text";
         this.statusCode = 200;
@@ -42,7 +42,7 @@ public class RouteResponse {
      * @param statusCode status code to be set
      * @return the modified instance of RouteResponse
      */
-    public RouteResponse setStatusCode(int statusCode) {
+    public HandlerResponse setStatusCode(int statusCode) {
         this.statusCode = statusCode;
         return this;
     }
@@ -52,7 +52,7 @@ public class RouteResponse {
      * @param contentType content type to be set
      * @return the modified instance of RouteResponse
      */
-    public RouteResponse setContentType(String contentType) {
+    public HandlerResponse setContentType(String contentType) {
         this.contentType = contentType;
         return this;
     }
@@ -75,7 +75,7 @@ public class RouteResponse {
             return false;
         }
 
-        RouteResponse that = (RouteResponse) o;
+        HandlerResponse that = (HandlerResponse) o;
         return statusCode == that.statusCode
                 && view.equals(that.view)
                 && contentType.equals(that.contentType);

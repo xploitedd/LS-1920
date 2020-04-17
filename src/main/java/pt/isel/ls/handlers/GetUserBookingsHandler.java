@@ -3,7 +3,7 @@ package pt.isel.ls.handlers;
 import pt.isel.ls.model.Booking;
 import pt.isel.ls.model.Table;
 import pt.isel.ls.router.request.RouteRequest;
-import pt.isel.ls.router.response.RouteResponse;
+import pt.isel.ls.router.response.HandlerResponse;
 import pt.isel.ls.router.response.RouteException;
 import pt.isel.ls.sql.ConnectionProvider;
 import pt.isel.ls.sql.queries.BookingQueries;
@@ -24,7 +24,7 @@ public final class GetUserBookingsHandler implements RouteHandler {
      * @throws RouteException Sent to the router
      */
     @Override
-    public RouteResponse execute(RouteRequest request) throws RouteException {
+    public HandlerResponse execute(RouteRequest request) throws RouteException {
         int uid = request.getPathParameter("uid").toInt();
         Iterable<Booking> iter = provider.execute(conn ->
                 new BookingQueries(conn).getBookingsByUid(uid));
@@ -35,7 +35,7 @@ public final class GetUserBookingsHandler implements RouteHandler {
                     booking.getBegin().toString(), booking.getEnd().toString());
         }
 
-        return new RouteResponse(new TableView(table));
+        return new HandlerResponse(new TableView(table));
 
     }
 }

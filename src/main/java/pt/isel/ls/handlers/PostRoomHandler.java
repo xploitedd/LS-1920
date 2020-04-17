@@ -7,7 +7,7 @@ import pt.isel.ls.model.Label;
 import pt.isel.ls.model.Room;
 import pt.isel.ls.router.request.Parameter;
 import pt.isel.ls.router.request.RouteRequest;
-import pt.isel.ls.router.response.RouteResponse;
+import pt.isel.ls.router.response.HandlerResponse;
 import pt.isel.ls.router.response.RouteException;
 import pt.isel.ls.sql.ConnectionProvider;
 import pt.isel.ls.sql.queries.LabelQueries;
@@ -23,7 +23,7 @@ public final class PostRoomHandler implements RouteHandler {
     }
 
     @Override
-    public RouteResponse execute(RouteRequest request) throws RouteException {
+    public HandlerResponse execute(RouteRequest request) throws RouteException {
         Optional<List<Parameter>> optLabels = request.getOptionalParameter("label");
         String desc = request.getOptionalParameter("description")
                 .map(Object::toString).orElse(null);
@@ -44,7 +44,7 @@ public final class PostRoomHandler implements RouteHandler {
             return new RoomQueries(conn).createNewRoom(name, location, capacity, desc, labels);
         });
 
-        return new RouteResponse(new IdentifierView("room",inserted.getRid()));
+        return new HandlerResponse(new IdentifierView("room",inserted.getRid()));
 
     }
 }

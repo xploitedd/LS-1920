@@ -8,7 +8,7 @@ import pt.isel.ls.model.Table;
 import pt.isel.ls.router.request.Parameter;
 import pt.isel.ls.router.response.RouteException;
 import pt.isel.ls.router.request.RouteRequest;
-import pt.isel.ls.router.response.RouteResponse;
+import pt.isel.ls.router.response.HandlerResponse;
 import pt.isel.ls.sql.ConnectionProvider;
 import pt.isel.ls.view.TableView;
 
@@ -81,8 +81,8 @@ public class GetUserBookingsHandlerTest {
         RouteRequest testRequest = RouteRequest.of("GET /users/1/bookings");
         testRequest.setPathParameters(map);
         
-        RouteResponse expected = new RouteResponse(new TableView(table));
-        RouteResponse result = new GetUserBookingsHandler(new ConnectionProvider(dSource))
+        HandlerResponse expected = new HandlerResponse(new TableView(table));
+        HandlerResponse result = new GetUserBookingsHandler(new ConnectionProvider(dSource))
                 .execute(testRequest);
 
         Assert.assertTrue(routeResponseEquals(expected,result));

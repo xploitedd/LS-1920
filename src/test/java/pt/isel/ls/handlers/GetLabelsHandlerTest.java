@@ -6,7 +6,7 @@ import org.junit.Test;
 import pt.isel.ls.DatasourceUtils;
 import pt.isel.ls.model.Table;
 import pt.isel.ls.router.response.RouteException;
-import pt.isel.ls.router.response.RouteResponse;
+import pt.isel.ls.router.response.HandlerResponse;
 import pt.isel.ls.sql.ConnectionProvider;
 import pt.isel.ls.view.TableView;
 
@@ -42,10 +42,10 @@ public class GetLabelsHandlerTest {
 
         conn.close();
 
-        RouteResponse result = new GetLabelsHandler(new ConnectionProvider(dSource))
+        HandlerResponse result = new GetLabelsHandler(new ConnectionProvider(dSource))
                 .execute(null);
 
-        RouteResponse expected = new RouteResponse(new TableView(table));
+        HandlerResponse expected = new HandlerResponse(new TableView(table));
         Assert.assertTrue(routeResponseEquals(expected,result));
 
     }

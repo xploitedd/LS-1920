@@ -3,7 +3,7 @@ package pt.isel.ls.handlers;
 import pt.isel.ls.model.Room;
 import pt.isel.ls.model.Table;
 import pt.isel.ls.router.request.RouteRequest;
-import pt.isel.ls.router.response.RouteResponse;
+import pt.isel.ls.router.response.HandlerResponse;
 import pt.isel.ls.router.response.RouteException;
 import pt.isel.ls.sql.ConnectionProvider;
 import pt.isel.ls.sql.queries.RoomLabelQueries;
@@ -24,7 +24,7 @@ public final class GetLabeledRoomsHandler implements RouteHandler {
      */
 
     @Override
-    public RouteResponse execute(RouteRequest request) throws RouteException {
+    public HandlerResponse execute(RouteRequest request) throws RouteException {
         int lid = request.getPathParameter("lid").toInt();
 
         Iterable<Room> rooms = provider.execute(conn ->
@@ -36,6 +36,6 @@ public final class GetLabeledRoomsHandler implements RouteHandler {
                     String.valueOf(room.getCapacity()), room.getDescription());
         }
 
-        return new RouteResponse(new TableView(table));
+        return new HandlerResponse(new TableView(table));
     }
 }

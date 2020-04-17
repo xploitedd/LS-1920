@@ -8,7 +8,7 @@ import pt.isel.ls.DatasourceUtils;
 import pt.isel.ls.router.request.Parameter;
 import pt.isel.ls.router.request.RouteRequest;
 import pt.isel.ls.router.response.RouteException;
-import pt.isel.ls.router.response.RouteResponse;
+import pt.isel.ls.router.response.HandlerResponse;
 import pt.isel.ls.sql.ConnectionProvider;
 import pt.isel.ls.view.IdentifierView;
 
@@ -79,10 +79,10 @@ public class PutBookingHandlerTest {
         RouteRequest testRequest = RouteRequest.of("PUT /rooms/1/bookings/1 uid=1&begin=" + b + "&duration=" + d);
         testRequest.setPathParameters(map);
 
-        RouteResponse result = new PutBookingHandler(new ConnectionProvider(dSource))
+        HandlerResponse result = new PutBookingHandler(new ConnectionProvider(dSource))
                 .execute(testRequest);
 
-        RouteResponse expected = new RouteResponse(new IdentifierView("updated", "booking",1));
+        HandlerResponse expected = new HandlerResponse(new IdentifierView("updated", "booking",1));
         Assert.assertTrue(routeResponseEquals(expected,result));
     }
 }

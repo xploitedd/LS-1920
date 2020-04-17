@@ -8,7 +8,7 @@ import pt.isel.ls.model.Table;
 import pt.isel.ls.router.request.Parameter;
 import pt.isel.ls.router.response.RouteException;
 import pt.isel.ls.router.request.RouteRequest;
-import pt.isel.ls.router.response.RouteResponse;
+import pt.isel.ls.router.response.HandlerResponse;
 import pt.isel.ls.sql.ConnectionProvider;
 import pt.isel.ls.view.TableView;
 
@@ -66,14 +66,14 @@ public class GetLabeledRoomsHandlerTest {
         Table table = new Table("RID", "Name", "Location", "Capacity", "Description");
         table.addTableRow(Integer.toString(rid), name, location, capacity, desc);
 
-        RouteResponse expected = new RouteResponse(new TableView(table));
+        HandlerResponse expected = new HandlerResponse(new TableView(table));
 
         HashMap<String, Parameter> map = new HashMap<>();
         map.put("lid", new Parameter("1"));
 
         RouteRequest testRequest = RouteRequest.of("GET /labels/1/rooms");
         testRequest.setPathParameters(map);
-        RouteResponse result = new GetLabeledRoomsHandler(new ConnectionProvider(dSource))
+        HandlerResponse result = new GetLabeledRoomsHandler(new ConnectionProvider(dSource))
                 .execute(testRequest);
 
         Assert.assertTrue(routeResponseEquals(expected,result));

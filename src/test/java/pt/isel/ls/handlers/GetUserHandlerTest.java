@@ -7,7 +7,7 @@ import pt.isel.ls.DatasourceUtils;
 import pt.isel.ls.model.Table;
 import pt.isel.ls.router.response.RouteException;
 import pt.isel.ls.router.request.RouteRequest;
-import pt.isel.ls.router.response.RouteResponse;
+import pt.isel.ls.router.response.HandlerResponse;
 import pt.isel.ls.sql.ConnectionProvider;
 import pt.isel.ls.view.TableView;
 
@@ -42,9 +42,9 @@ public class GetUserHandlerTest {
         Table table = new Table("User Id", "Name", "Email");
         table.addTableRow(uid, name, mail);
 
-        RouteResponse expected = new RouteResponse(new TableView(table));
+        HandlerResponse expected = new HandlerResponse(new TableView(table));
 
-        RouteResponse result = new GetUserHandler(new ConnectionProvider(dSource))
+        HandlerResponse result = new GetUserHandler(new ConnectionProvider(dSource))
                 .execute(RouteRequest.of("GET /users"));
 
         Assert.assertTrue(routeResponseEquals(expected,result));
@@ -55,9 +55,9 @@ public class GetUserHandlerTest {
         Table table = new Table("User Id", "Name", "Email");
         table.addTableRow(uid, name, mail);
 
-        RouteResponse expected = new RouteResponse(new TableView(table));
+        HandlerResponse expected = new HandlerResponse(new TableView(table));
 
-        RouteResponse result = new GetUserHandler(new ConnectionProvider(dSource))
+        HandlerResponse result = new GetUserHandler(new ConnectionProvider(dSource))
                 .execute(RouteRequest.of("GET /users/1"));
 
         Assert.assertTrue(routeResponseEquals(expected,result));

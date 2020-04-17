@@ -5,7 +5,7 @@ import pt.isel.ls.model.Room;
 import pt.isel.ls.model.Table;
 import pt.isel.ls.router.request.Parameter;
 import pt.isel.ls.router.request.RouteRequest;
-import pt.isel.ls.router.response.RouteResponse;
+import pt.isel.ls.router.response.HandlerResponse;
 
 import java.util.Optional;
 
@@ -30,7 +30,7 @@ public final class GetRoomsHandler implements RouteHandler {
      * @throws RouteException Sent to the router
      */
     @Override
-    public RouteResponse execute(RouteRequest request) throws RouteException {
+    public HandlerResponse execute(RouteRequest request) throws RouteException {
         Optional<Parameter> paramRid = request.getOptionalPathParameter("rid");
         Table table;
         if (paramRid.isPresent()) {
@@ -55,6 +55,6 @@ public final class GetRoomsHandler implements RouteHandler {
             }
         }
 
-        return new RouteResponse(new TableView(table));
+        return new HandlerResponse(new TableView(table));
     }
 }

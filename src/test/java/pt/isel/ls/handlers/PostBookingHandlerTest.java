@@ -7,7 +7,7 @@ import pt.isel.ls.DatasourceUtils;
 import pt.isel.ls.router.request.Parameter;
 import pt.isel.ls.router.response.RouteException;
 import pt.isel.ls.router.request.RouteRequest;
-import pt.isel.ls.router.response.RouteResponse;
+import pt.isel.ls.router.response.HandlerResponse;
 import pt.isel.ls.sql.ConnectionProvider;
 import pt.isel.ls.view.IdentifierView;
 
@@ -35,7 +35,7 @@ public class PostBookingHandlerTest {
 
     @Test
     public void testExecute() throws RouteException, IOException {
-        RouteResponse expected = new RouteResponse(new IdentifierView("booking",1));
+        HandlerResponse expected = new HandlerResponse(new IdentifierView("booking",1));
 
         HashMap<String, Parameter> map = new HashMap<>();
         map.put("rid", new Parameter("1"));
@@ -43,7 +43,7 @@ public class PostBookingHandlerTest {
         long e = 40 * 60 * 1000; //40 minutes in ms
         RouteRequest testRequest = RouteRequest.of("POST /rooms/1/bookings uid=1&begin=" + b + "&duration=" + e);
         testRequest.setPathParameters(map);
-        RouteResponse result = new PostBookingHandler(new ConnectionProvider(dSource))
+        HandlerResponse result = new PostBookingHandler(new ConnectionProvider(dSource))
                 .execute(testRequest);
 
         Assert.assertTrue(routeResponseEquals(expected,result));

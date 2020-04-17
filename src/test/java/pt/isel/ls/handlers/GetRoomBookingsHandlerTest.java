@@ -8,7 +8,7 @@ import pt.isel.ls.model.Table;
 import pt.isel.ls.router.request.Parameter;
 import pt.isel.ls.router.response.RouteException;
 import pt.isel.ls.router.request.RouteRequest;
-import pt.isel.ls.router.response.RouteResponse;
+import pt.isel.ls.router.response.HandlerResponse;
 import pt.isel.ls.sql.ConnectionProvider;
 import pt.isel.ls.view.TableView;
 
@@ -75,14 +75,14 @@ public class GetRoomBookingsHandlerTest {
         Table table = new Table("Booking Id", "User Id", "Begin time", "End time");
         table.addTableRow(Integer.toString(bid), Integer.toString(uid), bTime.toString(), eTime.toString());
 
-        RouteResponse expected = new RouteResponse(new TableView(table));
+        HandlerResponse expected = new HandlerResponse(new TableView(table));
 
         HashMap<String, Parameter> map = new HashMap<>();
         map.put("rid", new Parameter("1"));
 
         RouteRequest testRequest = RouteRequest.of("GET /rooms/1/bookings");
         testRequest.setPathParameters(map);
-        RouteResponse result = new GetRoomBookingsHandler(new ConnectionProvider(dSource))
+        HandlerResponse result = new GetRoomBookingsHandler(new ConnectionProvider(dSource))
                 .execute(testRequest);
 
         Assert.assertTrue(routeResponseEquals(expected, result));

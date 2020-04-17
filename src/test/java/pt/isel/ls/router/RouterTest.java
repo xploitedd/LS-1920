@@ -7,7 +7,7 @@ import pt.isel.ls.router.request.Parameter;
 import pt.isel.ls.router.request.RouteRequest;
 import pt.isel.ls.router.request.RouteRequest.ParameterNotFoundException;
 import pt.isel.ls.router.response.RouteException;
-import pt.isel.ls.router.response.RouteResponse;
+import pt.isel.ls.router.response.HandlerResponse;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -21,7 +21,7 @@ public class RouterTest {
         router.registerRoute(Method.GET, RouteTemplate.of("/example"), request -> {
             assertEquals(1, request.getPath().getPathSegments().length);
             assertEquals("example", request.getPath().getPathSegments()[0]);
-            return new RouteResponse(null);
+            return new HandlerResponse(null);
         });
 
         RouteRequest request = RouteRequest.of("GET /example");
@@ -41,7 +41,7 @@ public class RouterTest {
                 fail(e.getMessage());
             }
 
-            return new RouteResponse(null);
+            return new HandlerResponse(null);
         });
 
         RouteRequest request1 = RouteRequest.of("GET /test/abc");
@@ -71,7 +71,7 @@ public class RouterTest {
                 fail(e.getMessage());
             }
 
-            return new RouteResponse(null);
+            return new HandlerResponse(null);
         });
 
         RouteRequest request = RouteRequest.of("GET /test a=b&b=a");
@@ -85,7 +85,7 @@ public class RouterTest {
         router.registerRoute(Method.GET, RouteTemplate.of("/test/{param}?"), request -> {
             assertTrue(request.getPath().getPathSegments().length >= 1);
             assertEquals("test", request.getPath().getPathSegments()[0]);
-            return new RouteResponse(null);
+            return new HandlerResponse(null);
         });
 
         RouteRequest request1 = RouteRequest.of("GET /test/abc");

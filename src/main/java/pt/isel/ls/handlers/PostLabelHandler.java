@@ -2,7 +2,7 @@ package pt.isel.ls.handlers;
 
 import pt.isel.ls.model.Label;
 import pt.isel.ls.router.request.RouteRequest;
-import pt.isel.ls.router.response.RouteResponse;
+import pt.isel.ls.router.response.HandlerResponse;
 import pt.isel.ls.router.response.RouteException;
 import pt.isel.ls.sql.ConnectionProvider;
 import pt.isel.ls.sql.queries.LabelQueries;
@@ -18,12 +18,12 @@ public final class PostLabelHandler implements RouteHandler {
     }
 
     @Override
-    public RouteResponse execute(RouteRequest request) throws RouteException {
+    public HandlerResponse execute(RouteRequest request) throws RouteException {
         String labelName = request.getParameter("name").get(0).toString();
         Label label = provider.execute(conn ->
                 new LabelQueries(conn).createNewLabel(labelName));
 
-        return new RouteResponse(new IdentifierView("label", label.getLid()));
+        return new HandlerResponse(new IdentifierView("label", label.getLid()));
     }
 
 }

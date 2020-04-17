@@ -6,7 +6,7 @@ import org.junit.Test;
 import pt.isel.ls.DatasourceUtils;
 import pt.isel.ls.router.response.RouteException;
 import pt.isel.ls.router.request.RouteRequest;
-import pt.isel.ls.router.response.RouteResponse;
+import pt.isel.ls.router.response.HandlerResponse;
 import pt.isel.ls.sql.ConnectionProvider;
 import pt.isel.ls.view.IdentifierView;
 
@@ -27,9 +27,9 @@ public class PostLabelHandlerTest {
 
     @Test
     public void testExecute() throws RouteException, IOException {
-        RouteResponse expected = new RouteResponse(new IdentifierView("label",1));
+        HandlerResponse expected = new HandlerResponse(new IdentifierView("label",1));
 
-        RouteResponse result = new PostLabelHandler(new ConnectionProvider(dSource))
+        HandlerResponse result = new PostLabelHandler(new ConnectionProvider(dSource))
                 .execute(RouteRequest.of("POST /label name=testLabel.post"));
 
         Assert.assertTrue(routeResponseEquals(expected,result));

@@ -26,7 +26,7 @@ import pt.isel.ls.handlers.PutBookingHandler;
 import pt.isel.ls.router.request.HeaderType;
 import pt.isel.ls.router.request.Method;
 import pt.isel.ls.router.request.RouteRequest;
-import pt.isel.ls.router.response.RouteResponse;
+import pt.isel.ls.router.response.HandlerResponse;
 import pt.isel.ls.router.RouteTemplate;
 import pt.isel.ls.router.Router;
 import pt.isel.ls.router.response.RouteException;
@@ -136,7 +136,7 @@ public class App {
                             }).orElse(System.out);
 
                     PrintWriter pw = new PrintWriter(output);
-                    RouteResponse response = router.getHandler(request)
+                    HandlerResponse response = router.getHandler(request)
                             .execute(request);
 
                     response.getView().render(viewType, pw);

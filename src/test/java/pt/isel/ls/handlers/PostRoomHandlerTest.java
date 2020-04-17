@@ -6,7 +6,7 @@ import org.junit.Test;
 import pt.isel.ls.DatasourceUtils;
 import pt.isel.ls.router.response.RouteException;
 import pt.isel.ls.router.request.RouteRequest;
-import pt.isel.ls.router.response.RouteResponse;
+import pt.isel.ls.router.response.HandlerResponse;
 import pt.isel.ls.sql.ConnectionProvider;
 import pt.isel.ls.view.IdentifierView;
 
@@ -27,9 +27,9 @@ public class PostRoomHandlerTest {
 
     @Test
     public void testExecute() throws RouteException, IOException {
-        RouteResponse expected = new RouteResponse(new IdentifierView("room",1));
+        HandlerResponse expected = new HandlerResponse(new IdentifierView("room",1));
 
-        RouteResponse result = new PostRoomHandler(new ConnectionProvider(dSource))
+        HandlerResponse result = new PostRoomHandler(new ConnectionProvider(dSource))
                 .execute(RouteRequest.of("POST /rooms name=testRoom&location=testLocation&capacity=44"));
 
         Assert.assertTrue(routeResponseEquals(expected,result));
