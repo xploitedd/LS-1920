@@ -22,7 +22,7 @@ public class Table {
      * @param columnNames columns of the table
      */
     public Table(String... columnNames) {
-        rows.add(Arrays.asList(columnNames));
+        rows.add(Arrays.asList((Object[]) columnNames));
 
         this.columnCount = columnNames.length;
         this.maxSizes = new ArrayList<>();

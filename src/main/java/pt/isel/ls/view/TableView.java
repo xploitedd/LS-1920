@@ -11,7 +11,8 @@ import pt.isel.ls.dsl.elements.table.TableRowElement;
 import pt.isel.ls.dsl.text.table.TableText;
 import pt.isel.ls.model.Table;
 
-import static pt.isel.ls.dsl.Dsl.*;
+import static pt.isel.ls.dsl.Dsl.table;
+import static pt.isel.ls.dsl.Dsl.tr;
 
 public class TableView extends View {
 
