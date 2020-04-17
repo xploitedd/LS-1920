@@ -15,7 +15,7 @@ import static pt.isel.ls.dsl.Dsl.*;
 
 public class TableView extends View {
 
-    private Table table;
+    private final Table table;
 
     public TableView(Table table) {
         this.table = table;
