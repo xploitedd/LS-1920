@@ -17,9 +17,11 @@ import static pt.isel.ls.dsl.Dsl.tr;
 public class TableView extends View {
 
     private final Table table;
+    private final ArrayList<TableRowElement> htmlRows;
 
     public TableView(Table table) {
         this.table = table;
+        this.htmlRows = new ArrayList<>();
     }
 
     @Override
@@ -29,20 +31,18 @@ public class TableView extends View {
 
     @Override
     protected Node getHtmlBody() {
-        ArrayList<TableRowElement> rows = new ArrayList<>();
         // map table header
-        rows.add(tr(mapToTableText(table.getHeader(), Dsl::th)));
-
+        addRow(mapToTableText(table.getHeader(), Dsl::th));
         // map table data rows
-        table.getRowsStream().forEach(r ->
-                rows.add(tr(
-                        mapToTableText(r, Dsl::td)
-                ))
-        );
+        table.getRowsStream().forEach(r -> addRow(mapToTableText(r, Dsl::td)));
 
         return table(
-                rows.toArray(TableRowElement[]::new)
+                htmlRows.toArray(TableRowElement[]::new)
         );
+    }
+
+    private void addRow(TableText... rowText) {
+        htmlRows.add(tr(rowText));
     }
 
     private <T> TableText[] mapToTableText(Stream<T> stream, Function<String, TableText> mapper) {
