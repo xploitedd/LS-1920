@@ -14,7 +14,7 @@ public class Table {
     private static final String TABLE_DESCRIPTION_SEPARATOR = "━";
 
     private final int columnCount;
-    private final List<List<String>> rows = new LinkedList<>();
+    private final List<List<Object>> rows = new LinkedList<>();
     private final List<Integer> maxSizes;
 
     /**
@@ -37,7 +37,7 @@ public class Table {
      * @param values values of the row
      * @throws IllegalArgumentException if row size mismatches the table size
      */
-    public void addTableRow(String... values) throws IllegalArgumentException {
+    public void addTableRow(Object... values) throws IllegalArgumentException {
         if (values.length != columnCount) {
             throw new IllegalArgumentException("Row size is different from Table size!");
         }
@@ -46,11 +46,11 @@ public class Table {
         checkMaxColumnSize(values);
     }
 
-    public Stream<String> getHeader() {
+    public Stream<Object> getHeader() {
         return rows.get(0).stream();
     }
 
-    public Stream<Stream<String>> getRowsStream() {
+    public Stream<Stream<Object>> getRowsStream() {
         return rows.stream().skip(1).map(Collection::stream);
     }
 
@@ -77,9 +77,9 @@ public class Table {
      * wrapping content
      * @param newItems the row that was added
      */
-    private void checkMaxColumnSize(String... newItems) {
+    private void checkMaxColumnSize(Object... newItems) {
         for (int i = 0; i < columnCount; ++i) {
-            String columnItem = newItems[i];
+            String columnItem = newItems[i].toString();
             if (columnItem.length() > maxSizes.get(i)) {
                 maxSizes.set(i, columnItem.length());
             }
@@ -92,7 +92,7 @@ public class Table {
      * @param sb StringBuffer where to append the row
      */
     private void appendRow(int row, StringBuffer sb) {
-        List<String> rows = this.rows.get(row);
+        List<Object> rows = this.rows.get(row);
         int columnCount = this.rows.get(0).size();
         for (int i = 0; i < columnCount; i++) {
             int colMax = maxSizes.get(i);

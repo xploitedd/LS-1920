@@ -2,14 +2,16 @@ package pt.isel.ls.view;
 
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.function.Function;
+import java.util.stream.Stream;
+
 import pt.isel.ls.dsl.Dsl;
 import pt.isel.ls.dsl.Node;
 import pt.isel.ls.dsl.elements.table.TableRowElement;
 import pt.isel.ls.dsl.text.table.TableText;
 import pt.isel.ls.model.Table;
 
-import static pt.isel.ls.dsl.Dsl.table;
-import static pt.isel.ls.dsl.Dsl.tr;
+import static pt.isel.ls.dsl.Dsl.*;
 
 public class TableView extends View {
 
@@ -27,12 +29,23 @@ public class TableView extends View {
     @Override
     protected Node getHtmlBody() {
         ArrayList<TableRowElement> rows = new ArrayList<>();
-        rows.add(tr(table.getHeader().map(Dsl::th).toArray(TableText[]::new)));
+        // map table header
+        rows.add(tr(mapToTableText(table.getHeader(), Dsl::th)));
+
+        // map table data rows
         table.getRowsStream().forEach(r ->
-                rows.add(tr(r.map(Dsl::td).toArray(TableText[]::new))));
+                rows.add(tr(
+                        mapToTableText(r, Dsl::td)
+                ))
+        );
 
         return table(
                 rows.toArray(TableRowElement[]::new)
         );
+    }
+
+    private <T> TableText[] mapToTableText(Stream<T> stream, Function<String, TableText> mapper) {
+        return stream.map(cell -> mapper.apply(cell.toString()))
+                .toArray(TableText[]::new);
     }
 }
