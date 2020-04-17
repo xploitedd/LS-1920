@@ -29,8 +29,8 @@ public final class GetUserHandler implements RouteHandler {
      */
     @Override
     public HandlerResponse execute(RouteRequest request) throws RouteException {
+        Optional<Parameter> paramUid = request.getOptionalPathParameter("uid");
         Iterable<User> iter = provider.execute(conn -> {
-            Optional<Parameter> paramUid = request.getOptionalPathParameter("uid");
             if (paramUid.isPresent()) {
                 ArrayList<User> userList = new ArrayList<>(1);
                 userList.add(new UserQueries(conn).getUser(paramUid.get().toInt()));

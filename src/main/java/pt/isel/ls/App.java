@@ -1,11 +1,5 @@
 package pt.isel.ls;
 
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.PrintWriter;
-import java.util.Scanner;
 import org.postgresql.ds.PGSimpleDataSource;
 
 import javax.sql.DataSource;
@@ -23,23 +17,18 @@ import pt.isel.ls.handlers.PostLabelHandler;
 import pt.isel.ls.handlers.PostRoomHandler;
 import pt.isel.ls.handlers.PostUserHandler;
 import pt.isel.ls.handlers.PutBookingHandler;
-import pt.isel.ls.router.request.HeaderType;
 import pt.isel.ls.router.request.Method;
-import pt.isel.ls.router.request.RouteRequest;
-import pt.isel.ls.router.response.HandlerResponse;
 import pt.isel.ls.router.RouteTemplate;
 import pt.isel.ls.router.Router;
-import pt.isel.ls.router.response.RouteException;
 import pt.isel.ls.sql.ConnectionProvider;
-import pt.isel.ls.view.ExceptionView;
-import pt.isel.ls.view.ViewType;
 
-public class App {
+public class App implements Runnable {
 
     private static final String DATABASE_CONNECTION_ENV = "JDBC_DATABASE_URL";
 
-    private ConnectionProvider connProvider;
-    private Router router;
+    private final AppProcessor processor;
+    private final ConnectionProvider connProvider;
+    private final Router router;
 
     private App() {
         String url = System.getenv(DATABASE_CONNECTION_ENV);
@@ -50,19 +39,20 @@ public class App {
 
         this.connProvider = new ConnectionProvider(getDataSource(url));
         this.router = new Router();
+        this.processor = new AppProcessor(router);
 
         registerRoutes();
     }
 
     public static void main(String[] args) {
         App app = new App();
+        app.run();
+    }
 
-        try {
-            app.startApp();
-        } catch (IOException e) {
-            // handle unexpected exceptions
-            e.printStackTrace();
-        }
+    @Override
+    public void run() {
+        ConsoleApplication consoleApp = new ConsoleApplication(processor);
+        consoleApp.run();
     }
 
     /**
@@ -106,48 +96,6 @@ public class App {
                 new GetLabelsHandler(connProvider));
         router.registerRoute(Method.GET, RouteTemplate.of("/labels/{lid}/rooms"),
                 new GetLabeledRoomsHandler(connProvider));
-    }
-
-    /**
-     * Handles console app user interaction
-     */
-    private void startApp() throws IOException {
-        Scanner scanner = new Scanner(System.in);
-        // for needed where to print the user input character
-        for ( ; ; ) {
-            System.out.print("> ");
-            if (scanner.hasNext()) {
-                String line = scanner.nextLine();
-                // TODO: optimize this code and cleanup
-                OutputStream output = System.out;
-                ViewType viewType = null;
-                try {
-                    RouteRequest request = RouteRequest.of(line);
-                    viewType = ViewType.of(request.getHeaderValue(HeaderType.Accept)
-                            .orElse(null));
-
-                    output = request.getHeaderValue(HeaderType.FileName)
-                            .map(f -> {
-                                try {
-                                    return new FileOutputStream(f);
-                                } catch (FileNotFoundException e) {
-                                    return System.out;
-                                }
-                            }).orElse(System.out);
-
-                    PrintWriter pw = new PrintWriter(output);
-                    HandlerResponse response = router.getHandler(request)
-                            .execute(request);
-
-                    response.getView().render(viewType, pw);
-                    pw.flush();
-                } catch (RouteException | IOException e) {
-                    PrintWriter pw = new PrintWriter(output);
-                    new ExceptionView(e).render(viewType, pw);
-                    pw.flush();
-                }
-            }
-        }
     }
 
     /**

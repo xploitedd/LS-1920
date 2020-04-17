@@ -18,16 +18,20 @@ public abstract class View {
      * @param type render type
      * @param writer writer where to render this view
      */
-    public final void render(ViewType type, PrintWriter writer) throws IOException {
+    public final void render(ViewType type, PrintWriter writer) {
         if (type == ViewType.HTML) {
-            Element html =
-                    html(
-                            head(title("Placeholder Title")),
-                            body(getHtmlBody())
-                    );
+            try {
+                Element html =
+                        html(
+                                head(title("Placeholder Title")),
+                                body(getHtmlBody())
+                        );
 
-            html.write(writer);
-            writer.println();
+                html.write(writer);
+                writer.println();
+            } catch (IOException e) {
+                renderText(writer);
+            }
         } else {
             renderText(writer);
         }
