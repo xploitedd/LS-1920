@@ -27,23 +27,25 @@ public class AppProcessor {
 
     public void processInput(String input, OutputStream defaultStream) {
         ViewType viewType = null;
+        PrintWriter printWriter = null;
         try {
             RouteRequest request = RouteRequest.of(input);
             viewType = ViewType.of(request.getHeaderValue(HeaderType.Accept)
                     .orElse(null));
 
             defaultStream = parseOutputStream(request, defaultStream);
-
-            PrintWriter pw = new PrintWriter(defaultStream);
+            printWriter = new PrintWriter(defaultStream);
             HandlerResponse response = router.getHandler(request)
                     .execute(request);
 
-            response.getView().render(viewType, pw);
-            pw.flush();
+            response.getView().render(viewType, printWriter);
         } catch (RouteException e) {
-            PrintWriter pw = new PrintWriter(defaultStream);
-            new ExceptionView(e).render(viewType, pw);
-            pw.flush();
+            printWriter = new PrintWriter(defaultStream);
+            new ExceptionView(e).render(viewType, printWriter);
+        } finally {
+            if (printWriter != null) {
+                printWriter.close();
+            }
         }
     }
 
