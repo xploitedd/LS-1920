@@ -14,6 +14,8 @@ import java.util.Optional;
 
 public final class GetUserHandler implements RouteHandler {
 
+    private static final String DESCRIPTION = "Gets a specific user or all users";
+
     private final ConnectionProvider provider;
 
     public GetUserHandler(ConnectionProvider provider) {
@@ -45,4 +47,10 @@ public final class GetUserHandler implements RouteHandler {
 
         return new HandlerResponse(new TableView(table));
     }
+
+    @Override
+    public String getDescription() {
+        return DESCRIPTION;
+    }
+
 }

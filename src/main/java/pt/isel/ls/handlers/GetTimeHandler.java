@@ -8,6 +8,9 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 public class GetTimeHandler implements RouteHandler {
+
+    private static final String DESCRIPTION = "Gets the current time in ISO format";
+
     /**
      * Gets the current time in ISO format
      * @param request The route request
@@ -19,4 +22,8 @@ public class GetTimeHandler implements RouteHandler {
                 + LocalDateTime.now().format(DateTimeFormatter.ISO_DATE_TIME)));
     }
 
+    @Override
+    public String getDescription() {
+        return DESCRIPTION;
+    }
 }

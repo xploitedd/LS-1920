@@ -16,6 +16,8 @@ import pt.isel.ls.view.IdentifierView;
 
 public final class PostRoomHandler implements RouteHandler {
 
+    private static final String DESCRIPTION = "Creates a new room";
+
     private final ConnectionProvider provider;
 
     public PostRoomHandler(ConnectionProvider provider) {
@@ -45,6 +47,11 @@ public final class PostRoomHandler implements RouteHandler {
         });
 
         return new HandlerResponse(new IdentifierView("room",inserted.getRid()));
-
     }
+
+    @Override
+    public String getDescription() {
+        return DESCRIPTION;
+    }
+
 }

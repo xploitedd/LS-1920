@@ -10,6 +10,8 @@ import pt.isel.ls.view.TableView;
 
 public final class GetLabelsHandler implements RouteHandler {
 
+    private static final String DESCRIPTION = "Gets all existing Labels";
+
     private final ConnectionProvider provider;
 
     public GetLabelsHandler(ConnectionProvider provider) {
@@ -31,5 +33,10 @@ public final class GetLabelsHandler implements RouteHandler {
                         table.addTableRow(String.valueOf(label.getLid()), label.getName()));
 
         return new HandlerResponse(new TableView(table));
+    }
+
+    @Override
+    public String getDescription() {
+        return DESCRIPTION;
     }
 }

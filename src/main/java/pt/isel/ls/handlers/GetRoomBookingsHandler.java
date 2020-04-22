@@ -10,6 +10,8 @@ import pt.isel.ls.view.TableView;
 
 public final class GetRoomBookingsHandler implements RouteHandler {
 
+    private static final String DESCRIPTION = "Gets Bookings from Rooms";
+
     private final ConnectionProvider provider;
 
     public GetRoomBookingsHandler(ConnectionProvider provider) {
@@ -36,5 +38,10 @@ public final class GetRoomBookingsHandler implements RouteHandler {
                                 booking.getEnd().toString()));
 
         return new HandlerResponse(new TableView(table));
+    }
+
+    @Override
+    public String getDescription() {
+        return DESCRIPTION;
     }
 }

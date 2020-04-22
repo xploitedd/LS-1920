@@ -11,6 +11,8 @@ import pt.isel.ls.view.IdentifierView;
 
 public final class PostLabelHandler implements RouteHandler {
 
+    private static final String DESCRIPTION = "Creates a new label";
+
     private final ConnectionProvider provider;
 
     public PostLabelHandler(ConnectionProvider provider) {
@@ -24,6 +26,11 @@ public final class PostLabelHandler implements RouteHandler {
                 new LabelQueries(conn).createNewLabel(labelName));
 
         return new HandlerResponse(new IdentifierView("label", label.getLid()));
+    }
+
+    @Override
+    public String getDescription() {
+        return DESCRIPTION;
     }
 
 }

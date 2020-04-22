@@ -10,6 +10,8 @@ import pt.isel.ls.view.IdentifierView;
 
 public final class PostUserHandler implements RouteHandler {
 
+    private static final String DESCRIPTION = "Creates a new user";
+
     private final ConnectionProvider provider;
 
     public PostUserHandler(ConnectionProvider provider) {
@@ -26,4 +28,10 @@ public final class PostUserHandler implements RouteHandler {
 
         return new HandlerResponse(new IdentifierView("user", user.getUid()));
     }
+
+    @Override
+    public String getDescription() {
+        return DESCRIPTION;
+    }
+
 }

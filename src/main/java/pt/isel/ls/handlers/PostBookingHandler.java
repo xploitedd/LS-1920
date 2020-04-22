@@ -12,6 +12,8 @@ import java.sql.Timestamp;
 
 public final class PostBookingHandler implements RouteHandler {
 
+    private static final String DESCRIPTION = "Creates a new booking";
+
     private final ConnectionProvider provider;
 
     public PostBookingHandler(ConnectionProvider provider) {
@@ -33,4 +35,10 @@ public final class PostBookingHandler implements RouteHandler {
 
         return new HandlerResponse(new IdentifierView("booking", booking.getBid()));
     }
+
+    @Override
+    public String getDescription() {
+        return DESCRIPTION;
+    }
+
 }

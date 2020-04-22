@@ -1,7 +1,7 @@
 package pt.isel.ls.queries;
 
 import org.junit.Assert;
-import org.junit.BeforeClass;
+import org.junit.Before;
 import org.junit.Test;
 import pt.isel.ls.DatasourceUtils;
 import pt.isel.ls.model.Booking;
@@ -26,8 +26,8 @@ public class BookingQueriesTest {
     private final Timestamp begin = Timestamp.valueOf(LocalDateTime.of(2020,2,3,4,10));
     private final Timestamp end = Timestamp.valueOf(LocalDateTime.of(2021,2,3,4,10));
 
-    @BeforeClass
-    public static void init() throws Throwable {
+    @Before
+    public void beforeEach() throws Throwable {
         DatasourceUtils.executeFile(dSource, "src/test/resources/sql/CreateTables.sql");
         Connection conn = dSource.getConnection();
         UserQueries testUser = new UserQueries(conn);

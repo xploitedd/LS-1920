@@ -11,6 +11,7 @@ import java.util.stream.Stream;
 
 import pt.isel.ls.model.Booking;
 import pt.isel.ls.router.response.RouteException;
+import pt.isel.ls.utils.ExceptionUtils;
 import pt.isel.ls.utils.Interval;
 
 public class BookingQueries extends DatabaseQueries {
@@ -168,9 +169,22 @@ public class BookingQueries extends DatabaseQueries {
     }
 
     public Booking editBooking(int rid, int bid, int newUid, Timestamp newBegin, Timestamp newEnd) throws Exception {
+        Interval newInt = new Interval(newBegin.getTime(), newEnd.getTime());
+        getBookings()
+                .filter(booking -> booking.getBid() != bid)
+                .map(booking -> new Interval(booking.getBegin().getTime(), booking.getEnd().getTime()))
+                .forEach(interval -> ExceptionUtils.propagate(() -> {
+                    if (newInt.isOverlapping(interval)) {
+                        throw new RouteException("Can't update the booking. New interval overlaps another booking!");
+                    }
+
+                    return null;
+                }));
+
         PreparedStatement update = conn.prepareStatement(
                 "UPDATE booking SET uid = ?, begin = ?, \"end\" = ? WHERE bid = ?"
         );
+
         update.setInt(1, newUid);
         update.setTimestamp(2, newBegin);
         update.setTimestamp(3, newEnd);

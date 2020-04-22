@@ -8,4 +8,8 @@ public interface RouteHandler {
 
     HandlerResponse execute(RouteRequest request) throws RouteException;
 
+    default String getDescription() {
+        return "No description available!";
+    }
+
 }

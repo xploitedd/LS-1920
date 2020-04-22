@@ -1,6 +1,5 @@
 package pt.isel.ls.handlers;
 
-import pt.isel.ls.model.Booking;
 import pt.isel.ls.model.Label;
 import pt.isel.ls.model.Room;
 import pt.isel.ls.model.Table;

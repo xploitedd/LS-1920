@@ -10,18 +10,20 @@ import pt.isel.ls.view.TableView;
 
 public final class GetLabeledRoomsHandler implements RouteHandler {
 
+    private static final String DESCRIPTION = "Gets all of the rooms with a certain label";
+
     private final ConnectionProvider provider;
 
     public GetLabeledRoomsHandler(ConnectionProvider provider) {
         this.provider = provider;
     }
+
     /**
      * Gets all of the rooms with a certain label
      * @param request The route request
      * @return returns a RouteResponse with a tableView for the router
      * @throws RouteException Sent to the router
      */
-
     @Override
     public HandlerResponse execute(RouteRequest request) throws RouteException {
         int lid = request.getPathParameter("lid").toInt();
@@ -34,5 +36,10 @@ public final class GetLabeledRoomsHandler implements RouteHandler {
                                 String.valueOf(room.getCapacity()), room.getDescription()));
 
         return new HandlerResponse(new TableView(table));
+    }
+
+    @Override
+    public String getDescription() {
+        return DESCRIPTION;
     }
 }
