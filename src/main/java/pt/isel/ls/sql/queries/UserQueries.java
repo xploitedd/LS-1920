@@ -4,6 +4,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.LinkedList;
+import java.util.stream.Stream;
+
 import pt.isel.ls.model.User;
 
 public class UserQueries extends DatabaseQueries {
@@ -35,9 +37,9 @@ public class UserQueries extends DatabaseQueries {
      * Get User by uid
      * @param uid id of the user
      * @return an User
-     * @throws Throwable any exception that occurs
+     * @throws Exception any exception that occurs
      */
-    public User getUser(int uid) throws Throwable {
+    public User getUser(int uid) throws Exception {
         PreparedStatement ret = conn.prepareStatement(
                 "SELECT name, email FROM \"user\" WHERE uid = ?;"
         );
@@ -54,9 +56,9 @@ public class UserQueries extends DatabaseQueries {
      * @param name name of the user
      * @param email email of the user
      * @return an User
-     * @throws Throwable any exception that occurs
+     * @throws Exception any exception that occurs
      */
-    public User getUser(String name, String email) throws Throwable {
+    public User getUser(String name, String email) throws Exception {
         PreparedStatement ret = conn.prepareStatement(
                 "SELECT uid FROM \"user\" WHERE email = ? AND name = ?;"
         );
@@ -72,9 +74,9 @@ public class UserQueries extends DatabaseQueries {
     /**
      * Get all users
      * @return all users
-     * @throws Throwable any exception that occurs
+     * @throws Exception any exception that occurs
      */
-    public Iterable<User> getUsers() throws Throwable {
+    public Stream<User> getUsers() throws Exception {
         PreparedStatement ret = conn.prepareStatement(
                 "SELECT * FROM \"user\""
         );
@@ -88,7 +90,7 @@ public class UserQueries extends DatabaseQueries {
             results.add(new User(uid, name, email));
         }
 
-        return results;
+        return results.stream();
     }
 
 }

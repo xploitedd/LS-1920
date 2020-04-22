@@ -1,6 +1,5 @@
 package pt.isel.ls.handlers;
 
-import pt.isel.ls.model.Booking;
 import pt.isel.ls.model.Table;
 import pt.isel.ls.router.request.RouteRequest;
 import pt.isel.ls.router.response.HandlerResponse;
@@ -26,14 +25,14 @@ public final class GetUserBookingsHandler implements RouteHandler {
     @Override
     public HandlerResponse execute(RouteRequest request) throws RouteException {
         int uid = request.getPathParameter("uid").toInt();
-        Iterable<Booking> iter = provider.execute(conn ->
-                new BookingQueries(conn).getBookingsByUid(uid));
-
         Table table = new Table("Booking Id", "Room Id", "Begin time", "End time");
-        for (Booking booking : iter) {
-            table.addTableRow(String.valueOf(booking.getBid()), String.valueOf(booking.getRid()),
-                    booking.getBegin().toString(), booking.getEnd().toString());
-        }
+        provider.execute(conn -> new BookingQueries(conn)
+                .getBookingsByUid(uid))
+                .forEach(booking -> table.addTableRow(
+                        String.valueOf(booking.getBid()),
+                        String.valueOf(booking.getRid()),
+                        booking.getBegin().toString(),
+                        booking.getEnd().toString()));
 
         return new HandlerResponse(new TableView(table));
 

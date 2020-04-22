@@ -10,7 +10,6 @@ import pt.isel.ls.sql.ConnectionProvider;
 import pt.isel.ls.sql.queries.UserQueries;
 import pt.isel.ls.view.TableView;
 
-import java.util.ArrayList;
 import java.util.Optional;
 
 public final class GetUserHandler implements RouteHandler {
@@ -30,19 +29,18 @@ public final class GetUserHandler implements RouteHandler {
     @Override
     public HandlerResponse execute(RouteRequest request) throws RouteException {
         Optional<Parameter> paramUid = request.getOptionalPathParameter("uid");
-        Iterable<User> iter = provider.execute(conn -> {
-            if (paramUid.isPresent()) {
-                ArrayList<User> userList = new ArrayList<>(1);
-                userList.add(new UserQueries(conn).getUser(paramUid.get().toInt()));
-                return userList;
-            } else {
-                return new UserQueries(conn).getUsers();
-            }
-        });
-
         Table table = new Table("User Id", "Name", "Email");
-        for (User user : iter) {
+        if (paramUid.isPresent()) {
+            int uid = paramUid.get().toInt();
+            User user = provider.execute(conn -> new UserQueries(conn)
+                    .getUser(uid));
+
             table.addTableRow(String.valueOf(user.getUid()), user.getName(), user.getEmail());
+        } else {
+            provider.execute(conn -> new UserQueries(conn)
+                    .getUsers())
+                    .forEach(user ->
+                            table.addTableRow(String.valueOf(user.getUid()), user.getName(), user.getEmail()));
         }
 
         return new HandlerResponse(new TableView(table));

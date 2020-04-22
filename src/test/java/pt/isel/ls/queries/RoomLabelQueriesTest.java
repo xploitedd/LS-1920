@@ -5,7 +5,6 @@ import org.junit.Before;
 import org.junit.Test;
 import pt.isel.ls.DatasourceUtils;
 import pt.isel.ls.model.Label;
-import pt.isel.ls.model.Room;
 import pt.isel.ls.sql.queries.RoomLabelQueries;
 
 import javax.sql.DataSource;
@@ -92,12 +91,10 @@ public class RoomLabelQueriesTest {
         rl.execute();
 
         RoomLabelQueries query = new RoomLabelQueries(conn);
-        Iterable<Label> iter = query.getRoomLabels(rid);
-
-        for (Label lbl: iter) {
-            Assert.assertEquals(lName, lbl.getName());
-            Assert.assertEquals(lid,lbl.getLid());
-        }
+        query.getRoomLabels(rid).forEach(label -> {
+            Assert.assertEquals(lName, label.getName());
+            Assert.assertEquals(lid, label.getLid());
+        });
 
         conn.close();
     }
@@ -126,14 +123,12 @@ public class RoomLabelQueriesTest {
         rl.execute();
 
         RoomLabelQueries query = new RoomLabelQueries(conn);
-        Iterable<Room> iter = query.getLabeledRooms(lid);
-
-        for (Room room: iter) {
+        query.getLabeledRooms(lid).forEach(room -> {
             Assert.assertEquals(rName, room.getName());
-            Assert.assertEquals(rid,room.getRid());
-            Assert.assertEquals(rLocation,room.getLocation());
-            Assert.assertEquals(rCapacity,room.getCapacity());
-        }
+            Assert.assertEquals(rid, room.getRid());
+            Assert.assertEquals(rLocation, room.getLocation());
+            Assert.assertEquals(rCapacity, room.getCapacity());
+        });
 
         conn.close();
     }

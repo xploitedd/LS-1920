@@ -1,6 +1,5 @@
 package pt.isel.ls.handlers;
 
-import pt.isel.ls.model.Label;
 import pt.isel.ls.model.Table;
 import pt.isel.ls.router.request.RouteRequest;
 import pt.isel.ls.router.response.HandlerResponse;
@@ -25,13 +24,11 @@ public final class GetLabelsHandler implements RouteHandler {
      */
     @Override
     public HandlerResponse execute(RouteRequest request) throws RouteException {
-        Iterable<Label> iter = provider.execute(conn ->
-                new LabelQueries(conn).getLabels());
-
         Table table = new Table("Label Id", "Name");
-        for (Label label : iter) {
-            table.addTableRow(String.valueOf(label.getLid()), label.getName());
-        }
+        provider.execute(conn -> new LabelQueries(conn)
+                .getLabels())
+                .forEach(label ->
+                        table.addTableRow(String.valueOf(label.getLid()), label.getName()));
 
         return new HandlerResponse(new TableView(table));
     }

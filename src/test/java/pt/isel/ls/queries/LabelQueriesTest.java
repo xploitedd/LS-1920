@@ -75,12 +75,10 @@ public class LabelQueriesTest {
         stmt.execute();
 
         LabelQueries query = new LabelQueries(conn);
-        Iterable<Label> iter = query.getLabels();
-
-        for (Label lbl: iter) {
-            Assert.assertNotNull(lbl);
-            Assert.assertNotNull(lbl.getName());
-        }
+        query.getLabels().forEach(label -> {
+            Assert.assertNotNull(label);
+            Assert.assertNotNull(label.getName());
+        });
 
         conn.close();
     }

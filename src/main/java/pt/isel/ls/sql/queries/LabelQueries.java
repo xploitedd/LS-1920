@@ -5,6 +5,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.LinkedList;
 import java.util.NoSuchElementException;
+import java.util.stream.Stream;
 
 import pt.isel.ls.model.Label;
 
@@ -18,9 +19,9 @@ public class LabelQueries extends DatabaseQueries {
      * Create a new Label
      * @param labelName name of the label to be created
      * @return the created label
-     * @throws Throwable any exception that occurs
+     * @throws Exception any exception that occurs
      */
-    public Label createNewLabel(String labelName) throws Throwable {
+    public Label createNewLabel(String labelName) throws Exception {
         PreparedStatement stmt = conn.prepareStatement("INSERT INTO label (name) VALUES (?);");
         stmt.setString(1, labelName);
         stmt.execute();
@@ -32,9 +33,9 @@ public class LabelQueries extends DatabaseQueries {
      * Get a label by name
      * @param name name of the label
      * @return associated label
-     * @throws Throwable any exception that occurs
+     * @throws Exception any exception that occurs
      */
-    public Label getLabel(String name) throws Throwable {
+    public Label getLabel(String name) throws Exception {
         PreparedStatement stmt = conn.prepareStatement("SELECT lid FROM label WHERE name = ?;");
         stmt.setString(1, name);
         ResultSet rs = stmt.executeQuery();
@@ -47,9 +48,9 @@ public class LabelQueries extends DatabaseQueries {
     /**
      * Get all labels
      * @return every label available
-     * @throws Throwable any exception that occurs
+     * @throws Exception any exception that occurs
      */
-    public Iterable<Label> getLabels() throws Throwable {
+    public Stream<Label> getLabels() throws Exception {
         PreparedStatement stmt = conn.prepareStatement("SELECT * FROM label");
         ResultSet rs = stmt.executeQuery();
 
@@ -60,7 +61,7 @@ public class LabelQueries extends DatabaseQueries {
             results.add(new Label(lid, name));
         }
 
-        return results;
+        return results.stream();
     }
 
 }

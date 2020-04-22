@@ -8,6 +8,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Stream;
 
 public class RoomLabelQueries extends DatabaseQueries {
 
@@ -19,9 +20,9 @@ public class RoomLabelQueries extends DatabaseQueries {
      * Associate labels to a room
      * @param labels labels to be associated
      * @param rid room that will receive the labels
-     * @throws Throwable any exception that occurs
+     * @throws Exception any exception that occurs
      */
-    public void addRoomLabels(List<Label> labels, int rid) throws Throwable {
+    public void addRoomLabels(List<Label> labels, int rid) throws Exception {
         if (labels.size() == 0) {
             return;
         }
@@ -41,9 +42,9 @@ public class RoomLabelQueries extends DatabaseQueries {
      * Get all rooms that have a specified label
      * @param lid label to filter for
      * @return all rooms with the label
-     * @throws Throwable any exception that occurs
+     * @throws Exception any exception that occurs
      */
-    public Iterable<Room> getLabeledRooms(int lid) throws Throwable {
+    public Stream<Room> getLabeledRooms(int lid) throws Exception {
         PreparedStatement stmt = conn.prepareStatement(
                 "SELECT r.rid, \"name\", location, capacity, description "
                         + "FROM (room r FULL JOIN description d on r.rid = d.rid) "
@@ -63,16 +64,16 @@ public class RoomLabelQueries extends DatabaseQueries {
             rooms.add(new Room(rid, name, capacity, desc, location));
         }
 
-        return rooms;
+        return rooms.stream();
     }
 
     /**
      * Get all labels that are associated to a room
      * @param rid room containing the labels
      * @return all labels that are on a room
-     * @throws Throwable any exception that occurs
+     * @throws Exception any exception that occurs
      */
-    public Iterable<Label> getRoomLabels(int rid) throws Throwable {
+    public Stream<Label> getRoomLabels(int rid) throws Exception {
         PreparedStatement stmt = conn.prepareStatement(
                 "SELECT l.lid, name FROM "
                         + "(room_label rl JOIN label l on rl.lid = l.lid) WHERE rid = ?"
@@ -87,7 +88,7 @@ public class RoomLabelQueries extends DatabaseQueries {
                     rs.getString("name")));
         }
 
-        return labels;
+        return labels.stream();
     }
 
 }
