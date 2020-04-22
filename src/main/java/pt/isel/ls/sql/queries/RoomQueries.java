@@ -3,11 +3,14 @@ package pt.isel.ls.sql.queries;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.Timestamp;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 
 import pt.isel.ls.model.Label;
 import pt.isel.ls.model.Room;
+import pt.isel.ls.router.request.Parameter;
 
 public class RoomQueries extends DatabaseQueries {
 
@@ -92,7 +95,8 @@ public class RoomQueries extends DatabaseQueries {
     public Room getRoom(int rid) throws Throwable {
         PreparedStatement stmt = conn.prepareStatement(
                 "SELECT room.rid, name, location, capacity, description "
-                        + "FROM room FULL JOIN description d on room.rid = d.rid WHERE room.rid = ?;"
+                        + "FROM room FULL JOIN description d "
+                        + "on room.rid = d.rid WHERE room.rid = ?;"
         );
 
         stmt.setInt(1,rid);
@@ -134,4 +138,73 @@ public class RoomQueries extends DatabaseQueries {
         return rooms;
     }
 
+    public Iterable<Room> getRooms(Optional<List<Parameter>> begin,
+                                   Optional<List<Parameter>> duration,
+                                   Optional<List<Parameter>> capacity,
+                                   Optional<List<Parameter>> label) throws Throwable {
+        boolean byTime = false;
+        boolean byCapacity = false;
+        boolean byLabel = false;
+
+        if (begin.isPresent() && duration.isPresent()) {
+            PreparedStatement byTimeStmt = conn.prepareStatement(
+                    "CREATE VIEW ROOMS_BY_TIME AS SELECT * FROM room where room.rid "
+                    + "NOT IN (SELECT rid FROM booking WHERE begin >= ? and \"end\" <= ?)"
+            );
+
+            long b = begin.get().iterator().next().toLong();
+            long d = duration.get().iterator().next().toLong();
+
+            byTimeStmt.setTimestamp(1, new Timestamp(b));
+            byTimeStmt.setTimestamp(2, new Timestamp(b + d));
+
+            byTimeStmt.execute();
+            byTime = true;
+        }
+
+        if (capacity.isPresent()) {
+            PreparedStatement byCapacityStmt = conn.prepareStatement(
+                    "CREATE VIEW ROOMS_BY_CAPACITY AS SELECT * FROM room WHERE capacity >= ?");
+
+            byCapacityStmt.setInt(1, capacity.get().iterator().next().toInt());
+
+            byCapacityStmt.execute();
+            byCapacity = true;
+        }
+
+        if (label.isPresent()) {
+            String byLabelString = "CREATE VIEW ROOMS_BY_LABEL AS SELECT * FROM room "
+                    + "WHERE room.rid IN (SELECT rid FROM room_label WHERE lid = ?)"
+                    + "AND room.rid IN (SELECT rid FROM room_label WHERE lid = ?)".repeat(label.get().size() - 1) + ";";
+
+            PreparedStatement byLabelStmt = conn.prepareStatement(byLabelString);
+
+            int i = 0;
+            for (Parameter lbl : label.get()) {
+                byLabelStmt.setInt(++i, new LabelQueries(conn).getLabel(lbl.toString()).getLid());
+            }
+
+            byLabelStmt.execute();
+            byLabel = true;
+        }
+
+        PreparedStatement finalStmt = conn.prepareStatement(
+                "SELECT * FROM (" + (byTime ? "ROOMS_BY_TIME" : "room" + " INTERSECT ")
+                        + (byCapacity ? "ROOMS_BY_CAPACITY" : "room")
+                        + " INTERSECT " + (byLabel ? "ROOMS_BY_LABEL" : "room") + ");");
+
+        ResultSet rs = finalStmt.executeQuery();
+
+        LinkedList<Room> rooms = new LinkedList<>();
+        while (rs.next()) {
+            int rid = rs.getInt("rid");
+            String name = rs.getString("name");
+            String location = rs.getString("location");
+            int cap = rs.getInt("capacity");
+            String desc = rs.getString("description");
+            rooms.add(new Room(rid, name, cap, desc, location));
+        }
+
+        return rooms;
+    }
 }

@@ -17,7 +17,7 @@ public class DeleteBookingHandler implements RouteHandler {
     }
 
     /**
-     * Updates a Specific Booking with the new uid, begin and end
+     * Deletes a Specific Booking
      * @param request The route request
      * @return returns a RouteResponse with a IdentifierView for the router
      * @throws RouteException Sent to the router

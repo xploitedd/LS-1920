@@ -7,6 +7,7 @@ import pt.isel.ls.router.request.Parameter;
 import pt.isel.ls.router.request.RouteRequest;
 import pt.isel.ls.router.response.HandlerResponse;
 
+import java.util.List;
 import java.util.Optional;
 
 import pt.isel.ls.router.response.RouteException;
@@ -45,9 +46,21 @@ public final class GetRoomsHandler implements RouteHandler {
             table.addTableRow(String.valueOf(room.getRid()), room.getName(), room.getLocation(),
                     String.valueOf(room.getCapacity()), room.getDescription(), labels.toString());
         } else {
+            Optional<List<Parameter>> paramBegin = request.getOptionalParameter("begin");
+            Optional<List<Parameter>> paramDuration = request.getOptionalParameter("duration");
+            Optional<List<Parameter>> paramCapacity = request.getOptionalParameter("capacity");
+            Optional<List<Parameter>> paramLabel = request.getOptionalParameter("label");
+
             table = new Table("RID", "Name", "Location", "Capacity", "Description");
-            Iterable<Room> rooms = provider.execute(conn ->
-                    new RoomQueries(conn).getRooms());
+            Iterable<Room> rooms = null;
+            if (paramBegin.isPresent() || paramDuration.isPresent()
+                    || paramCapacity.isPresent() || paramLabel.isPresent()) {
+                rooms = provider.execute(conn ->
+                        new RoomQueries(conn).getRooms(paramBegin, paramDuration, paramCapacity, paramLabel));
+            } else {
+                rooms = provider.execute(conn ->
+                        new RoomQueries(conn).getRooms());
+            }
 
             for (Room room : rooms) {
                 table.addTableRow(String.valueOf(room.getRid()), room.getName(), room.getLocation(),
