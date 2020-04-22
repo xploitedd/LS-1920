@@ -38,8 +38,10 @@ public class AppProcessor {
                     .execute(request);
 
             response.getView().render(viewType, printWriter);
+            printWriter.flush();
         } catch (RouteException e) {
             new ExceptionView(e).render(ViewType.TEXT, DEFAULT_WRITER);
+            DEFAULT_WRITER.flush();
         } finally {
             // check that the PrintWriter isn't null and the object is the same as
             // the DEFAULT_WRITER, because we don't want to close the DEFAULT_WRITER

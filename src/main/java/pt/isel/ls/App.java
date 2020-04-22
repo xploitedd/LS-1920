@@ -12,6 +12,7 @@ import pt.isel.ls.handlers.GetRoomsHandler;
 import pt.isel.ls.handlers.GetTimeHandler;
 import pt.isel.ls.handlers.GetUserBookingsHandler;
 import pt.isel.ls.handlers.GetUserHandler;
+import pt.isel.ls.handlers.OptionHandler;
 import pt.isel.ls.handlers.PostBookingHandler;
 import pt.isel.ls.handlers.PostLabelHandler;
 import pt.isel.ls.handlers.PostRoomHandler;
@@ -64,6 +65,8 @@ public class App implements Runnable {
                 new ExitHandler());
         router.registerRoute(Method.GET, RouteTemplate.of("/time"),
                 new GetTimeHandler());
+        router.registerRoute(Method.OPTION, RouteTemplate.of("/"),
+                new OptionHandler(router));
 
         // Room Handlers
         router.registerRoute(Method.POST, RouteTemplate.of("/rooms"),

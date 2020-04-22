@@ -11,6 +11,7 @@ import java.util.Optional;
 public class RouteTemplate {
 
     private final ArrayList<TemplateSegment> templateSegments;
+    private final String stringRepresentation;
 
     /**
      * Creates a new RouteTemplate with template segments
@@ -18,6 +19,9 @@ public class RouteTemplate {
      */
     private RouteTemplate(ArrayList<TemplateSegment> templateSegments) {
         this.templateSegments = templateSegments;
+        this.stringRepresentation = '/' + String.join("/", templateSegments.stream()
+                .map(TemplateSegment::toString)
+                .toArray(CharSequence[]::new));
     }
 
     /**
@@ -120,8 +124,7 @@ public class RouteTemplate {
 
     @Override
     public String toString() {
-        return '/' + String.join("/", templateSegments.stream().map(TemplateSegment::toString)
-                .toArray(CharSequence[]::new));
+        return stringRepresentation;
     }
 
     private abstract static class TemplateSegment {
@@ -165,6 +168,11 @@ public class RouteTemplate {
         @Override
         public boolean match(String segment) {
             return true;
+        }
+
+        @Override
+        public String toString() {
+            return "{" + segment + "}" + (!isObligatory ? "?" : "");
         }
 
     }

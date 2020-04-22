@@ -1,10 +1,13 @@
 package pt.isel.ls.router;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+
 import pt.isel.ls.handlers.RouteHandler;
 import pt.isel.ls.router.request.Method;
 import pt.isel.ls.router.request.Parameter;
@@ -19,9 +22,9 @@ import pt.isel.ls.view.ExceptionView;
  * all the requests to the destination
  * controller
  */
-public class Router {
+public class Router implements Iterable<Router.Route> {
 
-    private HashMap<Method, Set<Route>> methodRoutes = new HashMap<>();
+    private final HashMap<Method, Set<Route>> methodRoutes = new HashMap<>();
 
     /**
      * Registers a new Route to this Router
@@ -29,7 +32,7 @@ public class Router {
      * @param handler Handler for the Route to be registered
      */
     public void registerRoute(Method method, RouteTemplate template, RouteHandler handler) {
-        Route route = new Route(template, handler);
+        Route route = new Route(template, handler, method);
         Set<Route> routes = methodRoutes.get(method);
         if (routes == null) {
             routes = new HashSet<>();
@@ -61,19 +64,29 @@ public class Router {
                 .setStatusCode(404);
     }
 
+    @Override
+    public Iterator<Route> iterator() {
+        return methodRoutes.values().stream()
+                .flatMap(Collection::stream)
+                .iterator();
+    }
+
     public static class Route {
 
         private RouteTemplate routeTemplate;
         private RouteHandler handler;
+        private Method method;
 
         /**
          * Creates a new Route
          * @param routeTemplate Template of this route
          * @param handler Handler of this route
+         * @param method the method of this route
          */
-        private Route(RouteTemplate routeTemplate, RouteHandler handler) {
+        private Route(RouteTemplate routeTemplate, RouteHandler handler, Method method) {
             this.routeTemplate = routeTemplate;
             this.handler = handler;
+            this.method = method;
         }
 
         /**
@@ -90,6 +103,14 @@ public class Router {
          */
         public RouteHandler getHandler() {
             return handler;
+        }
+
+        /**
+         * Get Route Method
+         * @return Route Method
+         */
+        public Method getMethod() {
+            return method;
         }
 
         @Override

@@ -23,6 +23,8 @@ import pt.isel.ls.view.TableView;
 
 public final class GetRoomsHandler implements RouteHandler {
 
+    private static final String DESCRIPTION = "Gets all of the Rooms or a specific room";
+
     private final ConnectionProvider provider;
 
     public GetRoomsHandler(ConnectionProvider provider) {
@@ -106,6 +108,11 @@ public final class GetRoomsHandler implements RouteHandler {
         }
 
         return new HandlerResponse(new TableView(table));
+    }
+
+    @Override
+    public String getDescription() {
+        return DESCRIPTION;
     }
 
 }
