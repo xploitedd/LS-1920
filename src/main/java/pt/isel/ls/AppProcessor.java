@@ -9,11 +9,14 @@ import pt.isel.ls.view.ExceptionView;
 import pt.isel.ls.view.ViewType;
 
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
+import java.util.Optional;
 
 public class AppProcessor {
+
+    private static final OutputStream DEFAULT_STREAM = System.out;
+    private static final PrintWriter DEFAULT_WRITER = new PrintWriter(DEFAULT_STREAM);
 
     private final Router router;
 
@@ -22,41 +25,40 @@ public class AppProcessor {
     }
 
     public void processInput(String input) {
-        processInput(input, System.out);
-    }
-
-    public void processInput(String input, OutputStream defaultStream) {
-        ViewType viewType = null;
         PrintWriter printWriter = null;
         try {
             RouteRequest request = RouteRequest.of(input);
-            viewType = ViewType.of(request.getHeaderValue(HeaderType.Accept)
-                    .orElse(null));
+            ViewType viewType = Optional.ofNullable(
+                    ViewType.of(request.getHeaderValue(HeaderType.Accept)
+                            .orElse(null))
+            ).orElse(ViewType.TEXT);
 
-            defaultStream = parseOutputStream(request, defaultStream);
-            printWriter = new PrintWriter(defaultStream);
+            printWriter = getPrintWriter(request);
             HandlerResponse response = router.getHandler(request)
                     .execute(request);
 
             response.getView().render(viewType, printWriter);
         } catch (RouteException e) {
-            printWriter = new PrintWriter(defaultStream);
-            new ExceptionView(e).render(viewType, printWriter);
+            new ExceptionView(e).render(ViewType.TEXT, DEFAULT_WRITER);
         } finally {
-            if (printWriter != null) {
+            // check that the PrintWriter isn't null and the object is the same as
+            // the DEFAULT_WRITER, because we don't want to close the DEFAULT_WRITER
+            // since it should only be closed when terminating the App
+            if (printWriter != null && printWriter != DEFAULT_WRITER) {
                 printWriter.close();
             }
         }
     }
 
-    private OutputStream parseOutputStream(RouteRequest request, OutputStream defaultStream) {
+    private PrintWriter getPrintWriter(RouteRequest request) {
         return request.getHeaderValue(HeaderType.FileName)
-                .map(this::fileToStream).orElse(defaultStream);
+                .map(this::fileToPrintWriter)
+                .orElse(DEFAULT_WRITER);
     }
 
-    private OutputStream fileToStream(String fileName) {
+    private PrintWriter fileToPrintWriter(String fileName) {
         try {
-            return new FileOutputStream(fileName);
+            return new PrintWriter(fileName);
         } catch (FileNotFoundException e) {
             return null;
         }
