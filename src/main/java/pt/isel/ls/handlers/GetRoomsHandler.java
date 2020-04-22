@@ -70,13 +70,9 @@ public final class GetRoomsHandler implements RouteHandler {
                     RoomLabelQueries labelQueries = new RoomLabelQueries(conn);
                     for (Parameter labelP : paramLabel.get()) {
                         int lid = labelP.toInt();
-                        roomStream = roomStream.filter(room -> ExceptionUtils.propagate(() -> {
-                            List<Integer> labels = labelQueries.getRoomLabels(lid)
-                                    .map(Label::getLid)
-                                    .collect(Collectors.toList());
-
-                            return labels.contains(lid);
-                        }));
+                        roomStream = roomStream.filter(room -> ExceptionUtils.propagate(() ->
+                                labelQueries.isLabelInRoom(room.getRid(), lid)
+                        ));
                     }
                 }
 
@@ -87,15 +83,12 @@ public final class GetRoomsHandler implements RouteHandler {
 
                     BookingQueries bookingQueries = new BookingQueries(conn);
                     roomStream = roomStream.filter(room -> ExceptionUtils.propagate(() -> {
-                        Iterable<Booking> bookings = bookingQueries.getBookingsByRid(room.getRid())
+                        Iterable<Interval> bookingInt = bookingQueries.getBookingsByRid(room.getRid())
+                                .map(b -> new Interval(b.getBegin().getTime(), b.getEnd().getTime()))
                                 .collect(Collectors.toList());
 
-                        for (Booking booking : bookings) {
-                            long bookingBegin = booking.getBegin().getTime();
-                            long bookingEnd = booking.getEnd().getTime();
-                            Interval i2 = new Interval(bookingBegin, bookingEnd);
-
-                            if (i1.isOverlapping(i2)) {
+                        for (Interval interval : bookingInt) {
+                            if (i1.isOverlapping(interval)) {
                                 return false;
                             }
                         }

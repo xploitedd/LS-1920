@@ -91,4 +91,14 @@ public class RoomLabelQueries extends DatabaseQueries {
         return labels.stream();
     }
 
+    public boolean isLabelInRoom(int rid, int lid) throws Exception {
+        PreparedStatement stmt = conn.prepareStatement(
+                "SELECT * FROM room_label WHERE rid=? AND lid=?"
+        );
+
+        stmt.setInt(1, rid);
+        stmt.setInt(2, lid);
+        return stmt.executeQuery().next();
+    }
+
 }
