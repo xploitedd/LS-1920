@@ -7,6 +7,7 @@ import java.util.LinkedList;
 import java.util.stream.Stream;
 
 import pt.isel.ls.model.User;
+import pt.isel.ls.router.response.RouteException;
 
 public class UserQueries extends DatabaseQueries {
 
@@ -46,9 +47,11 @@ public class UserQueries extends DatabaseQueries {
 
         ret.setInt(1, uid);
         ResultSet rs = ret.executeQuery();
-        rs.next();
+        if (rs.next()) {
+            return new User(uid, rs.getString("name"), rs.getString("email"));
+        }
 
-        return new User(uid, rs.getString("name"), rs.getString("email"));
+        throw new RouteException("A user with uid " + uid + " was not found!");
     }
 
     /**
@@ -66,9 +69,11 @@ public class UserQueries extends DatabaseQueries {
         ret.setString(1, email);
         ret.setString(2, name);
         ResultSet rs = ret.executeQuery();
-        rs.next();
+        if (rs.next()) {
+            return new User(rs.getInt("uid"), name, email);
+        }
 
-        return new User(rs.getInt("uid"), name, email);
+        throw new RouteException("A user was not found!");
     }
 
     /**

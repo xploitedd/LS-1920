@@ -68,9 +68,11 @@ public class BookingQueries extends DatabaseQueries {
         ret.setInt(4, uid);
 
         ResultSet rs = ret.executeQuery();
-        rs.next();
+        if (rs.next()) {
+            return new Booking(rs.getInt("bid"), rid, uid, begin, end);
+        }
 
-        return new Booking(rs.getInt("bid"), rid, uid, begin, end);
+        throw new RouteException("A booking was not found!");
     }
 
     /**
@@ -87,10 +89,12 @@ public class BookingQueries extends DatabaseQueries {
         ret.setInt(1, bid);
 
         ResultSet rs = ret.executeQuery();
-        rs.next();
+        if (rs.next()) {
+            return new Booking(bid, rs.getInt("rid"), rs.getInt("uid"),
+                    rs.getTimestamp("begin"), rs.getTimestamp("end"));
+        }
 
-        return new Booking(bid, rs.getInt("rid"), rs.getInt("uid"),
-                rs.getTimestamp("begin"), rs.getTimestamp("end"));
+        throw new RouteException("A booking with id " + bid + " was not found!");
     }
 
     /**
@@ -178,11 +182,11 @@ public class BookingQueries extends DatabaseQueries {
         update.setInt(4, bid);
         int rowCount = update.executeUpdate();
 
-        Booking booking = null;
         if (rowCount > 0) {
-            booking = new Booking(bid, rid, newUid, newBegin, newEnd);
+            return new Booking(bid, rid, newUid, newBegin, newEnd);
         }
-        return booking;
+
+        throw new RouteException("Couldn't update the booking!");
     }
 
     //returns how many rows were deleted, should be 0 or 1

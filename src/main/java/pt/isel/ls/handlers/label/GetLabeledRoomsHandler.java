@@ -36,7 +36,7 @@ public final class GetLabeledRoomsHandler implements RouteHandler {
                         table.addTableRow(String.valueOf(room.getRid()), room.getName(), room.getLocation(),
                                 String.valueOf(room.getCapacity()), room.getDescription()));
 
-        return new HandlerResponse(new TableView(table));
+        return new HandlerResponse(new TableView("Rooms with Label: " + lid, table));
     }
 
     @Override

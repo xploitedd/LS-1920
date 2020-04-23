@@ -27,7 +27,7 @@ public final class OptionHandler implements RouteHandler {
                     route.getHandler().getDescription());
         }
 
-        return new HandlerResponse(new TableView(table));
+        return new HandlerResponse(new TableView("Options Listing", table));
     }
 
     @Override

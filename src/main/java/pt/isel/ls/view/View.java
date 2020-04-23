@@ -13,6 +13,12 @@ import static pt.isel.ls.dsl.Dsl.title;
 
 public abstract class View {
 
+    protected final String title;
+
+    public View(String title) {
+        this.title = title;
+    }
+
     /**
      * Renders this view on the selected writer
      * @param type render type
@@ -23,7 +29,7 @@ public abstract class View {
             try {
                 Element html =
                         html(
-                                head(title("Placeholder Title")),
+                                head(title(title)),
                                 body(getHtmlBody())
                         );
 
@@ -42,5 +48,9 @@ public abstract class View {
     }
 
     protected abstract void renderText(PrintWriter writer);
+
+    public String getTitle() {
+        return title;
+    }
 
 }

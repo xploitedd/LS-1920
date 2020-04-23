@@ -38,7 +38,7 @@ public final class GetRoomBookingsHandler implements RouteHandler {
                                 booking.getBegin().toString(),
                                 booking.getEnd().toString()));
 
-        return new HandlerResponse(new TableView(table));
+        return new HandlerResponse(new TableView("Bookings", table));
     }
 
     @Override

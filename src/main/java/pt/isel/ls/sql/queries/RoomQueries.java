@@ -9,6 +9,7 @@ import java.util.stream.Stream;
 
 import pt.isel.ls.model.Label;
 import pt.isel.ls.model.Room;
+import pt.isel.ls.router.response.RouteException;
 
 public class RoomQueries extends DatabaseQueries {
 
@@ -78,11 +79,14 @@ public class RoomQueries extends DatabaseQueries {
         stmt.setInt(3, capacity);
 
         ResultSet rs = stmt.executeQuery();
-        rs.next();
-        int id = rs.getInt("rid");
-        String desc = rs.getString("description");
+        if (rs.next()) {
+            int id = rs.getInt("rid");
+            String desc = rs.getString("description");
 
-        return new Room(id, name, capacity, desc, location);
+            return new Room(id, name, capacity, desc, location);
+        }
+
+        throw new RouteException("No room found");
     }
 
     /**
@@ -101,14 +105,16 @@ public class RoomQueries extends DatabaseQueries {
         stmt.setInt(1,rid);
 
         ResultSet rs = stmt.executeQuery();
-        rs.next();
+        if (rs.next()) {
+            String name = rs.getString("name");
+            String location = rs.getString("location");
+            int capacity = rs.getInt("capacity");
+            String desc = rs.getString("description");
 
-        String name = rs.getString("name");
-        String location = rs.getString("location");
-        int capacity = rs.getInt("capacity");
-        String desc = rs.getString("description");
+            return new Room(rid, name, capacity, desc, location);
+        }
 
-        return new Room(rid, name, capacity, desc, location);
+        throw new RouteException("No room found with id " + rid);
     }
 
     /**

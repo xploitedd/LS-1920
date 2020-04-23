@@ -40,7 +40,7 @@ public final class GetRoomHandler implements RouteHandler {
         table.addTableRow(String.valueOf(room.getRid()), room.getName(), room.getLocation(),
                 String.valueOf(room.getCapacity()), room.getDescription(), labels.toString());
 
-        return new HandlerResponse(new TableView(table));
+        return new HandlerResponse(new TableView("Room " + rid + " details", table));
     }
 
     @Override

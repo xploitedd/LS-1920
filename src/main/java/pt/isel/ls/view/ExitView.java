@@ -13,6 +13,7 @@ public final class ExitView extends View {
     }
 
     public ExitView(String customText, int statusCode) {
+        super("Closing");
         this.customText = customText;
         this.statusCode = 0;
     }

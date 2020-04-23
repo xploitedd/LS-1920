@@ -41,7 +41,7 @@ public final class GetRoomBookingHandler implements RouteHandler {
         }
 
         table.addTableRow(b.getUid(), b.getBegin(), b.getEnd());
-        return new HandlerResponse(new TableView(table));
+        return new HandlerResponse(new TableView("Booking Id: " + bid, table));
     }
 
     @Override

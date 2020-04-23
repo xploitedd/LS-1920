@@ -33,7 +33,7 @@ public final class GetLabelsHandler implements RouteHandler {
                 .forEach(label ->
                         table.addTableRow(String.valueOf(label.getLid()), label.getName()));
 
-        return new HandlerResponse(new TableView(table));
+        return new HandlerResponse(new TableView("Labels", table));
     }
 
     @Override

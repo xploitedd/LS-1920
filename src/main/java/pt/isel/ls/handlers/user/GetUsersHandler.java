@@ -33,7 +33,7 @@ public final class GetUsersHandler implements RouteHandler {
                 .forEach(user ->
                         table.addTableRow(String.valueOf(user.getUid()), user.getName(), user.getEmail()));
 
-        return new HandlerResponse(new TableView(table));
+        return new HandlerResponse(new TableView("Users", table));
     }
 
     @Override

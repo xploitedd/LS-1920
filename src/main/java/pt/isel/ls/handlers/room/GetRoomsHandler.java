@@ -77,7 +77,7 @@ public final class GetRoomsHandler implements RouteHandler {
                     String.valueOf(room.getCapacity()), room.getDescription());
         });
 
-        return new HandlerResponse(new TableView(table));
+        return new HandlerResponse(new TableView("Rooms", table));
     }
 
     @Override

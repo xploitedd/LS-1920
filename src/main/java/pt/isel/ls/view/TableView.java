@@ -19,7 +19,8 @@ public class TableView extends View {
     private final Table table;
     private final ArrayList<TableRowElement> htmlRows;
 
-    public TableView(Table table) {
+    public TableView(String tableName, Table table) {
+        super(tableName);
         this.table = table;
         this.htmlRows = new ArrayList<>();
     }
@@ -38,7 +39,7 @@ public class TableView extends View {
 
         return table(
                 htmlRows.toArray(TableRowElement[]::new)
-        );
+        ).addAttribute("border", "1");
     }
 
     private void addRow(TableText... rowText) {
@@ -46,7 +47,8 @@ public class TableView extends View {
     }
 
     private <T> TableText[] mapToTableText(Stream<T> stream, Function<String, TableText> mapper) {
-        return stream.map(cell -> mapper.apply(cell.toString()))
+        return stream.map(cell -> mapper.apply(cell.toString())
+                .<TableText>addAttribute("style", "padding:5px;"))
                 .toArray(TableText[]::new);
     }
 }

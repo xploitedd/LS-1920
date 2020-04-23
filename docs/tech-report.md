@@ -178,6 +178,10 @@ Todos os erros que ocorrentes durante o processamento de uma *route* são lança
 nomeadamente através de `RouteException` ou seus derivados. Estas exceções apenas devem ser tratadas
 no `AppProcessor`, classe que decidirá qual é a melhor forma de apresentar os erros lançados.
 
+### Domain Specific Language (DSL)
+
+// TODO
+
 ## Avaliação crítica
 
 Na fase 1 do projecto *bookings* que fossem criados no mesmo horário e na mesma sala eram considerados

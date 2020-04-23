@@ -42,6 +42,7 @@ public class LabelQueries extends DatabaseQueries {
         if (!rs.next()) {
             throw new NoSuchElementException("Label '" + name + "' not found");
         }
+
         return new Label(rs.getInt("lid"), name);
     }
 

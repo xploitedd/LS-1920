@@ -26,8 +26,10 @@ public class RoomLabelQueries extends DatabaseQueries {
         if (labels.size() == 0) {
             return;
         }
+
         String insertStatement = "INSERT INTO room_label (lid, rid) VALUES (?, ?)"
                 + ", (?, ?)".repeat(labels.size() - 1) + ';';
+
         PreparedStatement rl = conn.prepareStatement(insertStatement);
         int i = 0;
         for (Label label : labels) {
@@ -35,6 +37,7 @@ public class RoomLabelQueries extends DatabaseQueries {
             rl.setInt(++i, label.getLid());
             rl.setInt(++i, rid);
         }
+
         rl.execute();
     }
 

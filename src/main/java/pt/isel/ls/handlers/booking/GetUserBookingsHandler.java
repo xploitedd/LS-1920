@@ -37,7 +37,7 @@ public final class GetUserBookingsHandler implements RouteHandler {
                         booking.getBegin().toString(),
                         booking.getEnd().toString()));
 
-        return new HandlerResponse(new TableView(table));
+        return new HandlerResponse(new TableView("Bookings of User: " + uid, table));
     }
 
     @Override

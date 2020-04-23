@@ -36,7 +36,7 @@ public final class GetUserHandler implements RouteHandler {
                 .getUser(uid));
 
         table.addTableRow(String.valueOf(user.getUid()), user.getName(), user.getEmail());
-        return new HandlerResponse(new TableView(table));
+        return new HandlerResponse(new TableView("User: " + uid, table));
     }
 
     @Override

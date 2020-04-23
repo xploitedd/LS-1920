@@ -4,16 +4,14 @@ import java.io.PrintWriter;
 
 public class MessageView extends View {
 
-    private String message;
-
     public MessageView(String message) {
-        this.message = message;
+        super(message);
     }
 
     @Override
     protected void renderText(PrintWriter writer) {
         writer.println("---------------------------------------------------------------------------");
-        writer.println("\t" + message);
+        writer.println("\t" + title);
         writer.println("---------------------------------------------------------------------------");
     }
 
