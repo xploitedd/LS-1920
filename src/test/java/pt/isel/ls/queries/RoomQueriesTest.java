@@ -1,7 +1,7 @@
 package pt.isel.ls.queries;
 
 import org.junit.Assert;
-import org.junit.BeforeClass;
+import org.junit.Before;
 import org.junit.Test;
 import pt.isel.ls.DatasourceUtils;
 import pt.isel.ls.model.Room;
@@ -22,10 +22,9 @@ public class RoomQueriesTest {
     private final String name = "TestRoom";
     private final String location = "TestLocation";
     private final int capacity = 32;
-    private final String description = "TestDescription";
 
-    @BeforeClass
-    public static void resetTables() throws SQLException, IOException {
+    @Before
+    public void resetTables() throws SQLException, IOException {
         DatasourceUtils.executeFile("CreateTables.sql");
     }
 
@@ -105,7 +104,8 @@ public class RoomQueriesTest {
         Connection conn = dSource.getConnection();
         RoomQueries query = new RoomQueries(conn);
 
-        query.createNewRoom(name, location, capacity,description,new LinkedList<>());
+        String description = "TestDescription";
+        query.createNewRoom(name, location, capacity, description,new LinkedList<>());
 
         PreparedStatement stmt = conn.prepareStatement(
                 "SELECT description FROM room "

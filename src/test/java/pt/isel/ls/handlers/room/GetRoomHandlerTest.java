@@ -1,4 +1,4 @@
-package pt.isel.ls.handlers.label;
+package pt.isel.ls.handlers.room;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -12,10 +12,12 @@ import pt.isel.ls.router.response.HandlerResponse;
 import pt.isel.ls.router.response.RouteException;
 import pt.isel.ls.sql.ConnectionProvider;
 import pt.isel.ls.sql.queries.LabelQueries;
+import pt.isel.ls.sql.queries.RoomQueries;
 import pt.isel.ls.view.TableView;
 
+import java.util.LinkedList;
 
-public class GetLabelsHandlerTest {
+public class GetRoomHandlerTest {
 
     private static Router router;
 
@@ -25,21 +27,25 @@ public class GetLabelsHandlerTest {
         DatasourceUtils.executeFile("CreateTables.sql");
         provider.execute(conn -> {
             LabelQueries labelQueries = new LabelQueries(conn);
-            labelQueries.createNewLabel("Teste1");
-            labelQueries.createNewLabel("Teste2");
+            labelQueries.createNewLabel("teste1");
+
+            RoomQueries roomQueries = new RoomQueries(conn);
+            roomQueries.createNewRoom("TR1", "TL1", 32, null, new LinkedList<>());
+
 
             return null;
         });
 
-        GetLabelsHandler glh = new GetLabelsHandler(provider);
+        GetRoomHandler grh = new GetRoomHandler(provider);
         router = new Router();
-        router.registerRoute(Method.GET, RouteTemplate.of("/labels"), glh);
+        router.registerRoute(Method.GET, RouteTemplate.of("/rooms/{rid}"), grh);
     }
 
     @Test
-    public void getExistingLabels() throws RouteException {
+    public void getRoom() throws RouteException {
+
         RouteRequest request = RouteRequest.of(
-                "GET /labels");
+                "GET /rooms/1");
 
         HandlerResponse response = router.getHandler(request).execute(request);
         Assert.assertTrue(response.getView() instanceof TableView);

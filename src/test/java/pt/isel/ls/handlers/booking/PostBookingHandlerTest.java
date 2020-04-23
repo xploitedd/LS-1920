@@ -1,4 +1,4 @@
-package pt.isel.ls.handlers;
+package pt.isel.ls.handlers.booking;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -28,6 +28,7 @@ public class PostBookingHandlerTest {
         provider.execute(conn -> {
             UserQueries userQueries = new UserQueries(conn);
             userQueries.createNewUser("teste", "teste@teste.com");
+
             RoomQueries roomQueries = new RoomQueries(conn);
             roomQueries.createNewRoom("teste", "teste", 10, "teste room",
                     new LinkedList<>());

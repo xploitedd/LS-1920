@@ -1,6 +1,6 @@
 CREATE TABLE IF NOT EXISTS room (
     rid SERIAL PRIMARY KEY,
-    name varchar(50),
+    name varchar(50) UNIQUE,
     location varchar(50),
     capacity smallint,
     constraint room_capacity_min_check check (capacity > 1)

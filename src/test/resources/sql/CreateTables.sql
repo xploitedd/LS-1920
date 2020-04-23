@@ -4,7 +4,7 @@ drop table if exists description;
 drop table if exists room;
 drop table if exists "user";
 drop table if exists "label";
-CREATE TABLE room (rid SERIAL PRIMARY KEY, name varchar(50), location varchar(50), capacity smallint, constraint room_capacity_min_check check (capacity > 1));
+CREATE TABLE room (rid SERIAL PRIMARY KEY, name varchar(50) UNIQUE, location varchar(50), capacity smallint, constraint room_capacity_min_check check (capacity > 1));
 CREATE TABLE description (rid SERIAL PRIMARY KEY REFERENCES room(rid), description varchar(200));
 CREATE TABLE "user" (uid SERIAL PRIMARY KEY, email varchar(64) UNIQUE, name varchar(50));
 CREATE TABLE "label" (lid SERIAL PRIMARY KEY, name varchar(50) UNIQUE);
