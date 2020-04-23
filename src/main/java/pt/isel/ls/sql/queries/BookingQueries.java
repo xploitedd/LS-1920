@@ -163,7 +163,7 @@ public class BookingQueries extends DatabaseQueries {
 
     public Booking editBooking(int rid, int bid, int newUid, Timestamp newBegin, Timestamp newEnd) throws Exception {
         Interval newInt = new Interval(newBegin.getTime(), newEnd.getTime());
-        getBookings()
+        getBookingsByRid(rid)
                 .filter(booking -> booking.getBid() != bid)
                 .forEach(booking -> ExceptionUtils.propagate(() ->
                         checkOverlap(booking, newInt)));

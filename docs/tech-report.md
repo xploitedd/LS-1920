@@ -1,8 +1,9 @@
-# Relatório técnico da Fase 1
+# Relatório Técnico do Projecto
 
 ## Introdução
 
-Este documento contém os aspectos relevantes do desenho e implementação da fase 1 do projecto de LS.
+Este documento contém os aspectos relevantes do desenho e implementação do projecto
+de Laboratório de Software
 
 ## Modelação da base de dados
 
@@ -26,7 +27,7 @@ O modelo conceptual apresenta ainda as seguintes restrições:
     - begin e end têm minutos multiplos de 10
     - o tempo entre begin e end tem de ser superior a 10 minutos
 
-    
+ 
 ### Modelação física ###
 
 O modelo físico da base de dados está presente em [ResetTables.sql](../src/main/resources/sql/ResetTables.sql) (apaga as tabelas para recriar se já estiverem lá) e [CreateTables.sql](../src/main/resources/sql/CreateTables.sql) (não faz nada se as tabelas já existirem).
@@ -37,17 +38,13 @@ O modelo físico da base de dados está presente em [ResetTables.sql](../src/mai
 
 ##### Interface com o utilizador
 
-O *input* do utilizador na consola é tratado pela classe `App` no método
-`startApp` que tem como objectivo processar o *request* que o utilizador
-passou na linha de comandos (através de `RouteRequest`), encontrar a *route*
-correspondente ao *request* através do `Router`, obter a `View` da resposta
-do *handler* e apresentar essa `View` passando um determinado `PrintWriter`,
-neste caso um `PrintWriter` com `System.out`.
+Para a interface com a consola foi criada uma nova classe `ConsoleApplication` que define como se obtém
+o *input* do utilizador. Com o *input* obtido, esta nova classe passa o mesmo para ser processado a uma
+instância de `AppProcessor`, previamente criado pela `App`.
 
-Caso alguma exceção seja obtida nesta parte do programa e se esse tipo
-de exceção não for resultado de uma causa interna então o stack trace da 
-mesma será apresentado, de modo a que o utilizador final possa analizar/enviar
-a causa externa.
+A classe `AppProcessor` tem como objectivo processar os comandos, obtendo a sua resposta, mas também
+tem como objectivo modificar o tipo de *output* do comando (nesta fase encontram-se disponíveis `TEXT/HTML` 
+e `TEXT/PLAIN`), bem como modificar o destino do *output*, através dos *headers* passados ao *request*.
 
 ##### Handlers e Parâmetros de Request
 
@@ -56,7 +53,7 @@ que estes devem implementar a interface `RouteHandler`.
 A interface `RouteHandler` contém um único método `execute` resposável
 por executar o pedido e responder através de um `RouteResponse`.
 
-Cada *handler* devolve um `RouteResponse` que, nesta fase do trabalho,
+Cada *handler* devolve um `HandlerResponse` que, nesta fase do trabalho,
 contém um `View`. O `View` é o responsável por apresentar a informação
 obtida no *request* ao utilizador no formato pretendido, sendo que para
 tal existem vários tipos de `View` (e.g `TableView`, `MessageView`, ...).
@@ -64,9 +61,7 @@ tal existem vários tipos de `View` (e.g `TableView`, `MessageView`, ...).
 Os parâmetros dos comandos são passados através da classe `RouteRequest`
 que para além da informação sobre o request, como o `Path`, contém métodos
 para obter parâmetros de *path* (e.g `/user/{uid}`, onde `uid` é o parâmetro) 
-e parâmetros do *request* em sí (e.g `?name=Jose`). Adicionalmente,
-os parâmetros podem ser opcionais ou obrigatórios, sendo que se forem
-obrigatórios e não estiverem presentes é lançada uma exceção `ParameterNotFoundException`.
+e parâmetros do *request* em sí (e.g `?name=Jose`).
 
 Enquanto que os parâmetros do *path* são processados durante o processo
 de *routing*, os parâmetros do *request* são processados pela classe
@@ -83,6 +78,21 @@ a cada sub-secção *key-value* (que estão separados por `=`). O `HashMap` é p
 que chamou `parseParameters`. Caso ocorra alguma exceção durante este processamento
 será lançada uma exceção `RouteException`.
 
+##### Resolução de Headers
+
+A resolução dos *headers* de um determinado *request* é feita de forma semelhante à resolução dos parâmetros
+de um *request*. Contudo ambos os *headers* e os parâmetros são opcionais, pelo que se o utilizador passar um destes é
+necessário averiguar se se tratam de *headers* ou parâmetros. Para isto a resolução é feita primeiro assumindo
+que foram passados parâmetros e caso seja lançada uma exceção nesta resolução então assume-se que foram passados *headers*.
+
+Os *headers* de cada *request* são guardados na classe associada `RouteRequest`, pelo que todos os troços de
+execução com acesso a uma instância de `RouteRequest` poderão obter um determinado *header*. Os *headers* disponíveis
+estão ainda especificados na classe `HeaderType`, sendo que se o utilizador não passar um *header* válido
+uma exceção será lançada.
+
+A resolução do valor dos *headers* `accept` e `file-name` é feita na classe `AppProcessor`, visto que é esta
+classe que tem como objectivo redirecionar e modificar o tipo de *output*.
+
 ### Encaminhamento dos comandos
 
 Para o `Router` poder encaminhar os comandos estes devem ser registados no ínicio
@@ -95,10 +105,12 @@ contrário um *handler* padrão (*handler* de 404) é passado ao *caller*.
 
 ##### Método do Request
 
-Nesta fase do trabalho apenas foram necessários 3 métodos:
 - `EXIT` que termina a aplicação
 - `GET` que tem como objectivo ir procurar dados à fonte de dados
 - `POST` que tem como objectivo inserir novos dados na fonte de dados da aplicação
+- `OPTION` que lista as *routes* disponíveis e a sua descrição
+- `PUT` que altera um recurso
+- `DELETE` que elimina um determinado recurso
 
 ##### Template da Route
 
@@ -112,13 +124,8 @@ Para transformar uma `String` num novo *template* é necessário primeiramente
 dividir a *string* em vários segmentos (secções do `Path` delimitadas por `/`).
 Com todos os segmentos é decidido se o segmento é constante `ConstantTemplateSegment` (o nome do segmento
 deve corresponder sempre, e.g `users`) ou se este é variável `VariableTemplateSegment` (o nome do segmento pode variar
-consoante o pedido, e.g `{uid}`). Nos segmentos variáveis ainda há opção para
-que um segmento variável seja opcional e para ser deste tipo é preciso cumprir o seguinte
-contracto:
-
-- Deve ser o último segmento
-- Deve estar no formato `{uid}?`, onde `uid` é a chave do segmento e `?`
-indica que o mesmo é opcional
+consoante o pedido, e.g `{uid}`). Foi removida a opção de poder conter segmentos variáveis opcionais pois tal
+aumentava a complexidade do código presente nos *handlers*.
 
 A lista com todos os `TemplateSegment` é então passada ao constructor de `RouteTemplate`
 e uma nova instância desta classe é devolvida ao *caller* de `of`.
@@ -167,16 +174,14 @@ uma instância de `Connection` (que será obtida através do uso do `ConnectionP
 
 ### Processamento de erros
 
-Todos os erros são lançados através de exceções e estas exceções lançadas durante o decorrer da aplicação
-são todas tratadas na classe `App`. Caso a exceção tenha como fonte causas internas ou expectáveis então
-uma `View` com a descrição do erro será apresentada ao utilizador. Caso a exceção tenha como origem a má
-configuração do ambiente onde a aplicação está a correr, o *stack trace* da mesma será apresentado ao
-utilizador para que este possa partilhar/resolver.
-
-As exceções expectáveis pela aplicação deverão ser *wrapped* na classe `RouteException`, ou seja, a exceção
-original não passa para o método chamador, mas sim a `RouteException` que contém informação sobre o erro.
+Todos os erros que ocorrentes durante o processamento de uma *route* são lançados através de exceções,
+nomeadamente através de `RouteException` ou seus derivados. Estas exceções apenas devem ser tratadas
+no `AppProcessor`, classe que decidirá qual é a melhor forma de apresentar os erros lançados.
 
 ## Avaliação crítica
+
+Na fase 1 do projecto *bookings* que fossem criados no mesmo horário e na mesma sala eram considerados
+como válidos, contudo este problema foi resolvido na fase 2 pelo que isto não é mais possível.
 
 Nesta fase foram realizados todos os objectivos propostos pelo enunciado da mesma.
 
