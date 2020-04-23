@@ -54,6 +54,10 @@ public class Table {
         return rows.stream().skip(1).map(Collection::stream);
     }
 
+    public int getRowCount() {
+        return rows.size() - 1;
+    }
+
     /**
      * Get table horizontal size
      * Horizontal size is defined as the number of characters

@@ -51,4 +51,9 @@ public class TableView extends View {
                 .<TableText>addAttribute("style", "padding:5px;"))
                 .toArray(TableText[]::new);
     }
+
+    public Table getTable() {
+        return table;
+    }
+
 }
