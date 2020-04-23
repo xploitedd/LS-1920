@@ -68,20 +68,19 @@ public final class GetRoomsHandler implements RouteHandler {
             long end = begin + 60000 * paramDuration.get().get(0).toInt();
             Interval i = new Interval(begin, end);
             rooms = rooms.filter(room -> ExceptionUtils.propagate(() -> provider.execute(conn -> {
-                    Iterable<Booking> bookings = new BookingQueries(conn)
-                            .getBookingsByRid(room.getRid())
-                            .collect(Collectors.toList());
+                Iterable<Booking> bookings = new BookingQueries(conn)
+                        .getBookingsByRid(room.getRid())
+                        .collect(Collectors.toList());
 
-                    for (Booking b : bookings) {
-                        Interval bi = new Interval(b.getBegin().getTime(), b.getEnd().getTime());
-                        if (i.isOverlapping(bi)) {
-                            return false;
-                        }
+                for (Booking b : bookings) {
+                    Interval bi = new Interval(b.getBegin().getTime(), b.getEnd().getTime());
+                    if (i.isOverlapping(bi)) {
+                        return false;
                     }
+                }
 
-                    return true;
-                })
-            ));
+                return true;
+            })));
         }
 
         rooms.forEach(room ->
