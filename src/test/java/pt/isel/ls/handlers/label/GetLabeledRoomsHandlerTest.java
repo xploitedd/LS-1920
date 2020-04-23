@@ -52,4 +52,12 @@ public class GetLabeledRoomsHandlerTest {
         HandlerResponse response = router.getHandler(request).execute(request);
         Assert.assertTrue(response.getView() instanceof TableView);
     }
+
+    @Test(expected = RouteException.class)
+    public void getLabeledRoomThatDoesNotExist() throws RouteException {
+        RouteRequest request = RouteRequest.of(
+                "GET /labels/2/rooms");
+
+        router.getHandler(request).execute(request);
+    }
 }

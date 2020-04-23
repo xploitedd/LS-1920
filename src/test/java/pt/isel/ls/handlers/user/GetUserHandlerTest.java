@@ -1,6 +1,6 @@
-package pt.isel.ls.handlers.label;
+package pt.isel.ls.handlers.user;
 
-import junit.framework.Assert;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import pt.isel.ls.DatasourceUtils;
@@ -11,11 +11,10 @@ import pt.isel.ls.router.request.RouteRequest;
 import pt.isel.ls.router.response.HandlerResponse;
 import pt.isel.ls.router.response.RouteException;
 import pt.isel.ls.sql.ConnectionProvider;
-import pt.isel.ls.sql.queries.LabelQueries;
-import pt.isel.ls.view.IdentifierView;
+import pt.isel.ls.sql.queries.UserQueries;
+import pt.isel.ls.view.TableView;
 
-
-public class PostLabelHandlerTest {
+public class GetUserHandlerTest {
 
     private static Router router;
 
@@ -24,22 +23,32 @@ public class PostLabelHandlerTest {
         ConnectionProvider provider = new ConnectionProvider(DatasourceUtils.getDataSource());
         DatasourceUtils.executeFile("CreateTables.sql");
         provider.execute(conn -> {
-            LabelQueries labelQueries = new LabelQueries(conn);
-            labelQueries.createNewLabel("Teste");
+            UserQueries userQueries = new UserQueries(conn);
+            userQueries.createNewUser("TestUser", "TestUser@test.com");
 
             return null;
         });
-        PostLabelHandler pbh = new PostLabelHandler(provider);
+
+        GetUserHandler guh = new GetUserHandler(provider);
         router = new Router();
-        router.registerRoute(Method.POST, RouteTemplate.of("/labels"), pbh);
+        router.registerRoute(Method.GET, RouteTemplate.of("/users/{uid}"), guh);
     }
 
     @Test
-    public void createNewLabel() throws RouteException {
+    public void getUserById() throws RouteException {
         RouteRequest request = RouteRequest.of(
-                "POST /labels name=teste1");
+                "GET /users/1");
 
         HandlerResponse response = router.getHandler(request).execute(request);
-        Assert.assertTrue(response.getView() instanceof IdentifierView);
+
+        Assert.assertTrue(response.getView() instanceof TableView);
+    }
+
+    @Test(expected = RouteException.class)
+    public void getUserDoesNotExist() throws RouteException {
+        RouteRequest request = RouteRequest.of(
+                "GET /users/2");
+
+        HandlerResponse response = router.getHandler(request).execute(request);
     }
 }

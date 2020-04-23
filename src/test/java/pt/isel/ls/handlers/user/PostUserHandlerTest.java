@@ -1,4 +1,4 @@
-package pt.isel.ls.handlers.label;
+package pt.isel.ls.handlers.user;
 
 import junit.framework.Assert;
 import org.junit.Before;
@@ -11,11 +11,10 @@ import pt.isel.ls.router.request.RouteRequest;
 import pt.isel.ls.router.response.HandlerResponse;
 import pt.isel.ls.router.response.RouteException;
 import pt.isel.ls.sql.ConnectionProvider;
-import pt.isel.ls.sql.queries.LabelQueries;
+import pt.isel.ls.sql.queries.UserQueries;
 import pt.isel.ls.view.IdentifierView;
 
-
-public class PostLabelHandlerTest {
+public class PostUserHandlerTest {
 
     private static Router router;
 
@@ -24,22 +23,33 @@ public class PostLabelHandlerTest {
         ConnectionProvider provider = new ConnectionProvider(DatasourceUtils.getDataSource());
         DatasourceUtils.executeFile("CreateTables.sql");
         provider.execute(conn -> {
-            LabelQueries labelQueries = new LabelQueries(conn);
-            labelQueries.createNewLabel("Teste");
+            UserQueries userQueries = new UserQueries(conn);
+            userQueries.createNewUser("teste", "teste@teste.com");
 
             return null;
         });
-        PostLabelHandler pbh = new PostLabelHandler(provider);
+        PostUserHandler pbh = new PostUserHandler(provider);
         router = new Router();
-        router.registerRoute(Method.POST, RouteTemplate.of("/labels"), pbh);
+        router.registerRoute(Method.POST, RouteTemplate.of("/users"), pbh);
     }
 
     @Test
-    public void createNewLabel() throws RouteException {
+    public void createNewUser() throws RouteException {
         RouteRequest request = RouteRequest.of(
-                "POST /labels name=teste1");
+                "POST /users name=TesteUser1&email=TesteUser1@teste.com");
 
         HandlerResponse response = router.getHandler(request).execute(request);
         Assert.assertTrue(response.getView() instanceof IdentifierView);
+    }
+
+    @Test(expected = RouteException.class)
+    public void createExistingUser() throws RouteException {
+
+        RouteRequest request = RouteRequest.of(
+                "POST /users name=teste&email=teste@teste.com");
+
+        HandlerResponse response = router.getHandler(request).execute(request);
+        Assert.assertTrue(response.getView() instanceof IdentifierView);
+
     }
 }
