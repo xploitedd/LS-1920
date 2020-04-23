@@ -84,7 +84,6 @@ public class GetRoomsHandlerTest {
 
     @Test
     public void getRoomsByLabel() throws RouteException {
-
         RouteRequest request = RouteRequest.of(
                 "GET /rooms label=1");
 

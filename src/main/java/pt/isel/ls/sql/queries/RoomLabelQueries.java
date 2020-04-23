@@ -99,13 +99,13 @@ public class RoomLabelQueries extends DatabaseQueries {
         return labels.stream();
     }
 
-    public boolean isLabelInRoom(int rid, int lid) throws Exception {
+    public boolean isLabelInRoom(int rid, String label) throws Exception {
         PreparedStatement stmt = conn.prepareStatement(
-                "SELECT * FROM room_label WHERE rid=? AND lid=?"
+                "SELECT * FROM (room_label rl JOIN label l on rl.lid=l.lid) WHERE rid=? AND l.name=?"
         );
 
         stmt.setInt(1, rid);
-        stmt.setInt(2, lid);
+        stmt.setString(2, label);
         return stmt.executeQuery().next();
     }
 

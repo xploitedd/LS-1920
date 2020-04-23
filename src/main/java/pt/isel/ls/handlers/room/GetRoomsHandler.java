@@ -1,6 +1,7 @@
 package pt.isel.ls.handlers.room;
 
 import pt.isel.ls.handlers.RouteHandler;
+import pt.isel.ls.model.Booking;
 import pt.isel.ls.model.Room;
 import pt.isel.ls.model.Table;
 import pt.isel.ls.router.request.Parameter;
@@ -10,7 +11,6 @@ import pt.isel.ls.router.response.HandlerResponse;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 import pt.isel.ls.router.response.RouteException;
@@ -46,36 +46,47 @@ public final class GetRoomsHandler implements RouteHandler {
         Optional<List<Parameter>> paramLabel = request.getOptionalParameter("label");
 
         Table table = new Table("RID", "Name", "Location", "Capacity", "Description");
-        provider.execute(conn -> {
-            Stream<Room> roomStream = new RoomQueries(conn).getRooms();
+        Stream<Room> rooms = provider.execute(conn -> {
+            Stream<Room> ret = new RoomQueries(conn).getRooms();
             if (paramCapacity.isPresent()) {
-                int capacity = paramCapacity.get().get(0).toInt();
-                roomStream = filterByCapacity(roomStream, capacity);
+                int minCapacity = paramCapacity.get().get(0).toInt();
+                ret = ret.filter(room -> room.getCapacity() >= minCapacity);
             }
 
-            if (paramLabel.isPresent()) {
-                RoomLabelQueries labelQueries = new RoomLabelQueries(conn);
-                IntStream lidStream = paramLabel.get()
-                        .stream()
-                        .mapToInt(lid -> ExceptionUtils.propagate(lid::toInt));
-
-                roomStream = filterByLabels(roomStream, lidStream, labelQueries);
-            }
-
-            if (paramBegin.isPresent() && paramDuration.isPresent()) {
-                long begin = paramBegin.get().get(0).toLong();
-                int duration = paramDuration.get().get(0).toInt();
-                Interval i1 = new Interval(begin, begin + duration);
-
-                BookingQueries bookingQueries = new BookingQueries(conn);
-                roomStream = filterByAvailability(roomStream, i1, bookingQueries);
-            }
-
-            return roomStream;
-        }).forEach(room -> {
-            table.addTableRow(String.valueOf(room.getRid()), room.getName(), room.getLocation(),
-                    String.valueOf(room.getCapacity()), room.getDescription());
+            return ret;
         });
+
+        if (paramLabel.isPresent()) {
+            for (Parameter labelPar : paramLabel.get()) {
+                rooms = rooms.filter(room -> ExceptionUtils.propagate(() -> provider.execute(conn ->
+                        new RoomLabelQueries(conn).isLabelInRoom(room.getRid(), labelPar.toString()))));
+            }
+        }
+
+        if (paramBegin.isPresent() && paramDuration.isPresent()) {
+            long begin = paramBegin.get().get(0).toLong();
+            long end = begin + 60000 * paramDuration.get().get(0).toInt();
+            Interval i = new Interval(begin, end);
+            rooms = rooms.filter(room -> ExceptionUtils.propagate(() -> provider.execute(conn -> {
+                    Iterable<Booking> bookings = new BookingQueries(conn)
+                            .getBookingsByRid(room.getRid())
+                            .collect(Collectors.toList());
+
+                    for (Booking b : bookings) {
+                        Interval bi = new Interval(b.getBegin().getTime(), b.getEnd().getTime());
+                        if (i.isOverlapping(bi)) {
+                            return false;
+                        }
+                    }
+
+                    return true;
+                })
+            ));
+        }
+
+        rooms.forEach(room ->
+                table.addTableRow(String.valueOf(room.getRid()), room.getName(), room.getLocation(),
+                        String.valueOf(room.getCapacity()), room.getDescription()));
 
         return new HandlerResponse(new TableView("Rooms", table));
     }
@@ -83,42 +94,6 @@ public final class GetRoomsHandler implements RouteHandler {
     @Override
     public String getDescription() {
         return DESCRIPTION;
-    }
-
-    private Stream<Room> filterByCapacity(Stream<Room> roomStream, int minCapacity) {
-        return roomStream.filter(room -> room.getCapacity() >= minCapacity);
-    }
-
-    private Stream<Room> filterByLabels(Stream<Room> roomStream,
-                                        IntStream labelIds,
-                                        RoomLabelQueries labelQueries) {
-
-        for (int lid : labelIds.toArray()) {
-            roomStream = roomStream.filter(room -> ExceptionUtils.propagate(() ->
-                    labelQueries.isLabelInRoom(room.getRid(), lid)
-            ));
-        }
-
-        return roomStream;
-    }
-
-    private Stream<Room> filterByAvailability(Stream<Room> roomStream,
-                                              Interval available,
-                                              BookingQueries queries) {
-
-        return roomStream.filter(room -> ExceptionUtils.propagate(() -> {
-            Iterable<Interval> bookingInt = queries.getBookingsByRid(room.getRid())
-                    .map(b -> new Interval(b.getBegin().getTime(), b.getEnd().getTime()))
-                    .collect(Collectors.toList());
-
-            for (Interval interval : bookingInt) {
-                if (available.isOverlapping(interval)) {
-                    return false;
-                }
-            }
-
-            return true;
-        }));
     }
 
 }

@@ -142,5 +142,4 @@ public class RoomQueries extends DatabaseQueries {
 
         return rooms.stream();
     }
-
 }

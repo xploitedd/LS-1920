@@ -1,5 +1,7 @@
 package pt.isel.ls.model;
 
+import java.util.Objects;
+
 public final class Room {
 
     private static final String NO_DESCRIPTION = "No Description";
@@ -71,6 +73,25 @@ public final class Room {
     public String toString() {
         return rid + " " + name + ": capacity=" + capacity + ", description="
                 + description + ", location=" + location;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+
+        Room room = (Room) o;
+        return rid == room.rid;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(rid);
     }
 
 }
