@@ -43,6 +43,7 @@ public class GetLabeledRoomsHandlerTest {
         router = new Router();
         router.registerRoute(Method.GET, RouteTemplate.of("/labels/{lid}/rooms"), pbh);
     }
+
     @Test
     public void getLabeledRooms() throws RouteException {
         RouteRequest request = RouteRequest.of(

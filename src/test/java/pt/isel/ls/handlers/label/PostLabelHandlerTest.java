@@ -30,7 +30,7 @@ public class PostLabelHandlerTest {
     @Test
     public void createNewLabel() throws RouteException {
         RouteRequest request = RouteRequest.of(
-                "POST /labels name = teste1");
+                "POST /labels name=teste1");
 
         HandlerResponse response = router.getHandler(request).execute(request);
         Assert.assertTrue(response.getView() instanceof IdentifierView);

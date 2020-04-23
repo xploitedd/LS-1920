@@ -24,8 +24,7 @@ public class GetLabelsHandlerTest {
         ConnectionProvider provider = new ConnectionProvider(DatasourceUtils.getDataSource());
         DatasourceUtils.executeFile("CreateTables.sql");
         provider.execute(conn -> {
-           LabelQueries labelQueries = new LabelQueries(conn);
-
+            LabelQueries labelQueries = new LabelQueries(conn);
             labelQueries.createNewLabel("Teste1");
             labelQueries.createNewLabel("Teste2");
 
@@ -42,8 +41,8 @@ public class GetLabelsHandlerTest {
         RouteRequest request = RouteRequest.of(
                 "GET /labels");
 
-       HandlerResponse response = router.getHandler(request).execute(request);
+        HandlerResponse response = router.getHandler(request).execute(request);
 
-       Assert.assertTrue(response.getView() instanceof TableView);
+        Assert.assertTrue(response.getView() instanceof TableView);
     }
 }
