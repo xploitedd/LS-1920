@@ -1,8 +1,10 @@
-package pt.isel.ls.handlers;
+package pt.isel.ls.handlers.room;
 
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
+
+import pt.isel.ls.handlers.RouteHandler;
 import pt.isel.ls.model.Label;
 import pt.isel.ls.model.Room;
 import pt.isel.ls.router.request.Parameter;

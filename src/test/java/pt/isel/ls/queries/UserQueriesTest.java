@@ -20,7 +20,7 @@ public class UserQueriesTest {
 
     @BeforeClass
     public static void resetTables() throws SQLException, IOException {
-        DatasourceUtils.executeFile(dSource, "src/test/resources/sql/CreateTables.sql");
+        DatasourceUtils.executeFile("CreateTables.sql");
     }
 
     @Test

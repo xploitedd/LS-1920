@@ -1,5 +1,6 @@
-package pt.isel.ls.handlers;
+package pt.isel.ls.handlers.booking;
 
+import pt.isel.ls.handlers.RouteHandler;
 import pt.isel.ls.model.Booking;
 import pt.isel.ls.router.request.RouteRequest;
 import pt.isel.ls.router.response.RouteException;
@@ -10,7 +11,7 @@ import pt.isel.ls.view.IdentifierView;
 
 import java.sql.Timestamp;
 
-public class PutBookingHandler implements RouteHandler {
+public final class PutBookingHandler implements RouteHandler {
 
     private static final String DESCRIPTION = "Updates a booking";
 
@@ -32,12 +33,12 @@ public class PutBookingHandler implements RouteHandler {
         int bid = request.getPathParameter("bid").toInt();
         int newUid = request.getParameter("uid").get(0).toInt();
         long newBegin = request.getParameter("begin").get(0).toLong();
-        long duration = request.getParameter("duration").get(0).toLong();
+        int duration = request.getParameter("duration").get(0).toInt();
         Timestamp newB = new Timestamp(newBegin);
-        Timestamp newE = new Timestamp(newBegin + duration);
+        Timestamp newE = new Timestamp(newBegin + 60000 * duration);
 
-        Booking booking = provider.execute(conn ->
-                new BookingQueries(conn).editBooking(rid, bid, newUid, newB, newE));
+        Booking booking = provider.execute(conn -> new BookingQueries(conn)
+                .editBooking(rid, bid, newUid, newB, newE));
 
         return new HandlerResponse(new IdentifierView("updated", "booking", booking.getBid()));
     }

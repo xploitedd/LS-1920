@@ -4,7 +4,6 @@ import javax.sql.DataSource;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -18,9 +17,9 @@ public class DatabaseTest {
     private static final DataSource dataSource = DatasourceUtils.getDataSource();
 
     @BeforeClass
-    public static void databaseTests_createSchema() throws SQLException, IOException {
-        DatasourceUtils.executeFile(dataSource, "src/test/resources/sql/createSchema.sql");
-        DatasourceUtils.executeFile(dataSource, "src/test/resources/sql/addData.sql");
+    public static void databaseTests_createSchema() {
+        DatasourceUtils.executeFile("createSchema.sql");
+        DatasourceUtils.executeFile("addData.sql");
     }
 
     @Test

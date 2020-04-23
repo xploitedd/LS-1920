@@ -52,18 +52,8 @@ public class RouteTemplate {
             }
         }
 
-        // check if there are any obligatory parameters ahead
         if (templateSegmentIterator.hasNext()) {
-            TemplateSegment templateSegment = templateSegmentIterator.next();
-            if (templateSegment instanceof ParameterTemplateSegment) {
-                ParameterTemplateSegment pts = (ParameterTemplateSegment) templateSegment;
-                // only the last segment can be optional according to the contract
-                if (pts.isObligatory) {
-                    return Optional.empty();
-                }
-            } else {
-                return Optional.empty();
-            }
+            return Optional.empty();
         }
 
         return Optional.of(pathParameters);
@@ -80,11 +70,8 @@ public class RouteTemplate {
         for (int i = 0; i < segments.length; i++) {
             String segment = segments[i];
             if (isParameterSegment(segment)) {
-                // guarantee that only the last segment can be optional
-                boolean isObligatory = isObligatoryParameter(segment) || i + 1 != segments.length;
                 templateSegments.add(new ParameterTemplateSegment(
-                        getParameterName(segment),
-                        isObligatory
+                        getParameterName(segment)
                 ));
             } else {
                 templateSegments.add(new ConstantTemplateSegment(segment));
@@ -109,17 +96,8 @@ public class RouteTemplate {
      * @return true if a parameter, false otherwise
      */
     private static boolean isParameterSegment(String segment) {
-        return segment.startsWith("{") && (segment.endsWith("}") || segment.endsWith("}?"))
+        return segment.startsWith("{") && segment.endsWith("}")
                 && segment.length() > 2;
-    }
-
-    /**
-     * Checks if a segment is a obligatory parameter
-     * @param segment segment to be checked
-     * @return true if an obligatory parameter, false otherwise
-     */
-    private static boolean isObligatoryParameter(String segment) {
-        return !segment.endsWith("}?");
     }
 
     @Override
@@ -158,11 +136,8 @@ public class RouteTemplate {
 
     private static class ParameterTemplateSegment extends TemplateSegment {
 
-        private boolean isObligatory;
-
-        protected ParameterTemplateSegment(String segment, boolean isObligatory) {
+        protected ParameterTemplateSegment(String segment) {
             super(segment);
-            this.isObligatory = isObligatory;
         }
 
         @Override
@@ -172,7 +147,7 @@ public class RouteTemplate {
 
         @Override
         public String toString() {
-            return "{" + segment + "}" + (!isObligatory ? "?" : "");
+            return "{" + segment + "}";
         }
 
     }

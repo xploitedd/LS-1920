@@ -10,7 +10,6 @@ import pt.isel.ls.router.response.RouteException;
 import pt.isel.ls.router.response.HandlerResponse;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 public class RouterTest {
@@ -77,24 +76,6 @@ public class RouterTest {
         RouteRequest request = RouteRequest.of("GET /test a=b&b=a");
         assertEquals(200, router.getHandler(request)
                 .execute(request).getStatusCode());
-    }
-
-    @Test
-    public void testRouteWithOptionalPathParameters() throws RouteException {
-        Router router = new Router();
-        router.registerRoute(Method.GET, RouteTemplate.of("/test/{param}?"), request -> {
-            assertTrue(request.getPath().getPathSegments().length >= 1);
-            assertEquals("test", request.getPath().getPathSegments()[0]);
-            return new HandlerResponse(null);
-        });
-
-        RouteRequest request1 = RouteRequest.of("GET /test/abc");
-        RouteRequest request2 = RouteRequest.of("GET /test");
-
-        assertEquals(200, router.getHandler(request1)
-                .execute(request1).getStatusCode());
-        assertEquals(200, router.getHandler(request2)
-                .execute(request2).getStatusCode());
     }
 
 }

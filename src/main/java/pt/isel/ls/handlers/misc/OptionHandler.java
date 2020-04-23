@@ -1,5 +1,6 @@
-package pt.isel.ls.handlers;
+package pt.isel.ls.handlers.misc;
 
+import pt.isel.ls.handlers.RouteHandler;
 import pt.isel.ls.model.Table;
 import pt.isel.ls.router.Router;
 import pt.isel.ls.router.request.RouteRequest;

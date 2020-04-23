@@ -28,7 +28,7 @@ public class BookingQueriesTest {
 
     @Before
     public void beforeEach() throws Throwable {
-        DatasourceUtils.executeFile(dSource, "src/test/resources/sql/CreateTables.sql");
+        DatasourceUtils.executeFile("CreateTables.sql");
         Connection conn = dSource.getConnection();
         UserQueries testUser = new UserQueries(conn);
         userID = testUser.createNewUser("TestUser","user@testing.booking").getUid();

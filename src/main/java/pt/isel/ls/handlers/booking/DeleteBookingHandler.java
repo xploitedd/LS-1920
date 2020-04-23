@@ -1,5 +1,6 @@
-package pt.isel.ls.handlers;
+package pt.isel.ls.handlers.booking;
 
+import pt.isel.ls.handlers.RouteHandler;
 import pt.isel.ls.router.request.RouteRequest;
 import pt.isel.ls.router.response.RouteException;
 import pt.isel.ls.router.response.HandlerResponse;
@@ -8,7 +9,7 @@ import pt.isel.ls.sql.queries.BookingQueries;
 import pt.isel.ls.view.IdentifierView;
 import pt.isel.ls.view.MessageView;
 
-public class DeleteBookingHandler implements RouteHandler {
+public final class DeleteBookingHandler implements RouteHandler {
 
     private final ConnectionProvider provider;
 
@@ -27,11 +28,13 @@ public class DeleteBookingHandler implements RouteHandler {
         int rid = request.getPathParameter("rid").toInt();
         int bid = request.getPathParameter("bid").toInt();
 
-        int deleted = provider.execute(conn ->
-                new BookingQueries(conn).deleteBooking(rid, bid));
+        int deleted = provider.execute(conn -> new BookingQueries(conn)
+                .deleteBooking(rid, bid));
+
         if (deleted == 0) {
             return new HandlerResponse(new MessageView("No booking with rid=" + rid + " and bid=" + bid + " found"));
         }
+
         return new HandlerResponse(new IdentifierView("deleted", "booking", bid));
     }
 }

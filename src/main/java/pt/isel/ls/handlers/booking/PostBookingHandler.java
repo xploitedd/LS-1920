@@ -1,5 +1,6 @@
-package pt.isel.ls.handlers;
+package pt.isel.ls.handlers.booking;
 
+import pt.isel.ls.handlers.RouteHandler;
 import pt.isel.ls.model.Booking;
 import pt.isel.ls.router.response.RouteException;
 import pt.isel.ls.router.request.RouteRequest;
@@ -25,10 +26,11 @@ public final class PostBookingHandler implements RouteHandler {
         int rid = request.getPathParameter("rid").toInt();
         int uid = request.getParameter("uid").get(0).toInt();
         long b = request.getParameter("begin").get(0).toLong();
-        long duration = request.getParameter("duration").get(0).toLong();
+        int duration = request.getParameter("duration").get(0).toInt();
 
         Timestamp begin = new Timestamp(b);
-        Timestamp end = new Timestamp(b + duration);
+        // duration in minutes
+        Timestamp end = new Timestamp(b + 60000 * duration);
 
         Booking booking = provider.execute(conn ->
                 new BookingQueries(conn).createNewBooking(rid, uid, begin, end));

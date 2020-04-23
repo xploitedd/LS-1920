@@ -3,8 +3,6 @@ package pt.isel.ls.router.request;
 import pt.isel.ls.router.RouterUtils;
 import pt.isel.ls.router.response.RouteException;
 
-import java.net.URLDecoder;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -47,17 +45,8 @@ public class RouteRequest {
      * @throws ParameterNotFoundException in case the parameter does not exist
      */
     public Parameter getPathParameter(String parameterName) throws ParameterNotFoundException {
-        return getOptionalPathParameter(parameterName)
+        return Optional.ofNullable(pathParameters.get(parameterName))
                 .orElseThrow(() -> new ParameterNotFoundException(parameterName));
-    }
-
-    /**
-     * Gets an optional path parameter
-     * @param parameterName name of the parameter
-     * @return parameter string value
-     */
-    public Optional<Parameter> getOptionalPathParameter(String parameterName) {
-        return Optional.ofNullable(pathParameters.get(parameterName));
     }
 
     /**
@@ -147,8 +136,8 @@ public class RouteRequest {
 
             return new RouteRequest(method, path.get(),
                     parameters.orElseGet(HashMap::new), headers.orElseGet(HashMap::new));
-        } catch (RouteException routeException) {
-            throw new RouteRequestParsingException(routeException.getMessage());
+        } catch (Exception exception) {
+            throw new RouteRequestParsingException(exception.getMessage());
         }
     }
 
@@ -161,7 +150,6 @@ public class RouteRequest {
     private static HashMap<String, List<Parameter>> parseParameters(String parameterSection)
             throws RouteException {
 
-        parameterSection = decodeSection(parameterSection);
         HashMap<String, List<Parameter>> parameters = new HashMap<>();
         RouterUtils.forEachKeyValue(parameterSection, "&", "=", (key, value) -> {
             List<Parameter> values = Optional.ofNullable(parameters.get(key))
@@ -177,7 +165,6 @@ public class RouteRequest {
     private static HashMap<HeaderType, String> parseHeaders(String headerSection)
             throws RouteException {
 
-        headerSection = decodeSection(headerSection);
         HashMap<HeaderType, String> headers = new HashMap<>();
         RouterUtils.forEachKeyValue(headerSection, "\\|", ":", (key, value) -> {
             HeaderType type = HeaderType.of(key);
@@ -185,10 +172,6 @@ public class RouteRequest {
         });
 
         return headers;
-    }
-
-    private static String decodeSection(String section) {
-        return URLDecoder.decode(section, StandardCharsets.UTF_8);
     }
 
     public static class ParameterNotFoundException extends RouteException {

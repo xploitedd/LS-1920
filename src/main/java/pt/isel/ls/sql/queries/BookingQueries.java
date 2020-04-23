@@ -6,7 +6,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.LinkedList;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import pt.isel.ls.model.Booking;
@@ -31,16 +30,10 @@ public class BookingQueries extends DatabaseQueries {
      */
     public Booking createNewBooking(int rid, int uid, Timestamp begin, Timestamp end) throws Exception {
         // check overlapping bookings
-        Iterable<Booking> roomBookings = getBookingsByRid(rid)
-                .collect(Collectors.toList());
-
-        Interval i1 = new Interval(begin.getTime(), end.getTime());
-        for (Booking b : roomBookings) {
-            Interval i2 = new Interval(b.getBegin().getTime(), b.getEnd().getTime());
-            if (i1.isOverlapping(i2)) {
-                throw new RouteException("The new booking overlaps another booking!");
-            }
-        }
+        Interval i2 = new Interval(begin.getTime(), end.getTime());
+        getBookingsByRid(rid)
+                .forEach(booking -> ExceptionUtils.propagate(() ->
+                        checkOverlap(booking, i2)));
 
         PreparedStatement stmt = conn.prepareStatement(
                 "INSERT INTO booking (begin, \"end\", rid, uid) VALUES (?, ?, ?, ?);"
@@ -172,14 +165,8 @@ public class BookingQueries extends DatabaseQueries {
         Interval newInt = new Interval(newBegin.getTime(), newEnd.getTime());
         getBookings()
                 .filter(booking -> booking.getBid() != bid)
-                .map(booking -> new Interval(booking.getBegin().getTime(), booking.getEnd().getTime()))
-                .forEach(interval -> ExceptionUtils.propagate(() -> {
-                    if (newInt.isOverlapping(interval)) {
-                        throw new RouteException("Can't update the booking. New interval overlaps another booking!");
-                    }
-
-                    return null;
-                }));
+                .forEach(booking -> ExceptionUtils.propagate(() ->
+                        checkOverlap(booking, newInt)));
 
         PreparedStatement update = conn.prepareStatement(
                 "UPDATE booking SET uid = ?, begin = ?, \"end\" = ? WHERE bid = ?"
@@ -207,4 +194,12 @@ public class BookingQueries extends DatabaseQueries {
         del.setInt(2,bid);
         return del.executeUpdate();
     }
+
+    private static void checkOverlap(Booking b1, Interval i2) throws RouteException {
+        Interval i1 = new Interval(b1.getBegin().getTime(), b1.getEnd().getTime());
+        if (i1.isOverlapping(i2)) {
+            throw new RouteException("This booking overlaps with another booking!");
+        }
+    }
+
 }

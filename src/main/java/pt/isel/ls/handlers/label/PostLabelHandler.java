@@ -1,5 +1,6 @@
-package pt.isel.ls.handlers;
+package pt.isel.ls.handlers.label;
 
+import pt.isel.ls.handlers.RouteHandler;
 import pt.isel.ls.model.Label;
 import pt.isel.ls.router.request.RouteRequest;
 import pt.isel.ls.router.response.HandlerResponse;

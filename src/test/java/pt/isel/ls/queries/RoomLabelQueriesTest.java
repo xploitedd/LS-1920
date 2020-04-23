@@ -30,7 +30,7 @@ public class RoomLabelQueriesTest {
 
     @Before
     public void resetTables() throws SQLException, IOException {
-        DatasourceUtils.executeFile(dSource,"src/test/resources/sql/CreateTables.sql");
+        DatasourceUtils.executeFile("CreateTables.sql");
     }
 
     @Test

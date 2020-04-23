@@ -2,6 +2,8 @@ package pt.isel.ls.router;
 
 import pt.isel.ls.router.response.RouteException;
 
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.stream.Stream;
 
 public class RouterUtils {
@@ -33,13 +35,17 @@ public class RouterUtils {
             }
 
             String key = kv[0];
-            String value = kv[1];
+            String value = decodeSection(kv[1]);
             if (key.isBlank() || value.isBlank()) {
                 throw new RouteException("Key and/or Value are/is blank!");
             }
 
             function.apply(key, value);
         }
+    }
+
+    private static String decodeSection(String section) {
+        return URLDecoder.decode(section, StandardCharsets.UTF_8);
     }
 
     @FunctionalInterface

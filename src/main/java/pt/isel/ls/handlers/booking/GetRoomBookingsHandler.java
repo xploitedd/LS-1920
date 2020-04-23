@@ -1,5 +1,6 @@
-package pt.isel.ls.handlers;
+package pt.isel.ls.handlers.booking;
 
+import pt.isel.ls.handlers.RouteHandler;
 import pt.isel.ls.model.Table;
 import pt.isel.ls.router.request.RouteRequest;
 import pt.isel.ls.router.response.HandlerResponse;
@@ -10,7 +11,7 @@ import pt.isel.ls.view.TableView;
 
 public final class GetRoomBookingsHandler implements RouteHandler {
 
-    private static final String DESCRIPTION = "Gets Bookings from Rooms";
+    private static final String DESCRIPTION = "Gets all room bookings";
 
     private final ConnectionProvider provider;
 
@@ -19,7 +20,7 @@ public final class GetRoomBookingsHandler implements RouteHandler {
     }
 
     /**
-     * Gets Bookings from Rooms
+     * Gets all room bookings
      * @param request The route request
      * @return returns a RouteResponse with a tableView for the router
      * @throws RouteException Sent to the router

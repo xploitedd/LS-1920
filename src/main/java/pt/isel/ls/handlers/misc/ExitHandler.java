@@ -1,10 +1,11 @@
-package pt.isel.ls.handlers;
+package pt.isel.ls.handlers.misc;
 
+import pt.isel.ls.handlers.RouteHandler;
 import pt.isel.ls.router.request.RouteRequest;
 import pt.isel.ls.router.response.HandlerResponse;
 import pt.isel.ls.view.ExitView;
 
-public class ExitHandler implements RouteHandler {
+public final class ExitHandler implements RouteHandler {
 
     private static final String DESCRIPTION = "Exits the application";
 

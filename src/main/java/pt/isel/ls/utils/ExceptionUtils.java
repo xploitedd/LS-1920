@@ -12,4 +12,12 @@ public class ExceptionUtils {
         }
     }
 
+    public static void propagate(ThrowingRunnable runnable) {
+        try {
+            runnable.run();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
 }
