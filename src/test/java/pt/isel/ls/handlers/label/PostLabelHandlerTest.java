@@ -42,12 +42,4 @@ public class PostLabelHandlerTest {
         HandlerResponse response = router.getHandler(request).execute(request);
         Assert.assertTrue(response.getView() instanceof IdentifierView);
     }
-
-    @Test(expected = RouteException.class)
-    public void createNewExistingLabel() throws RouteException {
-        RouteRequest request = RouteRequest.of(
-                "POST /labels name=Teste");
-
-        HandlerResponse response = router.getHandler(request).execute(request);
-    }
 }
