@@ -2,6 +2,7 @@ package pt.isel.ls.sql.queries;
 
 import pt.isel.ls.model.Label;
 import pt.isel.ls.model.Room;
+import pt.isel.ls.router.response.RouteException;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -48,6 +49,10 @@ public class RoomLabelQueries extends DatabaseQueries {
      * @throws Exception any exception that occurs
      */
     public Stream<Room> getLabeledRooms(int lid) throws Exception {
+        if (!doesLabelExist(lid)) {
+            throw new RouteException("A label with id " + lid + " does not exist!");
+        }
+
         PreparedStatement stmt = conn.prepareStatement(
                 "SELECT r.rid, \"name\", location, capacity, description "
                         + "FROM (room r FULL JOIN description d on r.rid = d.rid) "
@@ -101,6 +106,15 @@ public class RoomLabelQueries extends DatabaseQueries {
 
         stmt.setInt(1, rid);
         stmt.setInt(2, lid);
+        return stmt.executeQuery().next();
+    }
+
+    public boolean doesLabelExist(int lid) throws Exception {
+        PreparedStatement stmt = conn.prepareStatement(
+                "SELECT * FROM label WHERE lid=?"
+        );
+
+        stmt.setInt(1, lid);
         return stmt.executeQuery().next();
     }
 
