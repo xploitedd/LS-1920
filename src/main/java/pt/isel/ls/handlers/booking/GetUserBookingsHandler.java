@@ -1,4 +1,4 @@
-package pt.isel.ls.handlers.user;
+package pt.isel.ls.handlers.booking;
 
 import pt.isel.ls.handlers.RouteHandler;
 import pt.isel.ls.model.Table;

@@ -9,7 +9,7 @@ import pt.isel.ls.handlers.booking.GetRoomBookingHandler;
 import pt.isel.ls.handlers.booking.GetRoomBookingsHandler;
 import pt.isel.ls.handlers.booking.PostBookingHandler;
 import pt.isel.ls.handlers.booking.PutBookingHandler;
-import pt.isel.ls.handlers.user.GetUserBookingsHandler;
+import pt.isel.ls.handlers.booking.GetUserBookingsHandler;
 import pt.isel.ls.handlers.misc.ExitHandler;
 import pt.isel.ls.handlers.label.GetLabeledRoomsHandler;
 import pt.isel.ls.handlers.label.GetLabelsHandler;

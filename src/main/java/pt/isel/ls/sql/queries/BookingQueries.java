@@ -5,6 +5,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.util.Calendar;
 import java.util.LinkedList;
 import java.util.stream.Stream;
 
@@ -14,6 +15,9 @@ import pt.isel.ls.utils.ExceptionUtils;
 import pt.isel.ls.utils.Interval;
 
 public class BookingQueries extends DatabaseQueries {
+
+    private static final int BOOKING_MIN_TIME = 10;
+    private static final int BOOKING_MINUTE_MUL = 10;
 
     public BookingQueries(Connection conn) {
         super(conn);
@@ -29,6 +33,7 @@ public class BookingQueries extends DatabaseQueries {
      * @throws Exception any exception that occurs
      */
     public Booking createNewBooking(int rid, int uid, Timestamp begin, Timestamp end) throws Exception {
+        doBookingConstraintCheck(begin, end);
         // check overlapping bookings
         Interval i2 = new Interval(begin.getTime(), end.getTime());
         getBookingsByRid(rid)
@@ -166,6 +171,7 @@ public class BookingQueries extends DatabaseQueries {
     }
 
     public Booking editBooking(int rid, int bid, int newUid, Timestamp newBegin, Timestamp newEnd) throws Exception {
+        doBookingConstraintCheck(newBegin, newEnd);
         Interval newInt = new Interval(newBegin.getTime(), newEnd.getTime());
         getBookingsByRid(rid)
                 .filter(booking -> booking.getBid() != bid)
@@ -192,7 +198,7 @@ public class BookingQueries extends DatabaseQueries {
     //returns how many rows were deleted, should be 0 or 1
     public int deleteBooking(int rid, int bid) throws SQLException {
         PreparedStatement del = conn.prepareStatement(
-                "DELETE FROM booking WHERE rid = ? AND bid = ?;"
+                "DELETE FROM booking WHERE rid = ? AND bid = ?"
         );
         del.setInt(1,rid);
         del.setInt(2,bid);
@@ -203,6 +209,24 @@ public class BookingQueries extends DatabaseQueries {
         Interval i1 = new Interval(b1.getBegin().getTime(), b1.getEnd().getTime());
         if (i1.isOverlapping(i2)) {
             throw new RouteException("This booking overlaps with another booking!");
+        }
+    }
+
+    private static void doBookingConstraintCheck(Timestamp begin, Timestamp end) throws RouteException {
+        long lbegin = begin.getTime() / 1000;
+        long lend = end.getTime() / 1000;
+        if (lend - lbegin < BOOKING_MIN_TIME) {
+            throw new RouteException("A booking should last for at least " + BOOKING_MIN_TIME);
+        }
+
+        Calendar cal = Calendar.getInstance();
+        cal.setTimeInMillis(begin.getTime());
+        long min1 = cal.get(Calendar.MINUTE);
+        cal.setTimeInMillis(end.getTime());
+        long min2 = cal.get(Calendar.MINUTE);
+
+        if (min1 % BOOKING_MINUTE_MUL != 0 || min2 % BOOKING_MINUTE_MUL != 0) {
+            throw new RouteException("Minutes should be multiples of " + BOOKING_MINUTE_MUL);
         }
     }
 

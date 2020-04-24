@@ -19,6 +19,8 @@ import pt.isel.ls.view.IdentifierView;
 
 public final class PostRoomHandler extends RouteHandler {
 
+    private static final int MIN_CAPACITY = 2;
+
     public PostRoomHandler(ConnectionProvider provider) {
         super(
                 Method.POST,
@@ -37,6 +39,10 @@ public final class PostRoomHandler extends RouteHandler {
         String name = request.getParameter("name").get(0).toString();
         int capacity = request.getParameter("capacity").get(0).toInt();
         String location = request.getParameter("location").get(0).toString();
+
+        if (capacity < MIN_CAPACITY) {
+            throw new RouteException("Room capacity should be at least " + MIN_CAPACITY);
+        }
 
         Room inserted = provider.execute(conn -> {
             List<Label> labels = new LinkedList<>();
