@@ -47,6 +47,6 @@ public class GetUserHandlerTest {
         RouteRequest request = RouteRequest.of(
                 "GET /users/2");
 
-        HandlerResponse response = router.getHandler(request).execute(request);
+        router.getHandler(request).execute(request);
     }
 }

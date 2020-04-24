@@ -192,7 +192,7 @@ public class BookingQueries extends DatabaseQueries {
     //returns how many rows were deleted, should be 0 or 1
     public int deleteBooking(int rid, int bid) throws SQLException {
         PreparedStatement del = conn.prepareStatement(
-                "DELETE * FROM booking WHERE rid = ? AND bid = ?;"
+                "DELETE FROM booking WHERE rid = ? AND bid = ?;"
         );
         del.setInt(1,rid);
         del.setInt(2,bid);
