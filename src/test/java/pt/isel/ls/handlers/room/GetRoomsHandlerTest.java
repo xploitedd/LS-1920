@@ -67,8 +67,62 @@ public class GetRoomsHandlerTest {
         HandlerResponse response = router.getHandler(request).execute(request);
         TableView tableView = (TableView) response.getView();
 
-        Assert.assertEquals(tableView.getTable().getRowCount(), 3);
+        Assert.assertEquals(3, tableView.getTable().getRowCount());
     }
+
+    @Test
+    public void getRoomsByTime1() throws RouteException {
+        Timestamp begin = Timestamp.valueOf(LocalDateTime.of(2020, 4, 5, 10, 10));
+
+        //Well inside the booking
+        RouteRequest request = RouteRequest.of(
+                "GET /rooms begin=" + begin.getTime() + "&duration=49980");
+
+        HandlerResponse response = router.getHandler(request).execute(request);
+        TableView tableView = (TableView) response.getView();
+
+        //Assert.assertEquals(2, tableView.getTable().getRowCount());
+    }
+
+    @Test
+    public void getRoomsByTime2() throws RouteException {
+        Timestamp begin = Timestamp.valueOf(LocalDateTime.of(2020, 4, 4, 10, 10));
+        //same start as booking, different end
+        RouteRequest request = RouteRequest.of(
+                "GET /rooms begin=" + begin.getTime() + "&duration=49980");
+
+        HandlerResponse response = router.getHandler(request).execute(request);
+        TableView tableView = (TableView) response.getView();
+
+        //Assert.assertEquals(2, tableView.getTable().getRowCount());
+    }
+
+    @Test
+    public void getRoomsByTime3() throws RouteException {
+        Timestamp begin = Timestamp.valueOf(LocalDateTime.of(2021, 4, 4, 10, 0));
+        //same end as booking, different start
+        RouteRequest request = RouteRequest.of(
+                "GET /rooms begin=" + begin.getTime() + "&duration=10");
+
+        HandlerResponse response = router.getHandler(request).execute(request);
+        TableView tableView = (TableView) response.getView();
+
+        Assert.assertEquals(2, tableView.getTable().getRowCount());
+    }
+
+    @Test
+    public void getRoomsByTime4() throws RouteException {
+        Timestamp begin = Timestamp.valueOf(LocalDateTime.of(2020, 3, 4, 10, 0));
+        //same end as booking, different start
+        RouteRequest request = RouteRequest.of(
+                "GET /rooms begin=" + begin.getTime() + "&duration=10");
+
+        HandlerResponse response = router.getHandler(request).execute(request);
+        TableView tableView = (TableView) response.getView();
+
+        Assert.assertEquals(3, tableView.getTable().getRowCount());
+    }
+
 
     @Test
     public void getRoomsByCapacity() throws RouteException {
@@ -79,17 +133,18 @@ public class GetRoomsHandlerTest {
         HandlerResponse response = router.getHandler(request).execute(request);
         TableView tableView = (TableView) response.getView();
 
-        Assert.assertEquals(tableView.getTable().getRowCount(), 1);
+        Assert.assertEquals(1, tableView.getTable().getRowCount());
     }
 
     @Test
     public void getRoomsByLabel() throws RouteException {
         RouteRequest request = RouteRequest.of(
-                "GET /rooms label=1");
+                "GET /rooms label=teste1");
 
         HandlerResponse response = router.getHandler(request).execute(request);
         TableView tableView = (TableView) response.getView();
 
-        Assert.assertEquals(tableView.getTable().getRowCount(), 1);
+        Assert.assertEquals(1, tableView.getTable().getRowCount());
     }
+
 }
