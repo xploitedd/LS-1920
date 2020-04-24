@@ -52,12 +52,14 @@ public class Router implements Iterable<Router.Route> {
      */
     public Handler getHandler(RouteRequest request) {
         Set<Route> routes = methodRoutes.get(request.getMethod());
-        for (Route r : routes) {
-            RouteTemplate template = r.getRouteTemplate();
-            Optional<HashMap<String, Parameter>> match = template.match(request.getPath());
-            if (match.isPresent()) {
-                request.setPathParameters(match.get());
-                return r.getHandler();
+        if (routes != null) {
+            for (Route r : routes) {
+                RouteTemplate template = r.getRouteTemplate();
+                Optional<HashMap<String, Parameter>> match = template.match(request.getPath());
+                if (match.isPresent()) {
+                    request.setPathParameters(match.get());
+                    return r.getHandler();
+                }
             }
         }
 

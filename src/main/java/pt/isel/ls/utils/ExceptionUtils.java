@@ -8,7 +8,7 @@ public class ExceptionUtils {
         try {
             return supplier.call();
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException(e.getMessage());
         }
     }
 
@@ -16,7 +16,7 @@ public class ExceptionUtils {
         try {
             runnable.run();
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException(e.getMessage());
         }
     }
 
