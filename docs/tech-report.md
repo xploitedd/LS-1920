@@ -51,7 +51,7 @@ e `TEXT/PLAIN`), bem como modificar o destino do *output*, através dos *headers
 Todos os *handlers* encontram-se no package `pt.isel.ls.handlers` sendo
 que estes devem implementar a interface `RouteHandler`.
 A interface `RouteHandler` contém um único método `execute` resposável
-por executar o pedido e responder através de um `RouteResponse`.
+por executar o pedido e responder através de um `HandlerResponse`.
 
 Cada *handler* devolve um `HandlerResponse` que, nesta fase do trabalho,
 contém um `View`. O `View` é o responsável por apresentar a informação
@@ -180,15 +180,35 @@ no `AppProcessor`, classe que decidirá qual é a melhor forma de apresentar os 
 
 ### Domain Specific Language (DSL)
 
-// TODO
+Para a criação da **DSL** de **HTML** foi criado um *package* `pt.isel.ls.dsl`. Dentro deste package
+encontram-se todas as classes relacionadas com esta **DSL**.
+
+A **DSL** encontra-se dividida da seguinte forma:
+- `Node` que representa um nó da árvore
+    - `Element : Node` que representa um elemento **HTML**
+        - `Node...` cada elemento pode conter vários nós filhos
+    - `TextNode : Node` que representa um nó com texto
+
+A cada nó é possível pedir uma representação textual de elementos, ou pedir ao nó em sí para escrever
+num qualquer `Writer`.
+
+Adicionalmente, é ainda possível adicionar atributos a um determinado nó através do método `addAttribute`
+que recebe como parâmetro a chave e o valor do atributo a ser adicionado.
+
+Para utilizar a **DSL** existe uma classe auxiliar `Dsl`, que permite ao utilizador desta especificar a árvore
+de uma forma semelhante ao que faria se especificasse esta árvore num ficheiro **HTML**.
 
 ## Avaliação crítica
 
 Na fase 1 do projecto *bookings* que fossem criados no mesmo horário e na mesma sala eram considerados
 como válidos, contudo este problema foi resolvido na fase 2 pelo que isto não é mais possível.
 
-Nesta fase foram realizados todos os objectivos propostos pelo enunciado da mesma.
+Na fase 2 foram ainda modificados os `RouteHandler`, sendo que são estes os responsáveis por fornecer
+informação sobre a `Route` ao `Router` (e.g *path*, *method*, *description*, ...).
 
 Pretendem-se ainda melhorar os seguintes aspectos:
 - API de construção de *queries sql* (ver [JDBI Fluent API](http://jdbi.org/#_fluent_api) por exemplo)
-- Adicionar outro tipo de exceções (derivadas ou não de `RouteException`)
+- Adicionar outro tipo de exceções (derivadas ou não de `RouteException`).
+- `GetRoomsHandler` dado que se encontra mal optimizado e propenso a erros futuros.
+- Criar uma tabela "vertical" de modo a que resultados em que apenas seja esperado uma linha
+possa ser apresentados de uma forma mais conveniente para o utilizador da aplicação.
