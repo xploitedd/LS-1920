@@ -25,7 +25,7 @@ import pt.isel.ls.handlers.user.PostUserHandler;
 import pt.isel.ls.router.Router;
 import pt.isel.ls.sql.ConnectionProvider;
 
-public class App implements Runnable {
+public class App {
 
     private static final String DATABASE_CONNECTION_ENV = "JDBC_DATABASE_URL";
 
@@ -48,14 +48,21 @@ public class App implements Runnable {
     }
 
     public static void main(String[] args) {
-        App app = new App();
-        app.run();
+        try {
+            App app = new App();
+            app.run(args);
+        } catch (Exception e) {
+            throw new RuntimeException("An error occurred: " + e.getMessage());
+        }
     }
 
-    @Override
-    public void run() {
-        ConsoleApplication consoleApp = new ConsoleApplication(processor);
-        consoleApp.run();
+    public void run(String[] args) {
+        if (args.length >= 2) {
+            processor.processInput(String.join(" ", args));
+        } else {
+            ConsoleApplication consoleApp = new ConsoleApplication(processor);
+            consoleApp.run();
+        }
     }
 
     /**

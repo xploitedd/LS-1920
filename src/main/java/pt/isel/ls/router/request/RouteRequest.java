@@ -109,7 +109,7 @@ public class RouteRequest {
                 throw new RouteException("Path not valid!");
             }
 
-            Method method = Method.valueOf(requestParts[0]);
+            Method method = getMethodFromString(requestParts[0]);
             Optional<Path> path = Path.of(requestParts[1]);
             if (path.isEmpty()) {
                 throw new RouteException("Path not valid!");
@@ -172,6 +172,15 @@ public class RouteRequest {
         });
 
         return headers;
+    }
+
+    private static Method getMethodFromString(String method) throws RouteException {
+        method = method.toUpperCase();
+        try {
+            return Method.valueOf(method);
+        } catch (IllegalArgumentException e) {
+            throw new RouteException("Method " + method + " does not exist");
+        }
     }
 
     public static class ParameterNotFoundException extends RouteException {
