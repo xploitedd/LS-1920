@@ -48,8 +48,12 @@ public class App {
     }
 
     public static void main(String[] args) {
-        App app = new App();
-        app.run(args);
+        try {
+            App app = new App();
+            app.run(args);
+        } catch (Exception e) {
+            throw new RuntimeException("An error occurred: " + e.getMessage());
+        }
     }
 
     public void run(String[] args) {
