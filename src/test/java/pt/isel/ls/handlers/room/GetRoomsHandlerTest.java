@@ -111,7 +111,7 @@ public class GetRoomsHandlerTest {
     @Test
     public void getRoomsByTime4() throws RouteException {
         Timestamp begin = Timestamp.valueOf(LocalDateTime.of(2020, 3, 4, 10, 0));
-        //same end as booking, different start
+        //before booking, should be valid
         RouteRequest request = RouteRequest.of(
                 "GET /rooms begin=" + begin.getTime() + "&duration=10");
 
