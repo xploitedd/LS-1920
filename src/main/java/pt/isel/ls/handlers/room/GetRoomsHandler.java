@@ -4,6 +4,7 @@ import pt.isel.ls.handlers.RouteHandler;
 import pt.isel.ls.model.Booking;
 import pt.isel.ls.model.Room;
 import pt.isel.ls.model.Table;
+import pt.isel.ls.router.request.Method;
 import pt.isel.ls.router.request.Parameter;
 import pt.isel.ls.router.request.RouteRequest;
 import pt.isel.ls.router.response.HandlerResponse;
@@ -22,14 +23,15 @@ import pt.isel.ls.utils.ExceptionUtils;
 import pt.isel.ls.utils.Interval;
 import pt.isel.ls.view.TableView;
 
-public final class GetRoomsHandler implements RouteHandler {
-
-    private static final String DESCRIPTION = "Gets all of the Rooms";
-
-    private final ConnectionProvider provider;
+public final class GetRoomsHandler extends RouteHandler {
 
     public GetRoomsHandler(ConnectionProvider provider) {
-        this.provider = provider;
+        super(
+                Method.GET,
+                "/rooms",
+                "Gets all of the Rooms",
+                provider
+        );
     }
 
     /**
@@ -65,7 +67,7 @@ public final class GetRoomsHandler implements RouteHandler {
 
         if (paramBegin.isPresent() && paramDuration.isPresent()) {
             long begin = paramBegin.get().get(0).toLong();
-            long end = begin + 60000 * paramDuration.get().get(0).toInt();
+            long end = begin + 60000 * paramDuration.get().get(0).toLong();
             Interval i = new Interval(begin, end);
             rooms = rooms.filter(room -> ExceptionUtils.propagate(() -> provider.execute(conn -> {
                 Iterable<Booking> bookings = new BookingQueries(conn)
@@ -88,11 +90,6 @@ public final class GetRoomsHandler implements RouteHandler {
                         String.valueOf(room.getCapacity()), room.getDescription()));
 
         return new HandlerResponse(new TableView("Rooms", table));
-    }
-
-    @Override
-    public String getDescription() {
-        return DESCRIPTION;
     }
 
 }

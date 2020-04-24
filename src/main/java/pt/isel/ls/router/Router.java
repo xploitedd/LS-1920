@@ -8,6 +8,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 
+import pt.isel.ls.handlers.Handler;
 import pt.isel.ls.handlers.RouteHandler;
 import pt.isel.ls.router.request.Method;
 import pt.isel.ls.router.request.Parameter;
@@ -28,11 +29,11 @@ public class Router implements Iterable<Router.Route> {
 
     /**
      * Registers a new Route to this Router
-     * @param template Template of the Route to be registered
      * @param handler Handler for the Route to be registered
      */
-    public void registerRoute(Method method, RouteTemplate template, RouteHandler handler) {
-        Route route = new Route(template, handler, method);
+    public void registerRoute(RouteHandler handler) {
+        Method method = handler.getMethod();
+        Route route = new Route(handler.getTemplate(), handler, method);
         Set<Route> routes = methodRoutes.get(method);
         if (routes == null) {
             routes = new HashSet<>();
@@ -49,7 +50,7 @@ public class Router implements Iterable<Router.Route> {
      * @return handler associated with the specified request or
      * if not found the default 404 handler
      */
-    public RouteHandler getHandler(RouteRequest request) {
+    public Handler getHandler(RouteRequest request) {
         Set<Route> routes = methodRoutes.get(request.getMethod());
         for (Route r : routes) {
             RouteTemplate template = r.getRouteTemplate();
@@ -73,9 +74,9 @@ public class Router implements Iterable<Router.Route> {
 
     public static class Route {
 
-        private RouteTemplate routeTemplate;
-        private RouteHandler handler;
-        private Method method;
+        private final RouteTemplate routeTemplate;
+        private final RouteHandler handler;
+        private final Method method;
 
         /**
          * Creates a new Route

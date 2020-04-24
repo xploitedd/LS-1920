@@ -3,6 +3,7 @@ package pt.isel.ls.handlers.user;
 import pt.isel.ls.handlers.RouteHandler;
 import pt.isel.ls.model.Table;
 import pt.isel.ls.model.User;
+import pt.isel.ls.router.request.Method;
 import pt.isel.ls.router.request.Parameter;
 import pt.isel.ls.router.request.RouteRequest;
 import pt.isel.ls.router.response.HandlerResponse;
@@ -11,14 +12,15 @@ import pt.isel.ls.sql.ConnectionProvider;
 import pt.isel.ls.sql.queries.UserQueries;
 import pt.isel.ls.view.TableView;
 
-public final class GetUserHandler implements RouteHandler {
-
-    private static final String DESCRIPTION = "Get a specific user";
-
-    private final ConnectionProvider provider;
+public final class GetUserHandler extends RouteHandler {
 
     public GetUserHandler(ConnectionProvider provider) {
-        this.provider = provider;
+        super(
+                Method.GET,
+                "/users/{uid}",
+                "Get a specific user",
+                provider
+        );
     }
 
     /**
@@ -37,11 +39,6 @@ public final class GetUserHandler implements RouteHandler {
 
         table.addTableRow(String.valueOf(user.getUid()), user.getName(), user.getEmail());
         return new HandlerResponse(new TableView("User: " + uid, table));
-    }
-
-    @Override
-    public String getDescription() {
-        return DESCRIPTION;
     }
 
 }

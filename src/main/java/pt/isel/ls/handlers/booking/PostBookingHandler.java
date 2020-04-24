@@ -2,6 +2,7 @@ package pt.isel.ls.handlers.booking;
 
 import pt.isel.ls.handlers.RouteHandler;
 import pt.isel.ls.model.Booking;
+import pt.isel.ls.router.request.Method;
 import pt.isel.ls.router.response.RouteException;
 import pt.isel.ls.router.request.RouteRequest;
 import pt.isel.ls.router.response.HandlerResponse;
@@ -11,14 +12,15 @@ import pt.isel.ls.view.IdentifierView;
 
 import java.sql.Timestamp;
 
-public final class PostBookingHandler implements RouteHandler {
-
-    private static final String DESCRIPTION = "Creates a new booking";
-
-    private final ConnectionProvider provider;
+public final class PostBookingHandler extends RouteHandler {
 
     public PostBookingHandler(ConnectionProvider provider) {
-        this.provider = provider;
+        super(
+                Method.POST,
+                "/rooms/{rid}/bookings",
+                "Creates a new booking",
+                provider
+        );
     }
 
     @Override
@@ -36,11 +38,6 @@ public final class PostBookingHandler implements RouteHandler {
                 new BookingQueries(conn).createNewBooking(rid, uid, begin, end));
 
         return new HandlerResponse(new IdentifierView("booking", booking.getBid()));
-    }
-
-    @Override
-    public String getDescription() {
-        return DESCRIPTION;
     }
 
 }

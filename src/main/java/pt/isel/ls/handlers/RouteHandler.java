@@ -1,15 +1,37 @@
 package pt.isel.ls.handlers;
 
-import pt.isel.ls.router.request.RouteRequest;
-import pt.isel.ls.router.response.HandlerResponse;
-import pt.isel.ls.router.response.RouteException;
+import pt.isel.ls.router.RouteTemplate;
+import pt.isel.ls.router.request.Method;
+import pt.isel.ls.sql.ConnectionProvider;
 
-public interface RouteHandler {
+public abstract class RouteHandler implements Handler {
 
-    HandlerResponse execute(RouteRequest request) throws RouteException;
+    protected final ConnectionProvider provider;
+    private final Method method;
+    private final RouteTemplate template;
+    private final String description;
 
-    default String getDescription() {
-        return "No description available!";
+    public RouteHandler(Method method, String template, String description) {
+        this(method, template, description, null);
+    }
+
+    public RouteHandler(Method method, String template, String description, ConnectionProvider provider) {
+        this.provider = provider;
+        this.method = method;
+        this.template = RouteTemplate.of(template);
+        this.description = description;
+    }
+
+    public final Method getMethod() {
+        return method;
+    }
+
+    public final RouteTemplate getTemplate() {
+        return template;
+    }
+
+    public final String getDescription() {
+        return description;
     }
 
 }

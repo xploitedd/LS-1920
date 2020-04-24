@@ -3,10 +3,7 @@ package pt.isel.ls.handlers.booking;
 import org.junit.Before;
 import org.junit.Test;
 import pt.isel.ls.DatasourceUtils;
-import pt.isel.ls.handlers.booking.PostBookingHandler;
-import pt.isel.ls.router.RouteTemplate;
 import pt.isel.ls.router.Router;
-import pt.isel.ls.router.request.Method;
 import pt.isel.ls.router.request.RouteRequest;
 import pt.isel.ls.router.response.RouteException;
 import pt.isel.ls.sql.ConnectionProvider;
@@ -41,7 +38,7 @@ public class PostBookingHandlerTest {
 
         PostBookingHandler pbh = new PostBookingHandler(provider);
         router = new Router();
-        router.registerRoute(Method.POST, RouteTemplate.of("/rooms/{rid}/bookings"), pbh);
+        router.registerRoute(pbh);
     }
 
     @Test

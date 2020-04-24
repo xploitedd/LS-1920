@@ -2,6 +2,7 @@ package pt.isel.ls.handlers.user;
 
 import pt.isel.ls.handlers.RouteHandler;
 import pt.isel.ls.model.Table;
+import pt.isel.ls.router.request.Method;
 import pt.isel.ls.router.request.RouteRequest;
 import pt.isel.ls.router.response.HandlerResponse;
 import pt.isel.ls.router.response.RouteException;
@@ -9,14 +10,15 @@ import pt.isel.ls.sql.ConnectionProvider;
 import pt.isel.ls.sql.queries.UserQueries;
 import pt.isel.ls.view.TableView;
 
-public final class GetUsersHandler implements RouteHandler {
-
-    private static final String DESCRIPTION = "Get all users";
-
-    private final ConnectionProvider provider;
+public final class GetUsersHandler extends RouteHandler {
 
     public GetUsersHandler(ConnectionProvider provider) {
-        this.provider = provider;
+        super(
+                Method.GET,
+                "/users",
+                "Get all users",
+                provider
+        );
     }
 
     /**
@@ -34,11 +36,6 @@ public final class GetUsersHandler implements RouteHandler {
                         table.addTableRow(String.valueOf(user.getUid()), user.getName(), user.getEmail()));
 
         return new HandlerResponse(new TableView("Users", table));
-    }
-
-    @Override
-    public String getDescription() {
-        return DESCRIPTION;
     }
 
 }

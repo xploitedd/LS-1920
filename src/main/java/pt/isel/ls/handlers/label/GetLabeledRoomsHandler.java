@@ -2,6 +2,7 @@ package pt.isel.ls.handlers.label;
 
 import pt.isel.ls.handlers.RouteHandler;
 import pt.isel.ls.model.Table;
+import pt.isel.ls.router.request.Method;
 import pt.isel.ls.router.request.RouteRequest;
 import pt.isel.ls.router.response.HandlerResponse;
 import pt.isel.ls.router.response.RouteException;
@@ -9,14 +10,15 @@ import pt.isel.ls.sql.ConnectionProvider;
 import pt.isel.ls.sql.queries.RoomLabelQueries;
 import pt.isel.ls.view.TableView;
 
-public final class GetLabeledRoomsHandler implements RouteHandler {
-
-    private static final String DESCRIPTION = "Gets all of the rooms with a certain label";
-
-    private final ConnectionProvider provider;
+public final class GetLabeledRoomsHandler extends RouteHandler {
 
     public GetLabeledRoomsHandler(ConnectionProvider provider) {
-        this.provider = provider;
+        super(
+                Method.GET,
+                "/labels/{lid}/rooms",
+                "Gets all of the rooms with a certain label",
+                provider
+        );
     }
 
     /**
@@ -39,8 +41,4 @@ public final class GetLabeledRoomsHandler implements RouteHandler {
         return new HandlerResponse(new TableView("Rooms with Label: " + lid, table));
     }
 
-    @Override
-    public String getDescription() {
-        return DESCRIPTION;
-    }
 }

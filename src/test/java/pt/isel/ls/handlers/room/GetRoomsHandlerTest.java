@@ -7,9 +7,7 @@ import pt.isel.ls.DatasourceUtils;
 import pt.isel.ls.model.Label;
 import pt.isel.ls.model.Room;
 import pt.isel.ls.model.User;
-import pt.isel.ls.router.RouteTemplate;
 import pt.isel.ls.router.Router;
-import pt.isel.ls.router.request.Method;
 import pt.isel.ls.router.request.RouteRequest;
 import pt.isel.ls.router.response.HandlerResponse;
 import pt.isel.ls.router.response.RouteException;
@@ -55,7 +53,7 @@ public class GetRoomsHandlerTest {
 
         GetRoomsHandler grh = new GetRoomsHandler(provider);
         router = new Router();
-        router.registerRoute(Method.GET, RouteTemplate.of("/rooms"), grh);
+        router.registerRoute(grh);
     }
 
     @Test
@@ -81,7 +79,7 @@ public class GetRoomsHandlerTest {
         HandlerResponse response = router.getHandler(request).execute(request);
         TableView tableView = (TableView) response.getView();
 
-        //Assert.assertEquals(2, tableView.getTable().getRowCount());
+        Assert.assertEquals(2, tableView.getTable().getRowCount());
     }
 
     @Test
@@ -94,7 +92,7 @@ public class GetRoomsHandlerTest {
         HandlerResponse response = router.getHandler(request).execute(request);
         TableView tableView = (TableView) response.getView();
 
-        //Assert.assertEquals(2, tableView.getTable().getRowCount());
+        Assert.assertEquals(2, tableView.getTable().getRowCount());
     }
 
     @Test

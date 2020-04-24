@@ -4,9 +4,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import pt.isel.ls.DatasourceUtils;
-import pt.isel.ls.router.RouteTemplate;
 import pt.isel.ls.router.Router;
-import pt.isel.ls.router.request.Method;
 import pt.isel.ls.router.request.RouteRequest;
 import pt.isel.ls.router.response.HandlerResponse;
 import pt.isel.ls.router.response.RouteException;
@@ -31,7 +29,7 @@ public class GetUserHandlerTest {
 
         GetUserHandler guh = new GetUserHandler(provider);
         router = new Router();
-        router.registerRoute(Method.GET, RouteTemplate.of("/users/{uid}"), guh);
+        router.registerRoute(guh);
     }
 
     @Test

@@ -2,6 +2,7 @@ package pt.isel.ls.handlers.booking;
 
 import pt.isel.ls.handlers.RouteHandler;
 import pt.isel.ls.model.Table;
+import pt.isel.ls.router.request.Method;
 import pt.isel.ls.router.request.RouteRequest;
 import pt.isel.ls.router.response.HandlerResponse;
 import pt.isel.ls.router.response.RouteException;
@@ -9,14 +10,15 @@ import pt.isel.ls.sql.ConnectionProvider;
 import pt.isel.ls.sql.queries.BookingQueries;
 import pt.isel.ls.view.TableView;
 
-public final class GetRoomBookingsHandler implements RouteHandler {
-
-    private static final String DESCRIPTION = "Gets all room bookings";
-
-    private final ConnectionProvider provider;
+public final class GetRoomBookingsHandler extends RouteHandler {
 
     public GetRoomBookingsHandler(ConnectionProvider provider) {
-        this.provider = provider;
+        super(
+                Method.GET,
+                "/rooms/{rid}/bookings",
+                "Gets all room bookings",
+                provider
+        );
     }
 
     /**
@@ -41,8 +43,4 @@ public final class GetRoomBookingsHandler implements RouteHandler {
         return new HandlerResponse(new TableView("Bookings", table));
     }
 
-    @Override
-    public String getDescription() {
-        return DESCRIPTION;
-    }
 }

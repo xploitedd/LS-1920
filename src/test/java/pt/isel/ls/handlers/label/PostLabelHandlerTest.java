@@ -4,9 +4,7 @@ import junit.framework.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import pt.isel.ls.DatasourceUtils;
-import pt.isel.ls.router.RouteTemplate;
 import pt.isel.ls.router.Router;
-import pt.isel.ls.router.request.Method;
 import pt.isel.ls.router.request.RouteRequest;
 import pt.isel.ls.router.response.HandlerResponse;
 import pt.isel.ls.router.response.RouteException;
@@ -31,7 +29,7 @@ public class PostLabelHandlerTest {
         });
         PostLabelHandler pbh = new PostLabelHandler(provider);
         router = new Router();
-        router.registerRoute(Method.POST, RouteTemplate.of("/labels"), pbh);
+        router.registerRoute(pbh);
     }
 
     @Test

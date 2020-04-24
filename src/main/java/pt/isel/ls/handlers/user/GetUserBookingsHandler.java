@@ -1,7 +1,8 @@
-package pt.isel.ls.handlers.booking;
+package pt.isel.ls.handlers.user;
 
 import pt.isel.ls.handlers.RouteHandler;
 import pt.isel.ls.model.Table;
+import pt.isel.ls.router.request.Method;
 import pt.isel.ls.router.request.RouteRequest;
 import pt.isel.ls.router.response.HandlerResponse;
 import pt.isel.ls.router.response.RouteException;
@@ -9,14 +10,15 @@ import pt.isel.ls.sql.ConnectionProvider;
 import pt.isel.ls.sql.queries.BookingQueries;
 import pt.isel.ls.view.TableView;
 
-public final class GetUserBookingsHandler implements RouteHandler {
-
-    private static final String DESCRIPTION = "Gets bookings booked by a user";
-
-    private final ConnectionProvider provider;
+public final class GetUserBookingsHandler extends RouteHandler {
 
     public GetUserBookingsHandler(ConnectionProvider provider) {
-        this.provider = provider;
+        super(
+                Method.GET,
+                "/users/{uid}/bookings",
+                "Gets bookings booked by a user",
+                provider
+        );
     }
 
     /**
@@ -38,11 +40,6 @@ public final class GetUserBookingsHandler implements RouteHandler {
                         booking.getEnd().toString()));
 
         return new HandlerResponse(new TableView("Bookings of User: " + uid, table));
-    }
-
-    @Override
-    public String getDescription() {
-        return DESCRIPTION;
     }
 
 }

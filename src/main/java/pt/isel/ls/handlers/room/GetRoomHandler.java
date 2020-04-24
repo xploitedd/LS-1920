@@ -4,6 +4,7 @@ import pt.isel.ls.handlers.RouteHandler;
 import pt.isel.ls.model.Label;
 import pt.isel.ls.model.Room;
 import pt.isel.ls.model.Table;
+import pt.isel.ls.router.request.Method;
 import pt.isel.ls.router.request.Parameter;
 import pt.isel.ls.router.request.RouteRequest;
 import pt.isel.ls.router.response.HandlerResponse;
@@ -15,14 +16,15 @@ import pt.isel.ls.view.TableView;
 
 import java.util.stream.Collectors;
 
-public final class GetRoomHandler implements RouteHandler {
-
-    private static final String DESCRIPTION = "Get a specific room";
-
-    private final ConnectionProvider provider;
+public final class GetRoomHandler extends RouteHandler {
 
     public GetRoomHandler(ConnectionProvider provider) {
-        this.provider = provider;
+        super(
+                Method.GET,
+                "/rooms/{rid}",
+                "Get a specific room",
+                provider
+        );
     }
 
     @Override
@@ -41,11 +43,6 @@ public final class GetRoomHandler implements RouteHandler {
                 String.valueOf(room.getCapacity()), room.getDescription(), labels.toString());
 
         return new HandlerResponse(new TableView("Room " + rid + " details", table));
-    }
-
-    @Override
-    public String getDescription() {
-        return DESCRIPTION;
     }
 
 }

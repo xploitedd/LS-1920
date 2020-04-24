@@ -3,6 +3,7 @@ package pt.isel.ls.handlers.booking;
 import pt.isel.ls.handlers.RouteHandler;
 import pt.isel.ls.model.Booking;
 import pt.isel.ls.model.Table;
+import pt.isel.ls.router.request.Method;
 import pt.isel.ls.router.request.RouteRequest;
 import pt.isel.ls.router.response.HandlerResponse;
 import pt.isel.ls.router.response.RouteException;
@@ -11,14 +12,15 @@ import pt.isel.ls.sql.queries.BookingQueries;
 import pt.isel.ls.view.MessageView;
 import pt.isel.ls.view.TableView;
 
-public final class GetRoomBookingHandler implements RouteHandler {
-
-    private static final String DESCRIPTION = "Gets a specific booking from a room";
-
-    private final ConnectionProvider provider;
+public final class GetRoomBookingHandler extends RouteHandler {
 
     public GetRoomBookingHandler(ConnectionProvider provider) {
-        this.provider = provider;
+        super(
+                Method.GET,
+                "/rooms/{rid}/bookings/{bid}",
+                "Gets a specific booking from a room",
+                provider
+        );
     }
 
     /**
@@ -44,8 +46,4 @@ public final class GetRoomBookingHandler implements RouteHandler {
         return new HandlerResponse(new TableView("Booking Id: " + bid, table));
     }
 
-    @Override
-    public String getDescription() {
-        return DESCRIPTION;
-    }
 }

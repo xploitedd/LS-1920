@@ -2,6 +2,7 @@ package pt.isel.ls.handlers.label;
 
 import pt.isel.ls.handlers.RouteHandler;
 import pt.isel.ls.model.Table;
+import pt.isel.ls.router.request.Method;
 import pt.isel.ls.router.request.RouteRequest;
 import pt.isel.ls.router.response.HandlerResponse;
 import pt.isel.ls.router.response.RouteException;
@@ -9,14 +10,15 @@ import pt.isel.ls.sql.ConnectionProvider;
 import pt.isel.ls.sql.queries.LabelQueries;
 import pt.isel.ls.view.TableView;
 
-public final class GetLabelsHandler implements RouteHandler {
-
-    private static final String DESCRIPTION = "Gets all existing Labels";
-
-    private final ConnectionProvider provider;
+public final class GetLabelsHandler extends RouteHandler {
 
     public GetLabelsHandler(ConnectionProvider provider) {
-        this.provider = provider;
+        super(
+                Method.GET,
+                "/labels",
+                "Gets all existing Labels",
+                provider
+        );
     }
 
     /**
@@ -36,8 +38,4 @@ public final class GetLabelsHandler implements RouteHandler {
         return new HandlerResponse(new TableView("Labels", table));
     }
 
-    @Override
-    public String getDescription() {
-        return DESCRIPTION;
-    }
 }

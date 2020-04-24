@@ -1,6 +1,7 @@
 package pt.isel.ls.handlers.booking;
 
 import pt.isel.ls.handlers.RouteHandler;
+import pt.isel.ls.router.request.Method;
 import pt.isel.ls.router.request.RouteRequest;
 import pt.isel.ls.router.response.RouteException;
 import pt.isel.ls.router.response.HandlerResponse;
@@ -9,12 +10,15 @@ import pt.isel.ls.sql.queries.BookingQueries;
 import pt.isel.ls.view.IdentifierView;
 import pt.isel.ls.view.MessageView;
 
-public final class DeleteBookingHandler implements RouteHandler {
-
-    private final ConnectionProvider provider;
+public final class DeleteBookingHandler extends RouteHandler {
 
     public DeleteBookingHandler(ConnectionProvider provider) {
-        this.provider = provider;
+        super(
+                Method.DELETE,
+                "/rooms/{rid}/bookings/{bid}",
+                "Deletes a specific booking",
+                provider
+        );
     }
 
     /**
@@ -37,4 +41,5 @@ public final class DeleteBookingHandler implements RouteHandler {
 
         return new HandlerResponse(new IdentifierView("deleted", "booking", bid));
     }
+
 }

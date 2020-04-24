@@ -7,6 +7,7 @@ import java.util.Optional;
 import pt.isel.ls.handlers.RouteHandler;
 import pt.isel.ls.model.Label;
 import pt.isel.ls.model.Room;
+import pt.isel.ls.router.request.Method;
 import pt.isel.ls.router.request.Parameter;
 import pt.isel.ls.router.request.RouteRequest;
 import pt.isel.ls.router.response.HandlerResponse;
@@ -16,14 +17,15 @@ import pt.isel.ls.sql.queries.LabelQueries;
 import pt.isel.ls.sql.queries.RoomQueries;
 import pt.isel.ls.view.IdentifierView;
 
-public final class PostRoomHandler implements RouteHandler {
-
-    private static final String DESCRIPTION = "Creates a new room";
-
-    private final ConnectionProvider provider;
+public final class PostRoomHandler extends RouteHandler {
 
     public PostRoomHandler(ConnectionProvider provider) {
-        this.provider = provider;
+        super(
+                Method.POST,
+                "/rooms",
+                "Creates a new room",
+                provider
+        );
     }
 
     @Override
@@ -49,11 +51,6 @@ public final class PostRoomHandler implements RouteHandler {
         });
 
         return new HandlerResponse(new IdentifierView("room",inserted.getRid()));
-    }
-
-    @Override
-    public String getDescription() {
-        return DESCRIPTION;
     }
 
 }
