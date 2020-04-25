@@ -9,7 +9,6 @@ import pt.isel.ls.router.response.HandlerResponse;
 import pt.isel.ls.router.response.RouteException;
 import pt.isel.ls.sql.ConnectionProvider;
 import pt.isel.ls.sql.queries.BookingQueries;
-import pt.isel.ls.view.MessageView;
 import pt.isel.ls.view.TableView;
 
 public final class GetRoomBookingHandler extends RouteHandler {

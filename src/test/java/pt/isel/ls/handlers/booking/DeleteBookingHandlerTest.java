@@ -60,14 +60,13 @@ public class DeleteBookingHandlerTest {
         Assert.assertTrue(response.getView() instanceof IdentifierView);
     }
 
-    @Test
+    @Test(expected = RouteException.class)
     public void deleteInvalidBooking() throws RouteException {
 
         RouteRequest request = RouteRequest.of(
                 "DELETE /rooms/1/bookings/2");
 
-        HandlerResponse response = router.getHandler(request).execute(request);
-        Assert.assertFalse(response.getView() instanceof IdentifierView);
+        router.getHandler(request).execute(request);
     }
 
 }

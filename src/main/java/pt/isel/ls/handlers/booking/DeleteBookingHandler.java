@@ -8,7 +8,6 @@ import pt.isel.ls.router.response.HandlerResponse;
 import pt.isel.ls.sql.ConnectionProvider;
 import pt.isel.ls.sql.queries.BookingQueries;
 import pt.isel.ls.view.IdentifierView;
-import pt.isel.ls.view.MessageView;
 
 public final class DeleteBookingHandler extends RouteHandler {
 
