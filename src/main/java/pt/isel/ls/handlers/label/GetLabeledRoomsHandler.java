@@ -24,7 +24,7 @@ public final class GetLabeledRoomsHandler extends RouteHandler {
     /**
      * Gets all of the rooms with a certain label
      * @param request The route request
-     * @return returns a RouteResponse with a tableView for the router
+     * @return returns a HandlerResponse with a tableView for the router
      * @throws RouteException Sent to the router
      */
     @Override

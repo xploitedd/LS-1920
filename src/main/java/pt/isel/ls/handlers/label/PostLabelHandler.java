@@ -22,6 +22,12 @@ public final class PostLabelHandler extends RouteHandler {
         );
     }
 
+    /**
+     * Creates a new label
+     * @param request The RouteRequest to be executed
+     * @return a new HandlerResponse
+     * @throws RouteException any exception that occurred
+     */
     @Override
     public HandlerResponse execute(RouteRequest request) throws RouteException {
         String labelName = request.getParameter("name").get(0).toString();

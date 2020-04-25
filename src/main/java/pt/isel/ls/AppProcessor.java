@@ -20,10 +20,18 @@ public class AppProcessor {
 
     private final Router router;
 
+    /**
+     * Creates a new Processor that handles all router requests
+     * @param router router where the request are going to be handled
+     */
     public AppProcessor(Router router) {
         this.router = router;
     }
 
+    /**
+     * Processes a string of input
+     * @param input input string
+     */
     public void processInput(String input) {
         PrintWriter printWriter = null;
         try {
@@ -52,13 +60,27 @@ public class AppProcessor {
         }
     }
 
-    private PrintWriter getPrintWriter(RouteRequest request) {
+    /**
+     * Get a print writer from the request headers
+     *
+     * If no print writer is available or an exception
+     * occurred, then it's going to fallback to the
+     * default PrintWriter
+     * @param request route request
+     * @return request PrintWriter, or the fallback one
+     */
+    private static PrintWriter getPrintWriter(RouteRequest request) {
         return request.getHeaderValue(HeaderType.FileName)
-                .map(this::fileToPrintWriter)
+                .map(AppProcessor::fileToPrintWriter)
                 .orElse(DEFAULT_WRITER);
     }
 
-    private PrintWriter fileToPrintWriter(String fileName) {
+    /**
+     * Converts a file name to a PrintWriter
+     * @param fileName file to be opened for writing
+     * @return a new PrintWriter, or null if an exception occurred
+     */
+    private static PrintWriter fileToPrintWriter(String fileName) {
         try {
             return new PrintWriter(fileName);
         } catch (FileNotFoundException e) {

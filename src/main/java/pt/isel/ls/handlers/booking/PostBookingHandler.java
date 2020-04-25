@@ -8,6 +8,7 @@ import pt.isel.ls.router.request.RouteRequest;
 import pt.isel.ls.router.response.HandlerResponse;
 import pt.isel.ls.sql.ConnectionProvider;
 import pt.isel.ls.sql.queries.BookingQueries;
+import pt.isel.ls.utils.Time;
 import pt.isel.ls.view.IdentifierView;
 
 import java.sql.Timestamp;
@@ -23,6 +24,12 @@ public final class PostBookingHandler extends RouteHandler {
         );
     }
 
+    /**
+     * Creates a new booking
+     * @param request The route request
+     * @return returns a new HandlerResponse
+     * @throws RouteException Sent to the router
+     */
     @Override
     public HandlerResponse execute(RouteRequest request) throws RouteException {
         int rid = request.getPathParameter("rid").toInt();
@@ -32,7 +39,7 @@ public final class PostBookingHandler extends RouteHandler {
 
         Timestamp begin = new Timestamp(b);
         // duration in minutes
-        Timestamp end = new Timestamp(b + 60000 * duration);
+        Timestamp end = new Timestamp(b + Time.minutesToMillis(duration));
 
         Booking booking = provider.execute(conn ->
                 new BookingQueries(conn).createNewBooking(rid, uid, begin, end));

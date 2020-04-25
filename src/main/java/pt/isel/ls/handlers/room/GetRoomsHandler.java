@@ -21,6 +21,7 @@ import pt.isel.ls.sql.queries.RoomLabelQueries;
 import pt.isel.ls.sql.queries.RoomQueries;
 import pt.isel.ls.utils.ExceptionUtils;
 import pt.isel.ls.utils.Interval;
+import pt.isel.ls.utils.Time;
 import pt.isel.ls.view.TableView;
 
 public final class GetRoomsHandler extends RouteHandler {
@@ -67,7 +68,7 @@ public final class GetRoomsHandler extends RouteHandler {
 
         if (paramBegin.isPresent() && paramDuration.isPresent()) {
             long begin = paramBegin.get().get(0).toLong();
-            long end = begin + 60000 * paramDuration.get().get(0).toLong();
+            long end = begin + Time.minutesToMillis(paramDuration.get().get(0).toLong());
             Interval i = new Interval(begin, end);
             rooms = rooms.filter(room -> ExceptionUtils.propagate(() -> provider.execute(conn -> {
                 Iterable<Booking> bookings = new BookingQueries(conn)

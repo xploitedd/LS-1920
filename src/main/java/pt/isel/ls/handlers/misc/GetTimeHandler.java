@@ -22,7 +22,7 @@ public class GetTimeHandler extends RouteHandler {
     /**
      * Gets the current time in ISO format
      * @param request The route request
-     * @return returns a RouteResponse with a MessageView for the router
+     * @return returns a HandlerResponse with a MessageView for the router
      */
     @Override
     public HandlerResponse execute(RouteRequest request) {

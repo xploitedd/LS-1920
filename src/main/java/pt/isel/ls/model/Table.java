@@ -46,14 +46,27 @@ public class Table {
         checkMaxColumnSize(values);
     }
 
+    /**
+     * Get a stream of the header values of this table
+     * @return stream of the header
+     */
     public Stream<Object> getHeader() {
         return rows.get(0).stream();
     }
 
+    /**
+     * Get a stream of rows of this table
+     * excluding the header
+     * @return stream of rows
+     */
     public Stream<Stream<Object>> getRowsStream() {
         return rows.stream().skip(1).map(Collection::stream);
     }
 
+    /**
+     * Get the row count, excluding the header
+     * @return row count
+     */
     public int getRowCount() {
         return rows.size() - 1;
     }

@@ -21,6 +21,12 @@ public final class PostUserHandler extends RouteHandler {
         );
     }
 
+    /**
+     * Creates a new user
+     * @param request The request to be executed
+     * @return a new HandlerResponse
+     * @throws RouteException any exception that occurred
+     */
     @Override
     public HandlerResponse execute(RouteRequest request) throws RouteException {
         String name = request.getParameter("name").get(0).toString();

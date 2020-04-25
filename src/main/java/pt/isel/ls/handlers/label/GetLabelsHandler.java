@@ -24,7 +24,7 @@ public final class GetLabelsHandler extends RouteHandler {
     /**
      * Gets all existing Labels
      * @param request The route request
-     * @return returns a RouteResponse with a tableView for the router
+     * @return returns a HandlerResponse with a tableView for the router
      * @throws RouteException Sent to the router
      */
     @Override

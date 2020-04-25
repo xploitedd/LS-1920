@@ -27,6 +27,12 @@ public final class GetRoomHandler extends RouteHandler {
         );
     }
 
+    /**
+     * Get a specific room
+     * @param request The request to be executed
+     * @return a new HandlerResponse
+     * @throws RouteException any exception that occurred
+     */
     @Override
     public HandlerResponse execute(RouteRequest request) throws RouteException {
         Parameter paramRid = request.getPathParameter("rid");

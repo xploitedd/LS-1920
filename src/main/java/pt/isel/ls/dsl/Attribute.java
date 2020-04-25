@@ -7,15 +7,28 @@ public class Attribute {
     private final String name;
     private final String value;
 
+    /**
+     * Creates a new HTML Attribute
+     * @param name Attribute name
+     * @param value Attribute value
+     */
     Attribute(String name, String value) {
         this.name = name;
         this.value = value;
     }
 
+    /**
+     * Get the name of this attribute
+     * @return name of the attribute
+     */
     public String getName() {
         return name;
     }
 
+    /**
+     * Get the value of this attribute
+     * @return value of the attribute
+     */
     public String getValue() {
         return value;
     }

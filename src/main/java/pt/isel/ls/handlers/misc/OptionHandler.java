@@ -22,6 +22,11 @@ public final class OptionHandler extends RouteHandler {
         this.routes = routes;
     }
 
+    /**
+     * Lists all available routes
+     * @param request The request to be executed
+     * @return a new HandlerResponse
+     */
     @Override
     public HandlerResponse execute(RouteRequest request) {
         Table table = new Table("Method", "Template", "Description");

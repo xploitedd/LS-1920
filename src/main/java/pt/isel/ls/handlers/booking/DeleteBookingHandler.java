@@ -24,7 +24,7 @@ public final class DeleteBookingHandler extends RouteHandler {
     /**
      * Deletes a Specific Booking
      * @param request The route request
-     * @return returns a RouteResponse with a IdentifierView for the router
+     * @return returns a HandlerResponse with a IdentifierView for the router
      * @throws RouteException Sent to the router
      */
     @Override
@@ -36,7 +36,7 @@ public final class DeleteBookingHandler extends RouteHandler {
                 .deleteBooking(rid, bid));
 
         if (deleted == 0) {
-            return new HandlerResponse(new MessageView("No booking with rid=" + rid + " and bid=" + bid + " found"));
+            throw new RouteException("No booking with rid=" + rid + " and bid=" + bid + " found");
         }
 
         return new HandlerResponse(new IdentifierView("deleted", "booking", bid));

@@ -26,7 +26,7 @@ public final class GetRoomBookingHandler extends RouteHandler {
     /**
      * Gets a specific booking from a room
      * @param request The route request
-     * @return returns a RouteResponse with a tableView for the router
+     * @return returns a HandlerResponse with a tableView for the router
      * @throws RouteException Sent to the router
      */
     @Override
@@ -39,7 +39,7 @@ public final class GetRoomBookingHandler extends RouteHandler {
                 .getBooking(bid));
 
         if (b.getRid() != rid) {
-            return new HandlerResponse(new MessageView("No such booking found!"));
+            throw new RouteException("No such booking found!");
         }
 
         table.addTableRow(b.getUid(), b.getBegin(), b.getEnd());
