@@ -4,12 +4,16 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.util.HashMap;
 import java.util.Spliterators;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 public class Query extends SqlType<Query, ResultSet> {
+
+    private static final HashMap<Class<?>, Field[]> FIELD_CACHE = new HashMap<>();
+    private static final HashMap<Class<?>, Constructor<?>> CONSTRUCTOR_CACHE = new HashMap<>();
 
     Query(PreparedStatement stmt) {
         super(stmt);
@@ -26,10 +30,16 @@ public class Query extends SqlType<Query, ResultSet> {
         return rsStream.map(set -> mapToClass(clazz, set));
     }
 
+    @SuppressWarnings("unchecked")
     private static <T> T mapToClass(Class<T> clazz, ResultSet rs) {
         return SqlHandler.passException(() -> {
-            Field[] fields = getClassNonStaticFields(clazz)
-                    .toArray(Field[]::new);
+            Field[] fields = FIELD_CACHE.get(clazz);
+            if (fields == null) {
+                fields = getClassNonStaticFields(clazz)
+                        .toArray(Field[]::new);
+
+                FIELD_CACHE.put(clazz, fields);
+            }
 
             Object[] fieldValues = new Object[fields.length];
             for (int i = 0; i < fields.length; i++) {
@@ -37,8 +47,12 @@ public class Query extends SqlType<Query, ResultSet> {
                 fieldValues[i] = rs.getObject(f.getName());
             }
 
-            @SuppressWarnings("unchecked")
-            Constructor<T> ctor = (Constructor<T>) clazz.getDeclaredConstructors()[0];
+            Constructor<T> ctor = (Constructor<T>) CONSTRUCTOR_CACHE.get(clazz);
+            if (ctor == null) {
+                ctor = (Constructor<T>) clazz.getDeclaredConstructors()[0];
+                CONSTRUCTOR_CACHE.put(clazz, ctor);
+            }
+
             return ctor.newInstance(fieldValues);
         });
     }

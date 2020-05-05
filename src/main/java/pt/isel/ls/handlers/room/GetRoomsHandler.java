@@ -48,43 +48,44 @@ public final class GetRoomsHandler extends RouteHandler {
         Optional<List<Parameter>> paramLabel = request.getOptionalParameter("label");
 
         Table table = new Table("RID", "Name", "Location", "Capacity", "Description");
-        Stream<Room> rooms = provider.execute(handler -> {
+        Iterable<Room> rooms = provider.execute(handler -> {
             Stream<Room> ret = new RoomQueries(handler).getRooms();
             if (paramCapacity.isPresent()) {
                 int minCapacity = paramCapacity.get().get(0).toInt();
                 ret = ret.filter(room -> room.getCapacity() >= minCapacity);
             }
 
-            return ret;
-        });
-
-        if (paramLabel.isPresent()) {
-            for (Parameter labelPar : paramLabel.get()) {
-                rooms = rooms.filter(room -> provider.execute(handler ->
-                        new RoomLabelQueries(handler)
-                                .isLabelInRoom(room.getRid(), labelPar.toString())));
-            }
-        }
-
-        if (paramBegin.isPresent() && paramDuration.isPresent()) {
-            long begin = paramBegin.get().get(0).toLong();
-            long end = begin + Time.minutesToMillis(paramDuration.get().get(0).toLong());
-            Interval i = new Interval(begin, end);
-            rooms = rooms.filter(room -> provider.execute(handler -> {
-                Iterable<Booking> bookings = new BookingQueries(handler)
-                        .getBookingsByRid(room.getRid())
-                        .collect(Collectors.toList());
-
-                for (Booking b : bookings) {
-                    Interval bi = new Interval(b.getBegin().getTime(), b.getEnd().getTime());
-                    if (i.isOverlapping(bi)) {
-                        return false;
-                    }
+            if (paramLabel.isPresent()) {
+                RoomLabelQueries rlq = new RoomLabelQueries(handler);
+                for (Parameter labelPar : paramLabel.get()) {
+                    ret = ret.filter(room ->
+                            rlq.isLabelInRoom(room.getRid(), labelPar.toString()));
                 }
+            }
 
-                return true;
-            }));
-        }
+            if (paramBegin.isPresent() && paramDuration.isPresent()) {
+                long begin = paramBegin.get().get(0).toLong();
+                long end = begin + Time.minutesToMillis(paramDuration.get().get(0).toLong());
+                Interval i = new Interval(begin, end);
+                ret = ret.filter(room -> {
+                    Iterable<Booking> bookings = new BookingQueries(handler)
+                            .getBookingsByRid(room.getRid())
+                            .collect(Collectors.toList());
+
+                    for (Booking b : bookings) {
+                        Interval bi = new Interval(b.getBegin().getTime(), b.getEnd().getTime());
+                        if (i.isOverlapping(bi)) {
+                            return false;
+                        }
+                    }
+
+                    return true;
+                });
+            }
+
+            // collect the results due to the queries being made on filter operations
+            return ret.collect(Collectors.toList());
+        });
 
         rooms.forEach(room ->
                 table.addTableRow(String.valueOf(room.getRid()), room.getName(), room.getLocation(),
