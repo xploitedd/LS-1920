@@ -9,7 +9,7 @@ import pt.isel.ls.handlers.room.GetRoomHandler;
 import pt.isel.ls.handlers.room.GetRoomsHandler;
 import pt.isel.ls.handlers.room.PostRoomHandler;
 import pt.isel.ls.router.request.RouteRequest;
-import pt.isel.ls.router.response.RouteException;
+import pt.isel.ls.exceptions.router.RouteException;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;

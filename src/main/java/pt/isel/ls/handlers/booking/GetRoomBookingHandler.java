@@ -6,7 +6,7 @@ import pt.isel.ls.model.Table;
 import pt.isel.ls.router.request.Method;
 import pt.isel.ls.router.request.RouteRequest;
 import pt.isel.ls.router.response.HandlerResponse;
-import pt.isel.ls.router.response.RouteException;
+import pt.isel.ls.exceptions.router.RouteException;
 import pt.isel.ls.sql.ConnectionProvider;
 import pt.isel.ls.sql.queries.BookingQueries;
 import pt.isel.ls.view.TableView;
@@ -29,12 +29,12 @@ public final class GetRoomBookingHandler extends RouteHandler {
      * @throws RouteException Sent to the router
      */
     @Override
-    public HandlerResponse execute(RouteRequest request) throws RouteException {
+    public HandlerResponse execute(RouteRequest request) {
         int rid = request.getPathParameter("rid").toInt();
         int bid = request.getPathParameter("bid").toInt();
 
         Table table = new Table("User Id", "Begin time", "End time");
-        Booking b = provider.execute(conn -> new BookingQueries(conn)
+        Booking b = provider.execute(handler -> new BookingQueries(handler)
                 .getBooking(bid));
 
         if (b.getRid() != rid) {

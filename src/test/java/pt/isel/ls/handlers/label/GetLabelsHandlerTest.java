@@ -7,7 +7,7 @@ import pt.isel.ls.DatasourceUtils;
 import pt.isel.ls.router.Router;
 import pt.isel.ls.router.request.RouteRequest;
 import pt.isel.ls.router.response.HandlerResponse;
-import pt.isel.ls.router.response.RouteException;
+import pt.isel.ls.exceptions.router.RouteException;
 import pt.isel.ls.sql.ConnectionProvider;
 import pt.isel.ls.sql.queries.LabelQueries;
 import pt.isel.ls.view.TableView;

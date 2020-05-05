@@ -5,6 +5,7 @@ import org.junit.Before;
 import org.junit.Test;
 import pt.isel.ls.DatasourceUtils;
 import pt.isel.ls.model.Room;
+import pt.isel.ls.sql.api.SqlHandler;
 import pt.isel.ls.sql.queries.RoomQueries;
 
 import javax.sql.DataSource;
@@ -31,7 +32,8 @@ public class RoomQueriesTest {
     @Test
     public void testCreateNewRoom() throws Throwable {
         Connection conn = dSource.getConnection();
-        RoomQueries query = new RoomQueries(conn);
+        SqlHandler handler = new SqlHandler(conn);
+        RoomQueries query = new RoomQueries(handler);
 
         query.createNewRoom(name, location, capacity,null, new LinkedList<>());
 
@@ -53,7 +55,8 @@ public class RoomQueriesTest {
     @Test
     public void testGetRoomByNameLocationAndCapacity() throws Throwable {
         Connection conn = dSource.getConnection();
-        RoomQueries query = new RoomQueries(conn);
+        SqlHandler handler = new SqlHandler(conn);
+        RoomQueries query = new RoomQueries(handler);
 
         PreparedStatement stmt = conn.prepareStatement("INSERT INTO room (name, location, capacity) VALUES (?, ?, ?);");
         stmt.setString(1, name);
@@ -89,7 +92,8 @@ public class RoomQueriesTest {
         ResultSet res = stmt.executeQuery();
         Assert.assertTrue(res.next());
 
-        RoomQueries query = new RoomQueries(conn);
+        SqlHandler handler = new SqlHandler(conn);
+        RoomQueries query = new RoomQueries(handler);
         Room test = query.getRoom(res.getInt(1));
 
         Assert.assertNotNull(test);
@@ -102,7 +106,8 @@ public class RoomQueriesTest {
     @Test
     public void testCreateNewRoomWithDescription() throws Throwable {
         Connection conn = dSource.getConnection();
-        RoomQueries query = new RoomQueries(conn);
+        SqlHandler handler = new SqlHandler(conn);
+        RoomQueries query = new RoomQueries(handler);
 
         String description = "TestDescription";
         query.createNewRoom(name, location, capacity, description,new LinkedList<>());

@@ -5,7 +5,7 @@ import pt.isel.ls.model.Table;
 import pt.isel.ls.router.request.Method;
 import pt.isel.ls.router.request.RouteRequest;
 import pt.isel.ls.router.response.HandlerResponse;
-import pt.isel.ls.router.response.RouteException;
+import pt.isel.ls.exceptions.router.RouteException;
 import pt.isel.ls.sql.ConnectionProvider;
 import pt.isel.ls.sql.queries.LabelQueries;
 import pt.isel.ls.view.TableView;
@@ -28,9 +28,9 @@ public final class GetLabelsHandler extends RouteHandler {
      * @throws RouteException Sent to the router
      */
     @Override
-    public HandlerResponse execute(RouteRequest request) throws RouteException {
+    public HandlerResponse execute(RouteRequest request) {
         Table table = new Table("Label Id", "Name");
-        provider.execute(conn -> new LabelQueries(conn)
+        provider.execute(handler -> new LabelQueries(handler)
                 .getLabels())
                 .forEach(label ->
                         table.addTableRow(String.valueOf(label.getLid()), label.getName()));

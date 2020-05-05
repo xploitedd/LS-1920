@@ -8,8 +8,8 @@ public final class Room {
 
     private final int rid;
     private final String name;
-    private final String description;
     private final int capacity;
+    private final String description;
     private final String location;
 
     /**

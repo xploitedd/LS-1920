@@ -1,30 +1,27 @@
 package pt.isel.ls.sql.queries;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.util.LinkedList;
-import java.util.NoSuchElementException;
+import java.util.Optional;
 import java.util.stream.Stream;
 
+import pt.isel.ls.exceptions.router.RouteException;
 import pt.isel.ls.model.Label;
+import pt.isel.ls.sql.api.SqlHandler;
 
 public class LabelQueries extends DatabaseQueries {
 
-    public LabelQueries(Connection conn) {
-        super(conn);
+    public LabelQueries(SqlHandler handler) {
+        super(handler);
     }
 
     /**
      * Create a new Label
      * @param labelName name of the label to be created
      * @return the created label
-     * @throws Exception any exception that occurs
      */
-    public Label createNewLabel(String labelName) throws Exception {
-        PreparedStatement stmt = conn.prepareStatement("INSERT INTO label (name) VALUES (?);");
-        stmt.setString(1, labelName);
-        stmt.execute();
+    public Label createNewLabel(String labelName) {
+        handler.createUpdate("INSERT INTO label (name) VALUES (?);")
+                .bind(0, labelName)
+                .execute();
 
         return getLabel(labelName);
     }
@@ -33,36 +30,27 @@ public class LabelQueries extends DatabaseQueries {
      * Get a label by name
      * @param name name of the label
      * @return associated label
-     * @throws Exception any exception that occurs
      */
-    public Label getLabel(String name) throws Exception {
-        PreparedStatement stmt = conn.prepareStatement("SELECT lid FROM label WHERE name = ?;");
-        stmt.setString(1, name);
-        ResultSet rs = stmt.executeQuery();
-        if (!rs.next()) {
-            throw new NoSuchElementException("Label '" + name + "' not found");
+    public Label getLabel(String name) {
+        Optional<Label> label = handler.createQuery("SELECT * FROM label WHERE name = ?;")
+                .bind(0, name)
+                .mapToClass(Label.class)
+                .findFirst();
+
+        if (label.isEmpty()) {
+            throw new RouteException("Label '" + name + "' not found");
         }
 
-        return new Label(rs.getInt("lid"), name);
+        return label.get();
     }
 
     /**
      * Get all labels
      * @return every label available
-     * @throws Exception any exception that occurs
      */
-    public Stream<Label> getLabels() throws Exception {
-        PreparedStatement stmt = conn.prepareStatement("SELECT * FROM label");
-        ResultSet rs = stmt.executeQuery();
-
-        LinkedList<Label> results = new LinkedList<>();
-        while (rs.next()) {
-            int lid = rs.getInt("lid");
-            String name = rs.getString("name");
-            results.add(new Label(lid, name));
-        }
-
-        return results.stream();
+    public Stream<Label> getLabels() {
+        return handler.createQuery("SELECT * FROM label")
+                .mapToClass(Label.class);
     }
 
 }

@@ -2,14 +2,14 @@ package pt.isel.ls.view;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import pt.isel.ls.dsl.Node;
-import pt.isel.ls.dsl.elements.Element;
+import pt.isel.ls.model.dsl.Node;
+import pt.isel.ls.model.dsl.elements.Element;
 
-import static pt.isel.ls.dsl.Dsl.body;
-import static pt.isel.ls.dsl.Dsl.head;
-import static pt.isel.ls.dsl.Dsl.html;
-import static pt.isel.ls.dsl.Dsl.p;
-import static pt.isel.ls.dsl.Dsl.title;
+import static pt.isel.ls.model.dsl.Dsl.body;
+import static pt.isel.ls.model.dsl.Dsl.head;
+import static pt.isel.ls.model.dsl.Dsl.html;
+import static pt.isel.ls.model.dsl.Dsl.p;
+import static pt.isel.ls.model.dsl.Dsl.title;
 
 public abstract class View {
 
@@ -23,6 +23,7 @@ public abstract class View {
      * Renders this view on the selected writer
      * @param type render type
      * @param writer writer where to render this view
+     * @return the type of the response
      */
     public final void render(ViewType type, PrintWriter writer) {
         if (type == ViewType.HTML) {

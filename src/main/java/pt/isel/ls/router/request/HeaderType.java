@@ -5,7 +5,7 @@ public enum HeaderType {
     Accept("accept"),
     FileName("file-name");
 
-    private String name;
+    private final String name;
 
     HeaderType(String name) {
         this.name = name;

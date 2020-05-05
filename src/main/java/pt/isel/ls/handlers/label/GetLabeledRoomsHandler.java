@@ -5,7 +5,7 @@ import pt.isel.ls.model.Table;
 import pt.isel.ls.router.request.Method;
 import pt.isel.ls.router.request.RouteRequest;
 import pt.isel.ls.router.response.HandlerResponse;
-import pt.isel.ls.router.response.RouteException;
+import pt.isel.ls.exceptions.router.RouteException;
 import pt.isel.ls.sql.ConnectionProvider;
 import pt.isel.ls.sql.queries.RoomLabelQueries;
 import pt.isel.ls.view.TableView;
@@ -28,11 +28,11 @@ public final class GetLabeledRoomsHandler extends RouteHandler {
      * @throws RouteException Sent to the router
      */
     @Override
-    public HandlerResponse execute(RouteRequest request) throws RouteException {
+    public HandlerResponse execute(RouteRequest request) {
         int lid = request.getPathParameter("lid").toInt();
 
         Table table = new Table("RID", "Name", "Location", "Capacity", "Description");
-        provider.execute(conn -> new RoomLabelQueries(conn)
+        provider.execute(handler -> new RoomLabelQueries(handler)
                 .getLabeledRooms(lid))
                 .forEach(room ->
                         table.addTableRow(String.valueOf(room.getRid()), room.getName(), room.getLocation(),

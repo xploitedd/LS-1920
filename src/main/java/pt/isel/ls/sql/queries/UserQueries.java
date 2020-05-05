@@ -1,18 +1,16 @@
 package pt.isel.ls.sql.queries;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.util.LinkedList;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 import pt.isel.ls.model.User;
-import pt.isel.ls.router.response.RouteException;
+import pt.isel.ls.exceptions.router.RouteException;
+import pt.isel.ls.sql.api.SqlHandler;
 
 public class UserQueries extends DatabaseQueries {
 
-    public UserQueries(Connection conn) {
-        super(conn);
+    public UserQueries(SqlHandler handler) {
+        super(handler);
     }
 
     /**
@@ -20,16 +18,12 @@ public class UserQueries extends DatabaseQueries {
      * @param name name of the user
      * @param email email of the user
      * @return the created user
-     * @throws Throwable any exception that occurs
      */
-    public User createNewUser(String name, String email) throws Throwable {
-        PreparedStatement stmt = conn.prepareStatement(
-                "INSERT INTO \"user\" (email, name) VALUES (?, ?);"
-        );
-
-        stmt.setString(1, email);
-        stmt.setString(2, name);
-        stmt.execute();
+    public User createNewUser(String name, String email) {
+        handler.createUpdate("INSERT INTO \"user\" (email, name) VALUES (?, ?);")
+                .bind(0, email)
+                .bind(1, name)
+                .execute();
 
         return getUser(name, email);
     }
@@ -41,17 +35,17 @@ public class UserQueries extends DatabaseQueries {
      * @throws Exception any exception that occurs
      */
     public User getUser(int uid) throws Exception {
-        PreparedStatement ret = conn.prepareStatement(
-                "SELECT name, email FROM \"user\" WHERE uid = ?;"
-        );
+        Optional<User> user = handler
+                .createQuery("SELECT * FROM \"user\" WHERE uid = ?;")
+                .bind(0, uid)
+                .mapToClass(User.class)
+                .findFirst();
 
-        ret.setInt(1, uid);
-        ResultSet rs = ret.executeQuery();
-        if (rs.next()) {
-            return new User(uid, rs.getString("name"), rs.getString("email"));
+        if (user.isEmpty()) {
+            throw new RouteException("A user with uid " + uid + " was not found!");
         }
 
-        throw new RouteException("A user with uid " + uid + " was not found!");
+        return user.get();
     }
 
     /**
@@ -59,43 +53,29 @@ public class UserQueries extends DatabaseQueries {
      * @param name name of the user
      * @param email email of the user
      * @return an User
-     * @throws Exception any exception that occurs
      */
-    public User getUser(String name, String email) throws Exception {
-        PreparedStatement ret = conn.prepareStatement(
-                "SELECT uid FROM \"user\" WHERE email = ? AND name = ?;"
-        );
+    public User getUser(String name, String email) {
+        Optional<User> user = handler
+                .createQuery("SELECT * FROM \"user\" WHERE email = ? AND name = ?;")
+                .bind(0, email)
+                .bind(1, name)
+                .mapToClass(User.class)
+                .findFirst();
 
-        ret.setString(1, email);
-        ret.setString(2, name);
-        ResultSet rs = ret.executeQuery();
-        if (rs.next()) {
-            return new User(rs.getInt("uid"), name, email);
+        if (user.isEmpty()) {
+            throw new RouteException("A user was not found!");
         }
 
-        throw new RouteException("A user was not found!");
+        return user.get();
     }
 
     /**
      * Get all users
      * @return all users
-     * @throws Exception any exception that occurs
      */
-    public Stream<User> getUsers() throws Exception {
-        PreparedStatement ret = conn.prepareStatement(
-                "SELECT * FROM \"user\""
-        );
-
-        ResultSet rs = ret.executeQuery();
-        LinkedList<User> results = new LinkedList<>();
-        while (rs.next()) {
-            int uid = rs.getInt("uid");
-            String name = rs.getString("name");
-            String email = rs.getString("email");
-            results.add(new User(uid, name, email));
-        }
-
-        return results.stream();
+    public Stream<User> getUsers() {
+        return handler.createQuery("SELECT * FROM \"user\"")
+                .mapToClass(User.class);
     }
 
 }

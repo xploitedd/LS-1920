@@ -14,12 +14,11 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import pt.isel.ls.router.response.RouteException;
+import pt.isel.ls.exceptions.router.RouteException;
 import pt.isel.ls.sql.ConnectionProvider;
 import pt.isel.ls.sql.queries.BookingQueries;
 import pt.isel.ls.sql.queries.RoomLabelQueries;
 import pt.isel.ls.sql.queries.RoomQueries;
-import pt.isel.ls.utils.ExceptionUtils;
 import pt.isel.ls.utils.Interval;
 import pt.isel.ls.utils.Time;
 import pt.isel.ls.view.TableView;
@@ -42,15 +41,15 @@ public final class GetRoomsHandler extends RouteHandler {
      * @throws RouteException Sent to the router
      */
     @Override
-    public HandlerResponse execute(RouteRequest request) throws RouteException {
+    public HandlerResponse execute(RouteRequest request) {
         Optional<List<Parameter>> paramBegin = request.getOptionalParameter("begin");
         Optional<List<Parameter>> paramDuration = request.getOptionalParameter("duration");
         Optional<List<Parameter>> paramCapacity = request.getOptionalParameter("capacity");
         Optional<List<Parameter>> paramLabel = request.getOptionalParameter("label");
 
         Table table = new Table("RID", "Name", "Location", "Capacity", "Description");
-        Stream<Room> rooms = provider.execute(conn -> {
-            Stream<Room> ret = new RoomQueries(conn).getRooms();
+        Stream<Room> rooms = provider.execute(handler -> {
+            Stream<Room> ret = new RoomQueries(handler).getRooms();
             if (paramCapacity.isPresent()) {
                 int minCapacity = paramCapacity.get().get(0).toInt();
                 ret = ret.filter(room -> room.getCapacity() >= minCapacity);
@@ -61,8 +60,9 @@ public final class GetRoomsHandler extends RouteHandler {
 
         if (paramLabel.isPresent()) {
             for (Parameter labelPar : paramLabel.get()) {
-                rooms = rooms.filter(room -> ExceptionUtils.propagate(() -> provider.execute(conn ->
-                        new RoomLabelQueries(conn).isLabelInRoom(room.getRid(), labelPar.toString()))));
+                rooms = rooms.filter(room -> provider.execute(handler ->
+                        new RoomLabelQueries(handler)
+                                .isLabelInRoom(room.getRid(), labelPar.toString())));
             }
         }
 
@@ -70,8 +70,8 @@ public final class GetRoomsHandler extends RouteHandler {
             long begin = paramBegin.get().get(0).toLong();
             long end = begin + Time.minutesToMillis(paramDuration.get().get(0).toLong());
             Interval i = new Interval(begin, end);
-            rooms = rooms.filter(room -> ExceptionUtils.propagate(() -> provider.execute(conn -> {
-                Iterable<Booking> bookings = new BookingQueries(conn)
+            rooms = rooms.filter(room -> provider.execute(handler -> {
+                Iterable<Booking> bookings = new BookingQueries(handler)
                         .getBookingsByRid(room.getRid())
                         .collect(Collectors.toList());
 
@@ -83,7 +83,7 @@ public final class GetRoomsHandler extends RouteHandler {
                 }
 
                 return true;
-            })));
+            }));
         }
 
         rooms.forEach(room ->

@@ -1,20 +1,18 @@
 package pt.isel.ls.sql.queries;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 import pt.isel.ls.model.Label;
 import pt.isel.ls.model.Room;
-import pt.isel.ls.router.response.RouteException;
+import pt.isel.ls.exceptions.router.RouteException;
+import pt.isel.ls.sql.api.SqlHandler;
 
 public class RoomQueries extends DatabaseQueries {
 
-    public RoomQueries(Connection conn) {
-        super(conn);
+    public RoomQueries(SqlHandler handler) {
+        super(handler);
     }
 
     /**
@@ -25,35 +23,28 @@ public class RoomQueries extends DatabaseQueries {
      * @param description room description (optional)
      * @param labels list of room labels
      * @return the created room
-     * @throws Exception any exception that occurs
      */
     public Room createNewRoom(String name, String location, int capacity,
-                              String description, List<Label> labels) throws Exception {
+                              String description, List<Label> labels) {
 
-        //Inserts the new Room
-        PreparedStatement stmt = conn.prepareStatement(
-                "INSERT INTO room (name, location, capacity) VALUES (?, ?, ?);");
+        // Inserts the new Room
+        handler.createUpdate("INSERT INTO room (name, location, capacity) VALUES (?, ?, ?);")
+                .bind(0, name)
+                .bind(1, location)
+                .bind(2, capacity)
+                .execute();
 
-        stmt.setString(1,name);
-        stmt.setString(2,location);
-        stmt.setInt(3,capacity);
-        stmt.execute();
-
-        //Verifies if the new Room has been inserted
+        // Verifies if the new Room has been inserted
         Room toReturn = getRoom(name, location, capacity);
-
-        RoomLabelQueries rlQuery = new RoomLabelQueries(conn);
+        RoomLabelQueries rlQuery = new RoomLabelQueries(handler);
         rlQuery.addRoomLabels(labels, toReturn.getRid());
 
         if (description != null) {
             //Associate description with new Room
-            PreparedStatement din = conn.prepareStatement(
-                    "INSERT INTO description (rid, description) VALUES (?,?);"
-            );
-
-            din.setInt(1, toReturn.getRid());
-            din.setString(2, description);
-            din.execute();
+            handler.createUpdate("INSERT INTO description (rid, description) VALUES (?,?);")
+                    .bind(0, toReturn.getRid())
+                    .bind(1, description)
+                    .execute();
         }
 
         return toReturn;
@@ -65,81 +56,53 @@ public class RoomQueries extends DatabaseQueries {
      * @param location location of the room
      * @param capacity capacity of the room
      * @return the requested room
-     * @throws Exception any exception that occurs
      */
-    public Room getRoom(String name, String location, int capacity) throws Exception {
-        PreparedStatement stmt = conn.prepareStatement(
-                "SELECT room.rid, description FROM room "
-                        + "FULL JOIN description d on room.rid = d.rid "
-                        + "WHERE name = ? AND location = ? AND capacity = ?;"
-        );
+    public Room getRoom(String name, String location, int capacity) {
+        Optional<Room> room = handler
+                .createQuery("SELECT room.rid, name, capacity, description, location FROM room "
+                + "FULL JOIN description d on room.rid = d.rid "
+                + "WHERE name = ? AND location = ? AND capacity = ?;")
+                .bind(0, name)
+                .bind(1, location)
+                .bind(2, capacity)
+                .mapToClass(Room.class)
+                .findFirst();
 
-        stmt.setString(1, name);
-        stmt.setString(2, location);
-        stmt.setInt(3, capacity);
-
-        ResultSet rs = stmt.executeQuery();
-        if (rs.next()) {
-            int id = rs.getInt("rid");
-            String desc = rs.getString("description");
-
-            return new Room(id, name, capacity, desc, location);
+        if (room.isEmpty()) {
+            throw new RouteException("No room found");
         }
 
-        throw new RouteException("No room found");
+        return room.get();
     }
 
     /**
      * Get Room by rid
      * @param rid id of the room
      * @return a Room
-     * @throws Exception any exception that occurs
      */
-    public Room getRoom(int rid) throws Exception {
-        PreparedStatement stmt = conn.prepareStatement(
-                "SELECT room.rid, name, location, capacity, description "
-                        + "FROM room FULL JOIN description d "
-                        + "on room.rid = d.rid WHERE room.rid = ?;"
-        );
+    public Room getRoom(int rid) {
+        Optional<Room> room = handler
+                .createQuery("SELECT room.rid, name, location, capacity, description "
+                    + "FROM room FULL JOIN description d "
+                    + "on room.rid = d.rid WHERE room.rid = ?;")
+                .bind(0, rid)
+                .mapToClass(Room.class)
+                .findFirst();
 
-        stmt.setInt(1,rid);
-
-        ResultSet rs = stmt.executeQuery();
-        if (rs.next()) {
-            String name = rs.getString("name");
-            String location = rs.getString("location");
-            int capacity = rs.getInt("capacity");
-            String desc = rs.getString("description");
-
-            return new Room(rid, name, capacity, desc, location);
+        if (room.isEmpty()) {
+            throw new RouteException("No room found with id " + rid);
         }
 
-        throw new RouteException("No room found with id " + rid);
+        return room.get();
     }
 
     /**
      * Get all Rooms
      * @return all Rooms
-     * @throws Exception any exception that occurs
      */
-    public Stream<Room> getRooms() throws Exception {
-        PreparedStatement stmt = conn.prepareStatement(
-                "SELECT room.rid, name, location, capacity, description "
-                        + "FROM room FULL JOIN description d on room.rid = d.rid;"
-        );
-
-        ResultSet rs = stmt.executeQuery();
-
-        LinkedList<Room> rooms = new LinkedList<>();
-        while (rs.next()) {
-            int rid = rs.getInt("rid");
-            String name = rs.getString("name");
-            String location = rs.getString("location");
-            int capacity = rs.getInt("capacity");
-            String desc = rs.getString("description");
-            rooms.add(new Room(rid, name, capacity, desc, location));
-        }
-
-        return rooms.stream();
+    public Stream<Room> getRooms() {
+        return handler.createQuery("SELECT room.rid, name, location, capacity, description "
+                + "FROM room FULL JOIN description d on room.rid = d.rid;")
+                .mapToClass(Room.class);
     }
 }

@@ -5,6 +5,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import pt.isel.ls.DatasourceUtils;
 import pt.isel.ls.model.User;
+import pt.isel.ls.sql.api.SqlHandler;
 import pt.isel.ls.sql.queries.UserQueries;
 
 import javax.sql.DataSource;
@@ -26,7 +27,8 @@ public class UserQueriesTest {
     @Test
     public void testCreateNewUser() throws Throwable {
         Connection conn = dSource.getConnection();
-        UserQueries query = new UserQueries(conn);
+        SqlHandler handler = new SqlHandler(conn);
+        UserQueries query = new UserQueries(handler);
 
         final String testUser = "TestUser";
         final String mail = "Teste@Teste.com";
@@ -51,7 +53,8 @@ public class UserQueriesTest {
     @Test
     public void testGetUserByNameAndEmail() throws Throwable {
         Connection conn = dSource.getConnection();
-        UserQueries query = new UserQueries(conn);
+        SqlHandler handler = new SqlHandler(conn);
+        UserQueries query = new UserQueries(handler);
 
         String name = "UserTest";
         String mail = "UserTest@Teste.com";
@@ -86,7 +89,8 @@ public class UserQueriesTest {
         ResultSet res = qstmt.executeQuery();
         res.next();
 
-        UserQueries query = new UserQueries(conn);
+        SqlHandler handler = new SqlHandler(conn);
+        UserQueries query = new UserQueries(handler);
         User test = query.getUser(res.getInt(1));
 
         Assert.assertNotNull(test);

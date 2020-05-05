@@ -5,14 +5,14 @@ import java.util.ArrayList;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
-import pt.isel.ls.dsl.Dsl;
-import pt.isel.ls.dsl.Node;
-import pt.isel.ls.dsl.elements.table.TableRowElement;
-import pt.isel.ls.dsl.text.table.TableText;
+import pt.isel.ls.model.dsl.Dsl;
+import pt.isel.ls.model.dsl.Node;
+import pt.isel.ls.model.dsl.elements.table.TableRowElement;
+import pt.isel.ls.model.dsl.text.table.TableText;
 import pt.isel.ls.model.Table;
 
-import static pt.isel.ls.dsl.Dsl.table;
-import static pt.isel.ls.dsl.Dsl.tr;
+import static pt.isel.ls.model.dsl.Dsl.table;
+import static pt.isel.ls.model.dsl.Dsl.tr;
 
 public class TableView extends View {
 

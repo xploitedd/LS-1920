@@ -8,13 +8,12 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 
+import pt.isel.ls.exceptions.router.RouteNotFoundException;
 import pt.isel.ls.handlers.Handler;
 import pt.isel.ls.handlers.RouteHandler;
 import pt.isel.ls.router.request.Method;
 import pt.isel.ls.router.request.Parameter;
-import pt.isel.ls.router.request.Path;
 import pt.isel.ls.router.request.RouteRequest;
-import pt.isel.ls.router.response.RouteException;
 import pt.isel.ls.router.response.HandlerResponse;
 import pt.isel.ls.view.ExceptionView;
 
@@ -134,14 +133,6 @@ public class Router implements Iterable<Router.Route> {
         @Override
         public int hashCode() {
             return Objects.hash(routeTemplate, handler);
-        }
-
-    }
-
-    private static class RouteNotFoundException extends RouteException {
-
-        private RouteNotFoundException(Path path) {
-            super("The route " + path + " was not found!");
         }
 
     }

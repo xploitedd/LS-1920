@@ -5,7 +5,7 @@ public enum ViewType {
     HTML("text/html"),
     TEXT("text/plain");
 
-    private String name;
+    private final String name;
 
     ViewType(String name) {
         this.name = name;

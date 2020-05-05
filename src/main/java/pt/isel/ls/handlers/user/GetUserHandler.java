@@ -7,7 +7,7 @@ import pt.isel.ls.router.request.Method;
 import pt.isel.ls.router.request.Parameter;
 import pt.isel.ls.router.request.RouteRequest;
 import pt.isel.ls.router.response.HandlerResponse;
-import pt.isel.ls.router.response.RouteException;
+import pt.isel.ls.exceptions.router.RouteException;
 import pt.isel.ls.sql.ConnectionProvider;
 import pt.isel.ls.sql.queries.UserQueries;
 import pt.isel.ls.view.TableView;
@@ -30,11 +30,11 @@ public final class GetUserHandler extends RouteHandler {
      * @throws RouteException Sent to the router
      */
     @Override
-    public HandlerResponse execute(RouteRequest request) throws RouteException {
+    public HandlerResponse execute(RouteRequest request) {
         Parameter paramUid = request.getPathParameter("uid");
         Table table = new Table("User Id", "Name", "Email");
         int uid = paramUid.toInt();
-        User user = provider.execute(conn -> new UserQueries(conn)
+        User user = provider.execute(handler -> new UserQueries(handler)
                 .getUser(uid));
 
         table.addTableRow(String.valueOf(user.getUid()), user.getName(), user.getEmail());

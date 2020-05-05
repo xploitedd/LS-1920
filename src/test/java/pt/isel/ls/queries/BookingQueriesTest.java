@@ -5,6 +5,7 @@ import org.junit.Before;
 import org.junit.Test;
 import pt.isel.ls.DatasourceUtils;
 import pt.isel.ls.model.Booking;
+import pt.isel.ls.sql.api.SqlHandler;
 import pt.isel.ls.sql.queries.BookingQueries;
 import pt.isel.ls.sql.queries.RoomQueries;
 import pt.isel.ls.sql.queries.UserQueries;
@@ -30,9 +31,10 @@ public class BookingQueriesTest {
     public void beforeEach() throws Throwable {
         DatasourceUtils.executeFile("CreateTables.sql");
         Connection conn = dSource.getConnection();
-        UserQueries testUser = new UserQueries(conn);
+        SqlHandler handler = new SqlHandler(conn);
+        UserQueries testUser = new UserQueries(handler);
         userID = testUser.createNewUser("TestUser","user@testing.booking").getUid();
-        RoomQueries testRoom = new RoomQueries(conn);
+        RoomQueries testRoom = new RoomQueries(handler);
         roomID = testRoom.createNewRoom(
                 "TestRoom","Tests",42, null, new LinkedList<>()
         ).getRid();
@@ -42,7 +44,8 @@ public class BookingQueriesTest {
     @Test
     public void testCreateNewBooking() throws Throwable {
         Connection conn = dSource.getConnection();
-        BookingQueries query = new BookingQueries(conn);
+        SqlHandler handler = new SqlHandler(conn);
+        BookingQueries query = new BookingQueries(handler);
 
         query.createNewBooking(roomID, userID, begin, end);
 
@@ -67,7 +70,8 @@ public class BookingQueriesTest {
     @Test
     public void testGetBookingByRidUidBeginAndEnd() throws Throwable {
         Connection conn = dSource.getConnection();
-        BookingQueries query = new BookingQueries(conn);
+        SqlHandler handler = new SqlHandler(conn);
+        BookingQueries query = new BookingQueries(handler);
 
         PreparedStatement stmt = conn.prepareStatement(
                 "INSERT INTO booking (rid, uid, begin, \"end\") VALUES (?, ?, ?, ?);"
@@ -113,7 +117,8 @@ public class BookingQueriesTest {
 
         Assert.assertTrue(res.next());
 
-        BookingQueries query = new BookingQueries(conn);
+        SqlHandler handler = new SqlHandler(conn);
+        BookingQueries query = new BookingQueries(handler);
         Booking test = query.getBooking(res.getInt(1));
 
         Assert.assertNotNull(test);

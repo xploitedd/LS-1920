@@ -1,17 +1,13 @@
 package pt.isel.ls.sql.queries;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.Calendar;
-import java.util.LinkedList;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 import pt.isel.ls.model.Booking;
-import pt.isel.ls.router.response.RouteException;
-import pt.isel.ls.utils.ExceptionUtils;
+import pt.isel.ls.exceptions.router.RouteException;
+import pt.isel.ls.sql.api.SqlHandler;
 import pt.isel.ls.utils.Interval;
 
 public class BookingQueries extends DatabaseQueries {
@@ -19,8 +15,8 @@ public class BookingQueries extends DatabaseQueries {
     private static final int BOOKING_MIN_TIME = 10;
     private static final int BOOKING_MINUTE_MUL = 10;
 
-    public BookingQueries(Connection conn) {
-        super(conn);
+    public BookingQueries(SqlHandler handler) {
+        super(handler);
     }
 
     /**
@@ -30,25 +26,19 @@ public class BookingQueries extends DatabaseQueries {
      * @param begin begin instant of the booking
      * @param end end instant of the booking
      * @return the booking that was created
-     * @throws Exception any exception that occurs
      */
-    public Booking createNewBooking(int rid, int uid, Timestamp begin, Timestamp end) throws Exception {
+    public Booking createNewBooking(int rid, int uid, Timestamp begin, Timestamp end) {
         doBookingConstraintCheck(begin, end);
         // check overlapping bookings
         Interval i2 = new Interval(begin.getTime(), end.getTime());
-        getBookingsByRid(rid)
-                .forEach(booking -> ExceptionUtils.propagate(() ->
-                        checkOverlap(booking, i2)));
+        getBookingsByRid(rid).forEach(booking -> checkOverlap(booking, i2));
 
-        PreparedStatement stmt = conn.prepareStatement(
-                "INSERT INTO booking (begin, \"end\", rid, uid) VALUES (?, ?, ?, ?);"
-        );
-
-        stmt.setTimestamp(1, begin);
-        stmt.setTimestamp(2, end);
-        stmt.setInt(3, rid);
-        stmt.setInt(4, uid);
-        stmt.execute();
+        handler.createUpdate("INSERT INTO booking (begin, \"end\", rid, uid) VALUES (?, ?, ?, ?);")
+                .bind(0, begin)
+                .bind(1, end)
+                .bind(2, rid)
+                .bind(3, uid)
+                .execute();
 
         return getBooking(rid, uid, begin, end);
     }
@@ -60,114 +50,72 @@ public class BookingQueries extends DatabaseQueries {
      * @param begin begin timestamp
      * @param end end timestamp
      * @return a Booking
-     * @throws Exception any exception that occurs
      */
-    public Booking getBooking(int rid, int uid, Timestamp begin, Timestamp end) throws Exception {
-        PreparedStatement ret = conn.prepareStatement(
-                "SELECT bid FROM booking WHERE begin = ? AND \"end\" = ? AND rid = ? AND uid = ?;"
-        );
+    public Booking getBooking(int rid, int uid, Timestamp begin, Timestamp end) {
+        Optional<Booking> booking = handler
+                .createQuery("SELECT * FROM booking WHERE begin = ? AND \"end\" = ? AND rid = ? AND uid = ?;")
+                .bind(0, begin)
+                .bind(1, end)
+                .bind(2, rid)
+                .bind(3, uid)
+                .mapToClass(Booking.class)
+                .findFirst();
 
-        ret.setTimestamp(1, begin);
-        ret.setTimestamp(2, end);
-        ret.setInt(3, rid);
-        ret.setInt(4, uid);
-
-        ResultSet rs = ret.executeQuery();
-        if (rs.next()) {
-            return new Booking(rs.getInt("bid"), rid, uid, begin, end);
+        if (booking.isEmpty()) {
+            throw new RouteException("A booking was not found!");
         }
 
-        throw new RouteException("A booking was not found!");
+        return booking.get();
     }
 
     /**
      * Get booking by id
      * @param bid id of the booking
      * @return a Booking
-     * @throws Throwable any exception that occurs
      */
-    public Booking getBooking(int bid) throws Throwable {
-        PreparedStatement ret = conn.prepareStatement(
-                "SELECT begin, \"end\", rid, uid FROM booking WHERE bid = ?;"
-        );
+    public Booking getBooking(int bid) {
+        Optional<Booking> booking = handler
+                .createQuery("SELECT * FROM booking WHERE bid = ?;")
+                .bind(0, bid)
+                .mapToClass(Booking.class)
+                .findFirst();
 
-        ret.setInt(1, bid);
-
-        ResultSet rs = ret.executeQuery();
-        if (rs.next()) {
-            return new Booking(bid, rs.getInt("rid"), rs.getInt("uid"),
-                    rs.getTimestamp("begin"), rs.getTimestamp("end"));
+        if (booking.isEmpty()) {
+            throw new RouteException("A booking with id " + bid + " was not found!");
         }
 
-        throw new RouteException("A booking with id " + bid + " was not found!");
+        return booking.get();
     }
 
     /**
      * Retrieve all Bookings
      * @return all Bookings
-     * @throws Exception any exception that occurs
      */
-    public Stream<Booking> getBookings() throws Exception {
-        PreparedStatement ret = conn.prepareStatement(
-                "SELECT * FROM booking"
-        );
-
-        ResultSet rs = ret.executeQuery();
-        LinkedList<Booking> results = new LinkedList<>();
-        while (rs.next()) {
-            results.add(new Booking(rs.getInt("bid"), rs.getInt("rid"),
-                    rs.getInt("uid"), rs.getTimestamp("begin"),
-                    rs.getTimestamp("end")));
-        }
-
-        return results.stream();
+    public Stream<Booking> getBookings() {
+        return handler.createQuery("SELECT * FROM booking")
+                .mapToClass(Booking.class);
     }
 
     /**
      * Get all bookings that have the specified owner
      * @param uid user id of the owner
      * @return bookings owned by uid
-     * @throws Exception any exception that occurs
      */
-    public Stream<Booking> getBookingsByUid(int uid) throws Exception {
-        PreparedStatement ret = conn.prepareStatement(
-                "SELECT * FROM booking WHERE uid = ?"
-        );
-
-        ret.setInt(1, uid);
-
-        ResultSet rs = ret.executeQuery();
-        LinkedList<Booking> results = new LinkedList<>();
-        while (rs.next()) {
-            results.add(new Booking(rs.getInt("bid"), rs.getInt("rid"),
-                    uid, rs.getTimestamp("begin"), rs.getTimestamp("end")));
-        }
-
-        return results.stream();
+    public Stream<Booking> getBookingsByUid(int uid) {
+        return handler.createQuery("SELECT * FROM booking WHERE uid = ?")
+                .bind(0, uid)
+                .mapToClass(Booking.class);
     }
 
     /**
      * Get all bookings occurring in a room
      * @param rid room where the bookings are occurring
      * @return bookings with room rid
-     * @throws Exception any exception that occurs
      */
-    public Stream<Booking> getBookingsByRid(int rid) throws Exception {
-        PreparedStatement ret = conn.prepareStatement(
-                "SELECT * FROM booking WHERE rid = ?"
-        );
-
-        ret.setInt(1, rid);
-
-        ResultSet rs = ret.executeQuery();
-        LinkedList<Booking> results = new LinkedList<>();
-        while (rs.next()) {
-            results.add(new Booking(rs.getInt("bid"), rid,
-                    rs.getInt("uid"), rs.getTimestamp("begin"),
-                    rs.getTimestamp("end")));
-        }
-
-        return results.stream();
+    public Stream<Booking> getBookingsByRid(int rid) {
+        return handler.createQuery("SELECT * FROM booking WHERE rid = ?")
+                .bind(0, rid)
+                .mapToClass(Booking.class);
     }
 
     public Booking editBooking(int rid, int bid, int newUid, Timestamp newBegin, Timestamp newEnd) throws Exception {
@@ -175,34 +123,28 @@ public class BookingQueries extends DatabaseQueries {
         Interval newInt = new Interval(newBegin.getTime(), newEnd.getTime());
         getBookingsByRid(rid)
                 .filter(booking -> booking.getBid() != bid)
-                .forEach(booking -> ExceptionUtils.propagate(() ->
-                        checkOverlap(booking, newInt)));
+                .forEach(booking -> checkOverlap(booking, newInt));
 
-        PreparedStatement update = conn.prepareStatement(
-                "UPDATE booking SET uid = ?, begin = ?, \"end\" = ? WHERE bid = ?"
-        );
+        int res = handler
+                .createUpdate("UPDATE booking SET uid = ?, begin = ?, \"end\" = ? WHERE bid = ?")
+                .bind(0, newUid)
+                .bind(1, newBegin)
+                .bind(2, newEnd)
+                .bind(3, bid)
+                .execute();
 
-        update.setInt(1, newUid);
-        update.setTimestamp(2, newBegin);
-        update.setTimestamp(3, newEnd);
-        update.setInt(4, bid);
-        int rowCount = update.executeUpdate();
-
-        if (rowCount > 0) {
+        if (res > 0) {
             return new Booking(bid, rid, newUid, newBegin, newEnd);
         }
 
         throw new RouteException("Couldn't update the booking!");
     }
 
-    //returns how many rows were deleted, should be 0 or 1
-    public int deleteBooking(int rid, int bid) throws SQLException {
-        PreparedStatement del = conn.prepareStatement(
-                "DELETE FROM booking WHERE rid = ? AND bid = ?"
-        );
-        del.setInt(1,rid);
-        del.setInt(2,bid);
-        return del.executeUpdate();
+    public int deleteBooking(int rid, int bid) {
+        return handler.createUpdate("DELETE FROM booking WHERE rid = ? AND bid = ?")
+            .bind(0, rid)
+            .bind(1, bid)
+            .execute();
     }
 
     private static void checkOverlap(Booking b1, Interval i2) throws RouteException {

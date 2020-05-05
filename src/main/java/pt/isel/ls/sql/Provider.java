@@ -1,10 +1,10 @@
 package pt.isel.ls.sql;
 
-import java.sql.Connection;
+import pt.isel.ls.sql.api.SqlHandler;
 
 @FunctionalInterface
 public interface Provider<U> {
 
-    U apply(Connection connection) throws Throwable;
+    U apply(SqlHandler handler) throws Exception;
 
 }

@@ -5,6 +5,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import pt.isel.ls.DatasourceUtils;
 import pt.isel.ls.model.Label;
+import pt.isel.ls.sql.api.SqlHandler;
 import pt.isel.ls.sql.queries.LabelQueries;
 
 import javax.sql.DataSource;
@@ -26,7 +27,8 @@ public class LabelQueriesTest {
     @Test
     public void testCreateNewLabel() throws Throwable {
         Connection conn = dSource.getConnection();
-        LabelQueries query = new LabelQueries(conn);
+        SqlHandler handler = new SqlHandler(conn);
+        LabelQueries query = new LabelQueries(handler);
 
         final String lName = "TestLabel";
 
@@ -51,7 +53,8 @@ public class LabelQueriesTest {
         stmt.setString(1, lName);
         stmt.execute();
 
-        LabelQueries query = new LabelQueries(conn);
+        SqlHandler handler = new SqlHandler(conn);
+        LabelQueries query = new LabelQueries(handler);
         Label test = query.getLabel(lName);
 
         PreparedStatement qstmt = conn.prepareStatement("SELECT lid FROM label WHERE name = ?;");
@@ -74,7 +77,8 @@ public class LabelQueriesTest {
         stmt.setString(1, lName);
         stmt.execute();
 
-        LabelQueries query = new LabelQueries(conn);
+        SqlHandler handler = new SqlHandler(conn);
+        LabelQueries query = new LabelQueries(handler);
         query.getLabels().forEach(label -> {
             Assert.assertNotNull(label);
             Assert.assertNotNull(label.getName());

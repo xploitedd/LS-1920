@@ -5,6 +5,7 @@ import org.junit.Before;
 import org.junit.Test;
 import pt.isel.ls.DatasourceUtils;
 import pt.isel.ls.model.Label;
+import pt.isel.ls.sql.api.SqlHandler;
 import pt.isel.ls.sql.queries.RoomLabelQueries;
 
 import javax.sql.DataSource;
@@ -52,7 +53,8 @@ public class RoomLabelQueriesTest {
         rstmt.setInt(3, rCapacity);
         rstmt.execute();
 
-        RoomLabelQueries query = new RoomLabelQueries(conn);
+        SqlHandler handler = new SqlHandler(conn);
+        RoomLabelQueries query = new RoomLabelQueries(handler);
         query.addRoomLabels(list,rid);
 
         PreparedStatement lstmt = conn.prepareStatement(
@@ -90,7 +92,8 @@ public class RoomLabelQueriesTest {
         rl.setInt(2, rid);
         rl.execute();
 
-        RoomLabelQueries query = new RoomLabelQueries(conn);
+        SqlHandler handler = new SqlHandler(conn);
+        RoomLabelQueries query = new RoomLabelQueries(handler);
         query.getRoomLabels(rid).forEach(label -> {
             Assert.assertEquals(lName, label.getName());
             Assert.assertEquals(lid, label.getLid());
@@ -122,7 +125,8 @@ public class RoomLabelQueriesTest {
         rl.setInt(2, rid);
         rl.execute();
 
-        RoomLabelQueries query = new RoomLabelQueries(conn);
+        SqlHandler handler = new SqlHandler(conn);
+        RoomLabelQueries query = new RoomLabelQueries(handler);
         query.getLabeledRooms(lid).forEach(room -> {
             Assert.assertEquals(rName, room.getName());
             Assert.assertEquals(rid, room.getRid());

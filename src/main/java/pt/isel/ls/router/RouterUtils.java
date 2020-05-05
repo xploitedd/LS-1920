@@ -1,6 +1,6 @@
 package pt.isel.ls.router;
 
-import pt.isel.ls.router.response.RouteException;
+import pt.isel.ls.exceptions.router.RouteException;
 
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;

@@ -1,13 +1,13 @@
 package pt.isel.ls.sql.queries;
 
-import java.sql.Connection;
+import pt.isel.ls.sql.api.SqlHandler;
 
 public abstract class DatabaseQueries {
 
-    protected final Connection conn;
+    protected final SqlHandler handler;
 
-    public DatabaseQueries(Connection conn) {
-        this.conn = conn;
+    public DatabaseQueries(SqlHandler handler) {
+        this.handler = handler;
     }
 
 }

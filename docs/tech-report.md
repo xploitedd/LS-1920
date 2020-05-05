@@ -180,7 +180,7 @@ no `AppProcessor`, classe que decidirá qual é a melhor forma de apresentar os 
 
 ### Domain Specific Language (DSL)
 
-Para a criação da **DSL** de **HTML** foi criado um *package* `pt.isel.ls.dsl`. Dentro deste package
+Para a criação da **DSL** de **HTML** foi criado um *package* `pt.isel.ls.model.dsl`. Dentro deste package
 encontram-se todas as classes relacionadas com esta **DSL**.
 
 A **DSL** encontra-se dividida da seguinte forma:

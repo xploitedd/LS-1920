@@ -4,6 +4,8 @@ import org.postgresql.ds.PGSimpleDataSource;
 
 import javax.sql.DataSource;
 
+import pt.isel.ls.app.ConsoleApplication;
+import pt.isel.ls.exceptions.AppException;
 import pt.isel.ls.handlers.booking.DeleteBookingHandler;
 import pt.isel.ls.handlers.booking.GetRoomBookingHandler;
 import pt.isel.ls.handlers.booking.GetRoomBookingsHandler;
@@ -29,38 +31,33 @@ public class App {
 
     private static final String DATABASE_CONNECTION_ENV = "JDBC_DATABASE_URL";
 
-    private final AppProcessor processor;
     private final ConnectionProvider connProvider;
     private final Router router;
 
     private App() {
         String url = System.getenv(DATABASE_CONNECTION_ENV);
         if (url == null) {
-            System.err.println("Please set the " + DATABASE_CONNECTION_ENV + " environment variable");
-            System.exit(1);
+            throw new AppException("Please set the " + DATABASE_CONNECTION_ENV + " environment variable");
         }
 
         this.connProvider = new ConnectionProvider(getDataSource(url));
         this.router = new Router();
-        this.processor = new AppProcessor(router);
 
         registerRoutes();
     }
 
     public static void main(String[] args) {
-        try {
-            App app = new App();
-            app.run(args);
-        } catch (Exception e) {
-            throw new RuntimeException("An error occurred: " + e.getMessage());
-        }
+        App app = new App();
+        app.run(args);
     }
 
     public void run(String[] args) {
+        ConsoleApplication consoleApp = new ConsoleApplication(router);
         if (args.length >= 2) {
-            processor.processInput(String.join(" ", args));
+            // process single command provided in the arguments
+            consoleApp.processInput(String.join(" ", args));
         } else {
-            ConsoleApplication consoleApp = new ConsoleApplication(processor);
+            // run interactive mode
             consoleApp.run();
         }
     }
@@ -104,9 +101,13 @@ public class App {
      * @return a new data source
      */
     private DataSource getDataSource(String connectionUrl) {
-        PGSimpleDataSource dataSource = new PGSimpleDataSource();
-        dataSource.setUrl(connectionUrl);
-        return dataSource;
+        try {
+            PGSimpleDataSource dataSource = new PGSimpleDataSource();
+            dataSource.setUrl(connectionUrl);
+            return dataSource;
+        } catch (Exception e) {
+            throw new AppException(e.getMessage());
+        }
     }
 
 }

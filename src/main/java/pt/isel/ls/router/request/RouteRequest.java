@@ -1,7 +1,9 @@
 package pt.isel.ls.router.request;
 
+import pt.isel.ls.exceptions.ParameterNotFoundException;
+import pt.isel.ls.exceptions.router.RouteParsingException;
 import pt.isel.ls.router.RouterUtils;
-import pt.isel.ls.router.response.RouteException;
+import pt.isel.ls.exceptions.router.RouteException;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -23,7 +25,7 @@ public class RouteRequest {
      * @param path path of the request
      * @param parameters parameters of the request
      */
-    private RouteRequest(Method method, Path path,
+    public RouteRequest(Method method, Path path,
                          HashMap<String, List<Parameter>> parameters,
                          HashMap<HeaderType, String> headers) {
 
@@ -137,7 +139,7 @@ public class RouteRequest {
             return new RouteRequest(method, path.get(),
                     parameters.orElseGet(HashMap::new), headers.orElseGet(HashMap::new));
         } catch (Exception exception) {
-            throw new RouteRequestParsingException(exception.getMessage());
+            throw new RouteParsingException(exception.getMessage());
         }
     }
 
@@ -181,22 +183,6 @@ public class RouteRequest {
         } catch (IllegalArgumentException e) {
             throw new RouteException("Method " + method + " does not exist");
         }
-    }
-
-    public static class ParameterNotFoundException extends RouteException {
-
-        private ParameterNotFoundException(String parameterName) {
-            super("Parameter " + parameterName + " not found!");
-        }
-
-    }
-
-    public static class RouteRequestParsingException extends RouteException {
-
-        private RouteRequestParsingException(String message) {
-            super("Error while parsing the route: " + message);
-        }
-
     }
 
 }

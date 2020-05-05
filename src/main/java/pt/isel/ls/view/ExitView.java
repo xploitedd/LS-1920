@@ -1,7 +1,7 @@
 package pt.isel.ls.view;
 
 import java.io.PrintWriter;
-import pt.isel.ls.router.response.RouteException;
+import pt.isel.ls.exceptions.router.RouteException;
 
 public final class ExitView extends View {
 
