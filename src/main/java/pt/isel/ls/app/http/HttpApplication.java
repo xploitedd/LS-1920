@@ -6,22 +6,27 @@ import org.eclipse.jetty.servlet.ServletHolder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import pt.isel.ls.app.Application;
+import pt.isel.ls.exceptions.AppException;
 import pt.isel.ls.router.Router;
 
 public class HttpApplication extends Application {
 
     private static final Logger LOG = LoggerFactory.getLogger(HttpApplication.class);
     private static final int DEFAULT_PORT = 8080;
+    private final int port;
 
     public HttpApplication(Router router) {
+        this(router, DEFAULT_PORT);
+    }
+
+    public HttpApplication(Router router, int port) {
         super(router);
+        String portEnv = System.getenv("PORT");
+        this.port = portEnv == null ? port : Integer.parseInt(portEnv);
     }
 
     @Override
     public void run() {
-        String portEnv = System.getenv("PORT");
-        int port = portEnv == null ? DEFAULT_PORT : Integer.parseInt(portEnv);
-
         Server server = new Server(port);
         ServletHandler handler = new ServletHandler();
         AppServlet appServlet = new AppServlet(router);
@@ -35,7 +40,7 @@ public class HttpApplication extends Application {
             LOG.info("Server listening on port {}", port);
             server.join();
         } catch (Exception e) {
-            throw new RuntimeException(e.getMessage());
+            throw new AppException(e.getMessage());
         }
     }
 

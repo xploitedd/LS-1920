@@ -1,10 +1,10 @@
 package pt.isel.ls.app;
 
+import pt.isel.ls.exceptions.AppException;
 import pt.isel.ls.router.Router;
 import pt.isel.ls.router.request.HeaderType;
 import pt.isel.ls.router.request.RouteRequest;
 import pt.isel.ls.router.response.HandlerResponse;
-import pt.isel.ls.exceptions.router.RouteException;
 import pt.isel.ls.view.ExceptionView;
 import pt.isel.ls.view.ViewType;
 
@@ -52,7 +52,7 @@ public class ConsoleApplication extends Application {
 
             response.getView().render(viewType, printWriter);
             printWriter.flush();
-        } catch (RouteException e) {
+        } catch (AppException e) {
             new ExceptionView(e).render(ViewType.TEXT, DEFAULT_WRITER);
             DEFAULT_WRITER.flush();
         } finally {

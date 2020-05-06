@@ -7,6 +7,7 @@ public enum Method {
     EXIT,
     OPTION,
     PUT,
-    DELETE
+    DELETE,
+    LISTEN
 
 }

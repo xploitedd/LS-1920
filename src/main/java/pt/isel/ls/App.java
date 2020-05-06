@@ -15,6 +15,7 @@ import pt.isel.ls.handlers.booking.GetUserBookingsHandler;
 import pt.isel.ls.handlers.misc.ExitHandler;
 import pt.isel.ls.handlers.label.GetLabeledRoomsHandler;
 import pt.isel.ls.handlers.label.GetLabelsHandler;
+import pt.isel.ls.handlers.misc.ListenHandler;
 import pt.isel.ls.handlers.room.GetRoomHandler;
 import pt.isel.ls.handlers.room.GetRoomsHandler;
 import pt.isel.ls.handlers.misc.GetTimeHandler;
@@ -70,6 +71,7 @@ public class App {
         router.registerRoute(new ExitHandler());
         router.registerRoute(new GetTimeHandler());
         router.registerRoute(new OptionHandler(router));
+        router.registerRoute(new ListenHandler(router));
 
         // Room Handlers
         router.registerRoute(new PostRoomHandler(connProvider));
