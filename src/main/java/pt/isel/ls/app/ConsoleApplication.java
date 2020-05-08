@@ -1,5 +1,7 @@
 package pt.isel.ls.app;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import pt.isel.ls.exceptions.AppException;
 import pt.isel.ls.router.Router;
 import pt.isel.ls.router.request.HeaderType;
@@ -16,6 +18,7 @@ import java.util.Scanner;
 
 public class ConsoleApplication extends Application {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(ConsoleApplication.class);
     private static final OutputStream DEFAULT_STREAM = System.out;
     private static final PrintWriter DEFAULT_WRITER = new PrintWriter(DEFAULT_STREAM);
     private static final Scanner SCANNER = new Scanner(System.in);
@@ -26,8 +29,8 @@ public class ConsoleApplication extends Application {
 
     @Override
     public void run() {
+        LOGGER.info("Console Interactive Mode started!");
         for ( ; ; ) {
-            System.out.print("> ");
             String input = SCANNER.nextLine();
             processInput(input);
         }

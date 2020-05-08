@@ -1,5 +1,7 @@
 package pt.isel.ls.sql.api;
 
+import pt.isel.ls.exceptions.AppException;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.util.concurrent.Callable;
@@ -35,7 +37,7 @@ public class SqlHandler {
         try {
             return callable.call();
         } catch (Exception e) {
-            throw new RuntimeException(e.getMessage());
+            throw new AppException(e.getMessage());
         }
     }
 

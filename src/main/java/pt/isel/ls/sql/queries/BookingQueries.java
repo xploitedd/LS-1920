@@ -34,10 +34,10 @@ public class BookingQueries extends DatabaseQueries {
         getBookingsByRid(rid).forEach(booking -> checkOverlap(booking, i2));
 
         handler.createUpdate("INSERT INTO booking (begin, \"end\", rid, uid) VALUES (?, ?, ?, ?);")
-                .bind(0, begin)
-                .bind(1, end)
-                .bind(2, rid)
-                .bind(3, uid)
+                .bind(begin)
+                .bind(end)
+                .bind(rid)
+                .bind(uid)
                 .execute();
 
         return getBooking(rid, uid, begin, end);
@@ -54,10 +54,10 @@ public class BookingQueries extends DatabaseQueries {
     public Booking getBooking(int rid, int uid, Timestamp begin, Timestamp end) {
         Optional<Booking> booking = handler
                 .createQuery("SELECT * FROM booking WHERE begin = ? AND \"end\" = ? AND rid = ? AND uid = ?;")
-                .bind(0, begin)
-                .bind(1, end)
-                .bind(2, rid)
-                .bind(3, uid)
+                .bind(begin)
+                .bind(end)
+                .bind(rid)
+                .bind(uid)
                 .mapToClass(Booking.class)
                 .findFirst();
 
@@ -76,7 +76,7 @@ public class BookingQueries extends DatabaseQueries {
     public Booking getBooking(int bid) {
         Optional<Booking> booking = handler
                 .createQuery("SELECT * FROM booking WHERE bid = ?;")
-                .bind(0, bid)
+                .bind(bid)
                 .mapToClass(Booking.class)
                 .findFirst();
 
@@ -103,7 +103,7 @@ public class BookingQueries extends DatabaseQueries {
      */
     public Stream<Booking> getBookingsByUid(int uid) {
         return handler.createQuery("SELECT * FROM booking WHERE uid = ?")
-                .bind(0, uid)
+                .bind(uid)
                 .mapToClass(Booking.class);
     }
 
@@ -114,7 +114,7 @@ public class BookingQueries extends DatabaseQueries {
      */
     public Stream<Booking> getBookingsByRid(int rid) {
         return handler.createQuery("SELECT * FROM booking WHERE rid = ?")
-                .bind(0, rid)
+                .bind(rid)
                 .mapToClass(Booking.class);
     }
 
@@ -127,10 +127,10 @@ public class BookingQueries extends DatabaseQueries {
 
         int res = handler
                 .createUpdate("UPDATE booking SET uid = ?, begin = ?, \"end\" = ? WHERE bid = ?")
-                .bind(0, newUid)
-                .bind(1, newBegin)
-                .bind(2, newEnd)
-                .bind(3, bid)
+                .bind(newUid)
+                .bind(newBegin)
+                .bind(newEnd)
+                .bind(bid)
                 .execute();
 
         if (res > 0) {
@@ -142,8 +142,8 @@ public class BookingQueries extends DatabaseQueries {
 
     public int deleteBooking(int rid, int bid) {
         return handler.createUpdate("DELETE FROM booking WHERE rid = ? AND bid = ?")
-            .bind(0, rid)
-            .bind(1, bid)
+            .bind(rid)
+            .bind(bid)
             .execute();
     }
 

@@ -4,6 +4,8 @@ import org.postgresql.ds.PGSimpleDataSource;
 
 import javax.sql.DataSource;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import pt.isel.ls.app.ConsoleApplication;
 import pt.isel.ls.exceptions.AppException;
 import pt.isel.ls.handlers.booking.DeleteBookingHandler;
@@ -30,6 +32,7 @@ import pt.isel.ls.sql.ConnectionProvider;
 
 public class App {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(App.class);
     private static final String DATABASE_CONNECTION_ENV = "JDBC_DATABASE_URL";
 
     private final ConnectionProvider connProvider;
@@ -55,9 +58,11 @@ public class App {
     public void run(String[] args) {
         ConsoleApplication consoleApp = new ConsoleApplication(router);
         if (args.length >= 2) {
+            LOGGER.debug("application in argument mode");
             // process single command provided in the arguments
             consoleApp.processInput(String.join(" ", args));
         } else {
+            LOGGER.debug("application in interactive mode");
             // run interactive mode
             consoleApp.run();
         }

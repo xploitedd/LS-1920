@@ -20,7 +20,7 @@ public class LabelQueries extends DatabaseQueries {
      */
     public Label createNewLabel(String labelName) {
         handler.createUpdate("INSERT INTO label (name) VALUES (?);")
-                .bind(0, labelName)
+                .bind(labelName)
                 .execute();
 
         return getLabel(labelName);
@@ -33,7 +33,7 @@ public class LabelQueries extends DatabaseQueries {
      */
     public Label getLabel(String name) {
         Optional<Label> label = handler.createQuery("SELECT * FROM label WHERE name = ?;")
-                .bind(0, name)
+                .bind(name)
                 .mapToClass(Label.class)
                 .findFirst();
 

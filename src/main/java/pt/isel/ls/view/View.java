@@ -2,6 +2,8 @@ package pt.isel.ls.view;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+
+import pt.isel.ls.exceptions.AppException;
 import pt.isel.ls.model.dsl.Node;
 import pt.isel.ls.model.dsl.elements.Element;
 
@@ -23,21 +25,19 @@ public abstract class View {
      * Renders this view on the selected writer
      * @param type render type
      * @param writer writer where to render this view
-     * @return the type of the response
      */
     public final void render(ViewType type, PrintWriter writer) {
         if (type == ViewType.HTML) {
             try {
-                Element html =
-                        html(
-                                head(title(title)),
-                                body(getHtmlBody())
-                        );
+                Element html = html(
+                        head(title(title)),
+                        body(getHtmlBody())
+                );
 
                 html.write(writer);
                 writer.println();
             } catch (IOException e) {
-                renderText(writer);
+                throw new AppException(e.getMessage());
             }
         } else {
             renderText(writer);
@@ -48,7 +48,9 @@ public abstract class View {
         return p("No html representation available!");
     }
 
-    protected abstract void renderText(PrintWriter writer);
+    protected void renderText(PrintWriter writer) {
+        writer.println("No text representation available!");
+    }
 
     public String getTitle() {
         return title;

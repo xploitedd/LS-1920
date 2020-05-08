@@ -12,17 +12,11 @@ import pt.isel.ls.router.Router;
 public class HttpApplication extends Application {
 
     private static final Logger LOG = LoggerFactory.getLogger(HttpApplication.class);
-    private static final int DEFAULT_PORT = 8080;
     private final int port;
-
-    public HttpApplication(Router router) {
-        this(router, DEFAULT_PORT);
-    }
 
     public HttpApplication(Router router, int port) {
         super(router);
-        String portEnv = System.getenv("PORT");
-        this.port = portEnv == null ? port : Integer.parseInt(portEnv);
+        this.port = port;
     }
 
     @Override
@@ -38,7 +32,7 @@ public class HttpApplication extends Application {
         try {
             server.start();
             LOG.info("Server listening on port {}", port);
-            server.join();
+            //server.join();
         } catch (Exception e) {
             throw new AppException(e.getMessage());
         }

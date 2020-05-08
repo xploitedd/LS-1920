@@ -21,8 +21,8 @@ public class UserQueries extends DatabaseQueries {
      */
     public User createNewUser(String name, String email) {
         handler.createUpdate("INSERT INTO \"user\" (email, name) VALUES (?, ?);")
-                .bind(0, email)
-                .bind(1, name)
+                .bind(email)
+                .bind(name)
                 .execute();
 
         return getUser(name, email);
@@ -32,12 +32,11 @@ public class UserQueries extends DatabaseQueries {
      * Get User by uid
      * @param uid id of the user
      * @return an User
-     * @throws Exception any exception that occurs
      */
-    public User getUser(int uid) throws Exception {
+    public User getUser(int uid) {
         Optional<User> user = handler
                 .createQuery("SELECT * FROM \"user\" WHERE uid = ?;")
-                .bind(0, uid)
+                .bind(uid)
                 .mapToClass(User.class)
                 .findFirst();
 
@@ -57,8 +56,8 @@ public class UserQueries extends DatabaseQueries {
     public User getUser(String name, String email) {
         Optional<User> user = handler
                 .createQuery("SELECT * FROM \"user\" WHERE email = ? AND name = ?;")
-                .bind(0, email)
-                .bind(1, name)
+                .bind(email)
+                .bind(name)
                 .mapToClass(User.class)
                 .findFirst();
 

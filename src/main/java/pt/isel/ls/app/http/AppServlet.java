@@ -2,6 +2,7 @@ package pt.isel.ls.app.http;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import pt.isel.ls.exceptions.AppException;
 import pt.isel.ls.router.Router;
 import pt.isel.ls.router.request.HeaderType;
 import pt.isel.ls.router.request.Method;
@@ -9,7 +10,6 @@ import pt.isel.ls.router.request.Parameter;
 import pt.isel.ls.router.request.Path;
 import pt.isel.ls.router.request.RouteRequest;
 import pt.isel.ls.router.response.HandlerResponse;
-import pt.isel.ls.exceptions.router.RouteException;
 import pt.isel.ls.view.ViewType;
 
 import javax.servlet.http.HttpServlet;
@@ -17,6 +17,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -42,31 +43,31 @@ public class AppServlet extends HttpServlet {
     }
 
     private void processRequest(HttpServletRequest req, HttpServletResponse resp) {
-        Method method = Method.valueOf(req.getMethod());
         Optional<Path> path = Path.of(req.getRequestURI());
         if (path.isEmpty()) {
-            LOG.error("Invalid request received: " + req.getRequestURI());
+            LOG.error("Invalid request received: {}", req.getRequestURI());
             // bad request
             return;
         }
 
-        HashMap<String, List<Parameter>> parameters = processParameters(req.getParameterMap());
-        HashMap<HeaderType, String> headers = new HashMap<>();
-        Enumeration<String> headerNames = req.getHeaderNames();
-        if (headerNames != null) {
-            while (headerNames.hasMoreElements()) {
-                String name = headerNames.nextElement();
-                HeaderType type = HeaderType.of(name);
-                headers.put(type, req.getHeader(name));
-            }
-        }
+        LOG.debug("new request received. path: {}", path.get());
+        Method method = Method.valueOf(req.getMethod());
+        RouteRequest request = new RouteRequest(
+                method,
+                path.get(),
+                processParameters(req),
+                processHeaders(req)
+        );
 
-        RouteRequest request = new RouteRequest(method, path.get(), parameters, headers);
         try {
-            HandlerResponse response = router.getHandler(request).execute(request);
-            resp.setStatus(response.getStatusCode());
-            PrintWriter pw = new PrintWriter(resp.getOutputStream());
+            HandlerResponse response = router.getHandler(request)
+                    .execute(request);
 
+            resp.setStatus(response.getStatusCode());
+            StringWriter writer = new StringWriter();
+            PrintWriter pw = new PrintWriter(writer);
+
+            // default view type is ViewType.HTML
             ViewType viewType = request.getHeaderValue(HeaderType.Accept)
                     .map(ViewType::of)
                     .orElse(ViewType.HTML);
@@ -77,13 +78,18 @@ public class AppServlet extends HttpServlet {
 
             response.getView().render(viewType, pw);
             pw.close();
-        } catch (RouteException | IOException e) {
+
+            byte[] content = writer.toString().getBytes();
+            resp.setContentLength(content.length);
+            resp.getOutputStream().write(content);
+        } catch (AppException | IOException e) {
             resp.setStatus(500);
-            LOG.error("Error while executing the response: " + e.getMessage());
+            LOG.error("Error while executing the request: {}", e.getMessage());
         }
     }
 
-    private static HashMap<String, List<Parameter>> processParameters(Map<String, String[]> parameters) {
+    private static HashMap<String, List<Parameter>> processParameters(HttpServletRequest req) {
+        Map<String, String[]> parameters = req.getParameterMap();
         HashMap<String, List<Parameter>> parameterMap = new HashMap<>();
         for (String key : parameters.keySet()) {
             String[] values = parameters.get(key);
@@ -96,6 +102,22 @@ public class AppServlet extends HttpServlet {
         }
 
         return parameterMap;
+    }
+
+    private static HashMap<HeaderType, String> processHeaders(HttpServletRequest req) {
+        HashMap<HeaderType, String> headers = new HashMap<>();
+        Enumeration<String> headerNames = req.getHeaderNames();
+        if (headerNames != null) {
+            while (headerNames.hasMoreElements()) {
+                String name = headerNames.nextElement();
+                HeaderType type = HeaderType.of(name);
+                if (type != null) {
+                    headers.put(type, req.getHeader(name));
+                }
+            }
+        }
+
+        return headers;
     }
 
 }

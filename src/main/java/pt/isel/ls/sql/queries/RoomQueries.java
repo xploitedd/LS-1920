@@ -29,9 +29,9 @@ public class RoomQueries extends DatabaseQueries {
 
         // Inserts the new Room
         handler.createUpdate("INSERT INTO room (name, location, capacity) VALUES (?, ?, ?);")
-                .bind(0, name)
-                .bind(1, location)
-                .bind(2, capacity)
+                .bind(name)
+                .bind(location)
+                .bind(capacity)
                 .execute();
 
         // Verifies if the new Room has been inserted
@@ -42,8 +42,8 @@ public class RoomQueries extends DatabaseQueries {
         if (description != null) {
             //Associate description with new Room
             handler.createUpdate("INSERT INTO description (rid, description) VALUES (?,?);")
-                    .bind(0, toReturn.getRid())
-                    .bind(1, description)
+                    .bind(toReturn.getRid())
+                    .bind(description)
                     .execute();
         }
 
@@ -62,9 +62,9 @@ public class RoomQueries extends DatabaseQueries {
                 .createQuery("SELECT room.rid, name, capacity, description, location FROM room "
                 + "FULL JOIN description d on room.rid = d.rid "
                 + "WHERE name = ? AND location = ? AND capacity = ?;")
-                .bind(0, name)
-                .bind(1, location)
-                .bind(2, capacity)
+                .bind(name)
+                .bind(location)
+                .bind(capacity)
                 .mapToClass(Room.class)
                 .findFirst();
 
@@ -85,7 +85,7 @@ public class RoomQueries extends DatabaseQueries {
                 .createQuery("SELECT room.rid, name, location, capacity, description "
                     + "FROM room FULL JOIN description d "
                     + "on room.rid = d.rid WHERE room.rid = ?;")
-                .bind(0, rid)
+                .bind(rid)
                 .mapToClass(Room.class)
                 .findFirst();
 

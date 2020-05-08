@@ -28,11 +28,10 @@ public class RoomLabelQueries extends DatabaseQueries {
         Update update = handler.createUpdate("INSERT INTO room_label (lid, rid) VALUES (?, ?)"
                 + ", (?, ?)".repeat(labels.size() - 1) + ';');
 
-        int i = 0;
         for (Label label : labels) {
             //insert rid-lid pairs into ROOM_LABEL
-            update = update.bind(i++, label.getLid())
-                    .bind(i++, rid);
+            update = update.bind(label.getLid())
+                    .bind(rid);
         }
 
         update.execute();
@@ -51,7 +50,7 @@ public class RoomLabelQueries extends DatabaseQueries {
         return handler.createQuery("SELECT r.rid, \"name\", location, capacity, description "
                         + "FROM (room r FULL JOIN description d on r.rid = d.rid) "
                         + "WHERE r.rid IN (SELECT rid FROM room_label WHERE lid = ?)")
-                .bind(0, lid)
+                .bind(lid)
                 .mapToClass(Room.class);
     }
 
@@ -63,15 +62,15 @@ public class RoomLabelQueries extends DatabaseQueries {
     public Stream<Label> getRoomLabels(int rid) {
         return handler.createQuery("SELECT l.lid, name FROM "
                 + "(room_label rl JOIN label l on rl.lid = l.lid) WHERE rid = ?")
-                .bind(0, rid)
+                .bind(rid)
                 .mapToClass(Label.class);
     }
 
     public boolean isLabelInRoom(int rid, String label) {
         return SqlHandler.passException(() -> handler
                 .createQuery("SELECT * FROM (room_label rl JOIN label l on rl.lid=l.lid) WHERE rid=? AND l.name=?")
-                .bind(0, rid)
-                .bind(1, label)
+                .bind(rid)
+                .bind(label)
                 .execute()
                 .next());
     }
@@ -79,7 +78,7 @@ public class RoomLabelQueries extends DatabaseQueries {
     public boolean doesLabelExist(int lid) {
         return SqlHandler.passException(() ->
                 handler.createQuery("SELECT * FROM label WHERE lid=?")
-                        .bind(0, lid)
+                        .bind(lid)
                         .execute()
                         .next());
     }
