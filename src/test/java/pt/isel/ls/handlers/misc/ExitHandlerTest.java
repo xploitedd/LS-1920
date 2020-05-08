@@ -7,7 +7,7 @@ import pt.isel.ls.router.Router;
 import pt.isel.ls.router.request.RouteRequest;
 import pt.isel.ls.router.response.HandlerResponse;
 import pt.isel.ls.exceptions.router.RouteException;
-import pt.isel.ls.view.ExitView;
+import pt.isel.ls.view.misc.ExitView;
 
 public class ExitHandlerTest {
 

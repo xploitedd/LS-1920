@@ -76,7 +76,7 @@ public class AppServlet extends HttpServlet {
             resp.setContentType(viewType.getName());
             resp.setCharacterEncoding(utf8.name());
 
-            response.getView().render(viewType, pw);
+            response.getView().render(router, viewType, pw);
             pw.close();
 
             byte[] content = writer.toString().getBytes();

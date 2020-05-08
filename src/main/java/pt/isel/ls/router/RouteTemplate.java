@@ -1,5 +1,6 @@
 package pt.isel.ls.router;
 
+import pt.isel.ls.exceptions.AppException;
 import pt.isel.ls.router.request.Parameter;
 import pt.isel.ls.router.request.Path;
 
@@ -57,6 +58,33 @@ public class RouteTemplate {
         }
 
         return Optional.of(pathParameters);
+    }
+
+    public Path constructPathFromTemplate(Object... params) {
+        StringBuilder sb = new StringBuilder();
+        int paramIdx = 0;
+        for (TemplateSegment ts : templateSegments) {
+            sb.append("/");
+            if (ts instanceof ParameterTemplateSegment) {
+                sb.append(params[paramIdx++]);
+            } else {
+                sb.append(ts.segment);
+            }
+        }
+
+        String ps = sb.toString();
+        if (ps.equals("")) {
+            ps = "/";
+        }
+
+        Optional<Path> path = Path.of(ps);
+        if (path.isEmpty()) {
+            // it's not supposed to launch this exception unless we don't
+            // follow the established path contract
+            throw new AppException("Unexpected error constructing path from segment");
+        }
+
+        return path.get();
     }
 
     /**

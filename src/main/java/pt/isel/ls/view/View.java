@@ -6,7 +6,9 @@ import java.io.PrintWriter;
 import pt.isel.ls.exceptions.AppException;
 import pt.isel.ls.model.dsl.Node;
 import pt.isel.ls.model.dsl.elements.Element;
+import pt.isel.ls.router.Router;
 
+import static pt.isel.ls.model.dsl.Dsl.a;
 import static pt.isel.ls.model.dsl.Dsl.body;
 import static pt.isel.ls.model.dsl.Dsl.head;
 import static pt.isel.ls.model.dsl.Dsl.html;
@@ -16,35 +18,43 @@ import static pt.isel.ls.model.dsl.Dsl.title;
 public abstract class View {
 
     protected final String title;
+    private final boolean homeLink;
 
     public View(String title) {
-        this.title = title;
+        this(title, true);
     }
 
-    /**
-     * Renders this view on the selected writer
-     * @param type render type
-     * @param writer writer where to render this view
-     */
-    public final void render(ViewType type, PrintWriter writer) {
-        if (type == ViewType.HTML) {
-            try {
-                Element html = html(
-                        head(title(title)),
-                        body(getHtmlBody())
-                );
+    public View(String title, boolean homeLink) {
+        this.title = title;
+        this.homeLink = homeLink;
+    }
 
-                html.write(writer);
-                writer.println();
-            } catch (IOException e) {
-                throw new AppException(e.getMessage());
-            }
+    public final void render(Router router, ViewType type, PrintWriter writer) {
+        if (type == ViewType.HTML) {
+            renderHtml(router, writer);
         } else {
             renderText(writer);
         }
     }
 
-    protected Node getHtmlBody() {
+    private void renderHtml(Router router, PrintWriter writer) {
+        try {
+            Element body = body(getHtmlBody(router));
+            if (homeLink) {
+                Node homeLink = a(router.routeFromName("GetHomeHandler"),
+                        "Go to home");
+                body = body(homeLink, getHtmlBody(router));
+            }
+
+            Element html = html(head(title(title)), body);
+            html.write(writer);
+            writer.println();
+        } catch (IOException e) {
+            throw new AppException(e.getMessage());
+        }
+    }
+
+    protected Node getHtmlBody(Router router) {
         return p("No html representation available!");
     }
 

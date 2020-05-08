@@ -15,7 +15,7 @@ import pt.isel.ls.exceptions.router.RouteException;
 import pt.isel.ls.sql.ConnectionProvider;
 import pt.isel.ls.sql.queries.LabelQueries;
 import pt.isel.ls.sql.queries.RoomQueries;
-import pt.isel.ls.view.IdentifierView;
+import pt.isel.ls.view.misc.IdentifierView;
 
 public final class PostRoomHandler extends RouteHandler {
 

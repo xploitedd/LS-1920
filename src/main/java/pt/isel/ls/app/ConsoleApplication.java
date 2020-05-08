@@ -7,7 +7,7 @@ import pt.isel.ls.router.Router;
 import pt.isel.ls.router.request.HeaderType;
 import pt.isel.ls.router.request.RouteRequest;
 import pt.isel.ls.router.response.HandlerResponse;
-import pt.isel.ls.view.ExceptionView;
+import pt.isel.ls.view.misc.ExceptionView;
 import pt.isel.ls.view.ViewType;
 
 import java.io.FileNotFoundException;
@@ -53,10 +53,10 @@ public class ConsoleApplication extends Application {
             HandlerResponse response = router.getHandler(request)
                     .execute(request);
 
-            response.getView().render(viewType, printWriter);
+            response.getView().render(router, viewType, printWriter);
             printWriter.flush();
         } catch (AppException e) {
-            new ExceptionView(e).render(ViewType.TEXT, DEFAULT_WRITER);
+            new ExceptionView(e).render(router, ViewType.TEXT, DEFAULT_WRITER);
             DEFAULT_WRITER.flush();
         } finally {
             // check that the PrintWriter isn't null and the object is the same as

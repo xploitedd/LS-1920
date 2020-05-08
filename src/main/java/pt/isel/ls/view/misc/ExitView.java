@@ -1,7 +1,9 @@
-package pt.isel.ls.view;
+package pt.isel.ls.view.misc;
 
 import java.io.PrintWriter;
-import pt.isel.ls.exceptions.router.RouteException;
+
+import pt.isel.ls.exceptions.AppException;
+import pt.isel.ls.view.View;
 
 public final class ExitView extends View {
 
@@ -26,8 +28,7 @@ public final class ExitView extends View {
             Thread.sleep(2000);
             System.exit(statusCode);
         } catch (InterruptedException e) {
-            new ExceptionView(new RouteException(e.getMessage()))
-                    .renderText(writer);
+            throw new AppException(e.getMessage());
         }
     }
 

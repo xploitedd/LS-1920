@@ -1,6 +1,7 @@
 package pt.isel.ls.view;
 
 import pt.isel.ls.model.dsl.Node;
+import pt.isel.ls.router.Router;
 
 import java.io.PrintWriter;
 
@@ -22,7 +23,8 @@ public class MessageView extends View {
     }
 
     @Override
-    protected Node getHtmlBody() {
+    protected Node getHtmlBody(Router router) {
         return h1(title);
     }
+
 }

@@ -9,7 +9,7 @@ import pt.isel.ls.router.response.HandlerResponse;
 import pt.isel.ls.sql.ConnectionProvider;
 import pt.isel.ls.sql.queries.BookingQueries;
 import pt.isel.ls.utils.Time;
-import pt.isel.ls.view.IdentifierView;
+import pt.isel.ls.view.misc.IdentifierView;
 
 import java.sql.Timestamp;
 

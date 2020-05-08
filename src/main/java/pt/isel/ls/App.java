@@ -14,15 +14,16 @@ import pt.isel.ls.handlers.booking.GetRoomBookingsHandler;
 import pt.isel.ls.handlers.booking.PostBookingHandler;
 import pt.isel.ls.handlers.booking.PutBookingHandler;
 import pt.isel.ls.handlers.booking.GetUserBookingsHandler;
-import pt.isel.ls.handlers.misc.ExitHandler;
 import pt.isel.ls.handlers.label.GetLabeledRoomsHandler;
 import pt.isel.ls.handlers.label.GetLabelsHandler;
+import pt.isel.ls.handlers.misc.ExitHandler;
+import pt.isel.ls.handlers.misc.GetTimeHandler;
+import pt.isel.ls.handlers.misc.GetHomeHandler;
 import pt.isel.ls.handlers.misc.ListenHandler;
+import pt.isel.ls.handlers.misc.OptionHandler;
 import pt.isel.ls.handlers.room.GetRoomHandler;
 import pt.isel.ls.handlers.room.GetRoomsHandler;
-import pt.isel.ls.handlers.misc.GetTimeHandler;
 import pt.isel.ls.handlers.user.GetUserHandler;
-import pt.isel.ls.handlers.misc.OptionHandler;
 import pt.isel.ls.handlers.label.PostLabelHandler;
 import pt.isel.ls.handlers.room.PostRoomHandler;
 import pt.isel.ls.handlers.user.GetUsersHandler;
@@ -51,8 +52,12 @@ public class App {
     }
 
     public static void main(String[] args) {
-        App app = new App();
-        app.run(args);
+        try {
+            App app = new App();
+            app.run(args);
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
     }
 
     public void run(String[] args) {
@@ -77,6 +82,7 @@ public class App {
         router.registerRoute(new GetTimeHandler());
         router.registerRoute(new OptionHandler(router));
         router.registerRoute(new ListenHandler(router));
+        router.registerRoute(new GetHomeHandler());
 
         // Room Handlers
         router.registerRoute(new PostRoomHandler(connProvider));

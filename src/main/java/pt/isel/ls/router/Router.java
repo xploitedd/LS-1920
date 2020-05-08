@@ -2,12 +2,12 @@ package pt.isel.ls.router;
 
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.Set;
 
+import pt.isel.ls.exceptions.router.RouteException;
 import pt.isel.ls.exceptions.router.RouteNotFoundException;
 import pt.isel.ls.handlers.Handler;
 import pt.isel.ls.handlers.RouteHandler;
@@ -15,7 +15,7 @@ import pt.isel.ls.router.request.Method;
 import pt.isel.ls.router.request.Parameter;
 import pt.isel.ls.router.request.RouteRequest;
 import pt.isel.ls.router.response.HandlerResponse;
-import pt.isel.ls.view.ExceptionView;
+import pt.isel.ls.view.misc.ExceptionView;
 
 /**
  * Router is responsible for routing
@@ -24,22 +24,29 @@ import pt.isel.ls.view.ExceptionView;
  */
 public class Router implements Iterable<Router.Route> {
 
-    private final HashMap<Method, Set<Route>> methodRoutes = new HashMap<>();
+    private static final String HOME = "/";
+
+    private final HashMap<Method, Map<String, Route>> methodRoutes = new HashMap<>();
 
     /**
      * Registers a new Route to this Router
      * @param handler Handler for the Route to be registered
      */
     public void registerRoute(RouteHandler handler) {
+        String handlerName = handler.getClass().getSimpleName();
+        if (handlerName.equals("")) {
+            throw new RouteException("Handler class cannot be anonymous!");
+        }
+
         Method method = handler.getMethod();
-        Route route = new Route(handler.getTemplate(), handler, method);
-        Set<Route> routes = methodRoutes.get(method);
+        Route route = new Route(handlerName, handler.getTemplate(), handler, method);
+        Map<String, Route> routes = methodRoutes.get(method);
         if (routes == null) {
-            routes = new HashSet<>();
-            routes.add(route);
+            routes = new HashMap<>();
+            routes.put(handlerName, route);
             methodRoutes.put(method, routes);
         } else {
-            routes.add(route);
+            routes.put(handlerName, route);
         }
     }
 
@@ -50,9 +57,9 @@ public class Router implements Iterable<Router.Route> {
      * if not found the default 404 handler
      */
     public Handler getHandler(RouteRequest request) {
-        Set<Route> routes = methodRoutes.get(request.getMethod());
+        Map<String, Route> routes = methodRoutes.get(request.getMethod());
         if (routes != null) {
-            for (Route r : routes) {
+            for (Route r : routes.values()) {
                 RouteTemplate template = r.getRouteTemplate();
                 Optional<HashMap<String, Parameter>> match = template.match(request.getPath());
                 if (match.isPresent()) {
@@ -66,15 +73,33 @@ public class Router implements Iterable<Router.Route> {
                 .setStatusCode(404);
     }
 
+    public String routeFromName(String routeName, Object... params) {
+        for (Method method : Method.values()) {
+            Map<String, Route> map = methodRoutes.get(method);
+            if (map != null) {
+                Route route = map.get(routeName);
+                if (route != null) {
+                    return route.getRouteTemplate()
+                            .constructPathFromTemplate(params)
+                            .toString();
+                }
+            }
+        }
+
+        return HOME;
+    }
+
     @Override
     public Iterator<Route> iterator() {
         return methodRoutes.values().stream()
+                .map(Map::values)
                 .flatMap(Collection::stream)
                 .iterator();
     }
 
     public static class Route {
 
+        private final String name;
         private final RouteTemplate routeTemplate;
         private final RouteHandler handler;
         private final Method method;
@@ -85,10 +110,15 @@ public class Router implements Iterable<Router.Route> {
          * @param handler Handler of this route
          * @param method the method of this route
          */
-        private Route(RouteTemplate routeTemplate, RouteHandler handler, Method method) {
+        private Route(String name, RouteTemplate routeTemplate, RouteHandler handler, Method method) {
+            this.name = name;
             this.routeTemplate = routeTemplate;
             this.handler = handler;
             this.method = method;
+        }
+
+        public String getName() {
+            return name;
         }
 
         /**

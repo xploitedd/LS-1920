@@ -1,11 +1,15 @@
 package pt.isel.ls.model.dsl;
 
 import pt.isel.ls.model.dsl.elements.BodyElement;
+import pt.isel.ls.model.dsl.elements.DivElement;
 import pt.isel.ls.model.dsl.elements.Element;
 import pt.isel.ls.model.dsl.elements.HeadElement;
 import pt.isel.ls.model.dsl.elements.HtmlElement;
+import pt.isel.ls.model.dsl.elements.lists.ListItemElement;
+import pt.isel.ls.model.dsl.elements.lists.UnorderedListElement;
 import pt.isel.ls.model.dsl.elements.table.TableElement;
 import pt.isel.ls.model.dsl.elements.table.TableRowElement;
+import pt.isel.ls.model.dsl.text.AnchorText;
 import pt.isel.ls.model.dsl.text.HeadText;
 import pt.isel.ls.model.dsl.text.ParagraphText;
 import pt.isel.ls.model.dsl.text.TitleText;
@@ -61,6 +65,22 @@ public class Dsl {
 
     public static TableText td(String data) {
         return new TableDataText(data);
+    }
+
+    public static UnorderedListElement ul(ListItemElement... items) {
+        return new UnorderedListElement(items);
+    }
+
+    public static ListItemElement li(Node... children) {
+        return new ListItemElement(children);
+    }
+
+    public static DivElement div(Node... children) {
+        return new DivElement(children);
+    }
+
+    public static AnchorText a(String href, String text) {
+        return new AnchorText(href, text);
     }
 
 }
