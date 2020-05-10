@@ -2,9 +2,9 @@ package pt.isel.ls.sql.api;
 
 import java.sql.PreparedStatement;
 
-public class Update extends SqlType<Update, Integer> {
+import static pt.isel.ls.utils.ExceptionUtils.passException;
 
-    private int stmtIdx;
+public class Update extends SqlType<Update, Integer> {
 
     Update(PreparedStatement stmt) {
         super(stmt);
@@ -12,7 +12,7 @@ public class Update extends SqlType<Update, Integer> {
 
     @Override
     public Integer execute() {
-        return SqlHandler.passException(stmt::executeUpdate);
+        return passException(stmt::executeUpdate);
     }
 
 }

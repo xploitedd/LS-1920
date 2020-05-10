@@ -6,7 +6,6 @@ import java.io.PrintWriter;
 import pt.isel.ls.exceptions.AppException;
 import pt.isel.ls.model.dsl.Node;
 import pt.isel.ls.model.dsl.elements.Element;
-import pt.isel.ls.router.Router;
 
 import static pt.isel.ls.model.dsl.Dsl.a;
 import static pt.isel.ls.model.dsl.Dsl.body;
@@ -29,21 +28,23 @@ public abstract class View {
         this.homeLink = homeLink;
     }
 
-    public final void render(Router router, ViewType type, PrintWriter writer) {
+    final void render(ViewHandler handler, ViewType type, PrintWriter writer) {
         if (type == ViewType.HTML) {
-            renderHtml(router, writer);
+            renderHtml(handler, writer);
         } else {
-            renderText(writer);
+            renderText(handler, writer);
         }
     }
 
-    private void renderHtml(Router router, PrintWriter writer) {
+    private void renderHtml(ViewHandler handler, PrintWriter writer) {
         try {
-            Element body = body(getHtmlBody(router));
+            Element body;
             if (homeLink) {
-                Node homeLink = a(router.routeFromName("GetHomeHandler"),
+                Node homeLink = a(handler.route("GetHomeHandler"),
                         "Go to home");
-                body = body(homeLink, getHtmlBody(router));
+                body = body(homeLink, getHtmlBody(handler));
+            } else {
+                body = body(getHtmlBody(handler));
             }
 
             Element html = html(head(title(title)), body);
@@ -54,11 +55,11 @@ public abstract class View {
         }
     }
 
-    protected Node getHtmlBody(Router router) {
+    protected Node getHtmlBody(ViewHandler handler) {
         return p("No html representation available!");
     }
 
-    protected void renderText(PrintWriter writer) {
+    protected void renderText(ViewHandler handler, PrintWriter writer) {
         writer.println("No text representation available!");
     }
 

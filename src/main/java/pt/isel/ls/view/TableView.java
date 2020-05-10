@@ -29,12 +29,12 @@ public class TableView extends View {
     }
 
     @Override
-    protected void renderText(PrintWriter writer) {
+    protected void renderText(ViewHandler handler, PrintWriter writer) {
         writer.println(table);
     }
 
     @Override
-    protected Node getHtmlBody(Router router) {
+    protected Node getHtmlBody(ViewHandler handler) {
         if (cache == null) {
             // map table header
             addRow(mapToTableText(table.getHeader(), Dsl::th));
@@ -43,7 +43,7 @@ public class TableView extends View {
 
             cache = table(
                     htmlRows.toArray(TableRowElement[]::new)
-            ).addAttribute("border", "1");
+            ).attr("border", "1");
         }
 
         // this cache is not shared across different requests so there's
@@ -57,7 +57,7 @@ public class TableView extends View {
 
     private <T> TableText[] mapToTableText(Stream<T> stream, Function<String, TableText> mapper) {
         return stream.map(cell -> mapper.apply(cell.toString())
-                .<TableText>addAttribute("style", "padding:5px;"))
+                .<TableText>attr("style", "padding:5px;"))
                 .toArray(TableText[]::new);
     }
 

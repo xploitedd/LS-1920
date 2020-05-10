@@ -5,6 +5,9 @@ import pt.isel.ls.model.dsl.elements.DivElement;
 import pt.isel.ls.model.dsl.elements.Element;
 import pt.isel.ls.model.dsl.elements.HeadElement;
 import pt.isel.ls.model.dsl.elements.HtmlElement;
+import pt.isel.ls.model.dsl.elements.forms.FormElement;
+import pt.isel.ls.model.dsl.elements.forms.InputElement;
+import pt.isel.ls.model.dsl.elements.forms.SelectElement;
 import pt.isel.ls.model.dsl.elements.lists.ListItemElement;
 import pt.isel.ls.model.dsl.elements.lists.UnorderedListElement;
 import pt.isel.ls.model.dsl.elements.table.TableElement;
@@ -13,6 +16,8 @@ import pt.isel.ls.model.dsl.text.AnchorText;
 import pt.isel.ls.model.dsl.text.HeadText;
 import pt.isel.ls.model.dsl.text.ParagraphText;
 import pt.isel.ls.model.dsl.text.TitleText;
+import pt.isel.ls.model.dsl.text.forms.LabelText;
+import pt.isel.ls.model.dsl.text.forms.OptionText;
 import pt.isel.ls.model.dsl.text.table.TableDataText;
 import pt.isel.ls.model.dsl.text.table.TableHeaderText;
 import pt.isel.ls.model.dsl.text.table.TableText;
@@ -81,6 +86,30 @@ public class Dsl {
 
     public static AnchorText a(String href, String text) {
         return new AnchorText(href, text);
+    }
+
+    public static FormElement form(String method, String action, Node... children) {
+        return new FormElement(method, action, children);
+    }
+
+    public static InputElement input(String type, String name) {
+        return new InputElement(type, name);
+    }
+
+    public static SelectElement select(String name, OptionText... options) {
+        return new SelectElement(name, options);
+    }
+
+    public static SelectElement select(String name, boolean multiple, OptionText... options) {
+        return new SelectElement(name, multiple, options);
+    }
+
+    public static OptionText option(String value, String text) {
+        return new OptionText(value, text);
+    }
+
+    public static LabelText label(String forId, String text) {
+        return new LabelText(forId, text);
     }
 
 }

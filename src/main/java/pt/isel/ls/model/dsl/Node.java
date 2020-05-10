@@ -50,7 +50,7 @@ public abstract class Node {
      * @return the Node, casted to its subtype
      */
     @SuppressWarnings("unchecked")
-    public <T extends Node> T addAttribute(String name, String value) {
+    public <T extends Node> T attr(String name, String value) {
         attributes.add(new Attribute(name, value));
         return (T) this;
     }

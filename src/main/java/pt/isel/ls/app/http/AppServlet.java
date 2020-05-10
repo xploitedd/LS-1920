@@ -10,6 +10,7 @@ import pt.isel.ls.router.request.Parameter;
 import pt.isel.ls.router.request.Path;
 import pt.isel.ls.router.request.RouteRequest;
 import pt.isel.ls.router.response.HandlerResponse;
+import pt.isel.ls.view.ViewHandler;
 import pt.isel.ls.view.ViewType;
 
 import javax.servlet.http.HttpServlet;
@@ -32,9 +33,11 @@ public class AppServlet extends HttpServlet {
     private static final Logger LOG = LoggerFactory.getLogger(AppServlet.class);
 
     private final Router router;
+    private final ViewHandler viewHandler;
 
     public AppServlet(Router router) {
         this.router = router;
+        this.viewHandler = new ViewHandler(router);
     }
 
     @Override
@@ -76,7 +79,7 @@ public class AppServlet extends HttpServlet {
             resp.setContentType(viewType.getName());
             resp.setCharacterEncoding(utf8.name());
 
-            response.getView().render(router, viewType, pw);
+            viewHandler.render(response.getView(), viewType, pw);
             pw.close();
 
             byte[] content = writer.toString().getBytes();

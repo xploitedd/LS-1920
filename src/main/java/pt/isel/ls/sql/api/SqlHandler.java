@@ -1,10 +1,9 @@
 package pt.isel.ls.sql.api;
 
-import pt.isel.ls.exceptions.AppException;
-
 import java.sql.Connection;
 import java.sql.PreparedStatement;
-import java.util.concurrent.Callable;
+
+import static pt.isel.ls.utils.ExceptionUtils.passException;
 
 public class SqlHandler {
 
@@ -31,14 +30,6 @@ public class SqlHandler {
 
     public Query createQuery(String query) {
         return passException(() -> new Query(conn.prepareStatement(query)));
-    }
-
-    public static <T> T passException(Callable<T> callable) {
-        try {
-            return callable.call();
-        } catch (Exception e) {
-            throw new AppException(e.getMessage());
-        }
     }
 
 }

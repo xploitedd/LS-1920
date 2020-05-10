@@ -114,13 +114,9 @@ public class App {
      * @return a new data source
      */
     private DataSource getDataSource(String connectionUrl) {
-        try {
-            PGSimpleDataSource dataSource = new PGSimpleDataSource();
-            dataSource.setUrl(connectionUrl);
-            return dataSource;
-        } catch (Exception e) {
-            throw new AppException(e.getMessage());
-        }
+        PGSimpleDataSource dataSource = new PGSimpleDataSource();
+        dataSource.setUrl(connectionUrl);
+        return dataSource;
     }
 
 }

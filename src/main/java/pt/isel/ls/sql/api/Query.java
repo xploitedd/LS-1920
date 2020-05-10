@@ -10,6 +10,8 @@ import java.util.function.Consumer;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
+import static pt.isel.ls.utils.ExceptionUtils.passException;
+
 public class Query extends SqlType<Query, ResultSet> {
 
     private static final ConcurrentHashMap<Class<?>, Field[]> FIELD_CACHE = new ConcurrentHashMap<>();
@@ -21,7 +23,7 @@ public class Query extends SqlType<Query, ResultSet> {
 
     @Override
     public ResultSet execute() {
-        return SqlHandler.passException(stmt::executeQuery);
+        return passException(stmt::executeQuery);
     }
 
     public <T> Stream<T> mapToClass(Class<T> clazz) {
@@ -31,7 +33,7 @@ public class Query extends SqlType<Query, ResultSet> {
     }
 
     private static <T> T mapToClass(Class<T> clazz, ResultSet rs) {
-        return SqlHandler.passException(() -> {
+        return passException(() -> {
             Field[] fields = getFields(clazz);
             Object[] fieldValues = new Object[fields.length];
             for (int i = 0; i < fields.length; i++) {
@@ -73,7 +75,7 @@ public class Query extends SqlType<Query, ResultSet> {
 
         @Override
         public boolean tryAdvance(Consumer<? super ResultSet> action) {
-            return SqlHandler.passException(() -> {
+            return passException(() -> {
                 if (resultSet.next()) {
                     action.accept(resultSet);
                     return true;

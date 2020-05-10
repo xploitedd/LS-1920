@@ -7,6 +7,8 @@ import pt.isel.ls.router.Router;
 import pt.isel.ls.router.request.HeaderType;
 import pt.isel.ls.router.request.RouteRequest;
 import pt.isel.ls.router.response.HandlerResponse;
+import pt.isel.ls.view.View;
+import pt.isel.ls.view.ViewHandler;
 import pt.isel.ls.view.misc.ExceptionView;
 import pt.isel.ls.view.ViewType;
 
@@ -23,8 +25,11 @@ public class ConsoleApplication extends Application {
     private static final PrintWriter DEFAULT_WRITER = new PrintWriter(DEFAULT_STREAM);
     private static final Scanner SCANNER = new Scanner(System.in);
 
+    private final ViewHandler handler;
+
     public ConsoleApplication(Router router) {
         super(router);
+        this.handler = new ViewHandler(router);
     }
 
     @Override
@@ -53,10 +58,10 @@ public class ConsoleApplication extends Application {
             HandlerResponse response = router.getHandler(request)
                     .execute(request);
 
-            response.getView().render(router, viewType, printWriter);
+            handler.render(response.getView(), viewType, printWriter);
             printWriter.flush();
         } catch (AppException e) {
-            new ExceptionView(e).render(router, ViewType.TEXT, DEFAULT_WRITER);
+            handler.render(new ExceptionView(e), ViewType.TEXT, DEFAULT_WRITER);
             DEFAULT_WRITER.flush();
         } finally {
             // check that the PrintWriter isn't null and the object is the same as
