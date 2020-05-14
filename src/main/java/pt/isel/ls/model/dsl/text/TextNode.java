@@ -13,6 +13,11 @@ public abstract class TextNode extends Node {
     }
 
     @Override
+    protected final boolean canHaveChildren() {
+        return true;
+    }
+
+    @Override
     public void write(Writer writer) throws IOException {
         writer.write(getOpeningTag());
         writer.write(text);

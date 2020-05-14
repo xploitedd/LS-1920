@@ -48,7 +48,9 @@ public class RouterUtils {
                 throw new RouteException("Key and/or Value are/is blank!");
             }
 
-            function.apply(key, value);
+            if (!value.isEmpty() && !value.isBlank()) {
+                function.apply(key, value);
+            }
         }
     }
 

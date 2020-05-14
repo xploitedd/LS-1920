@@ -15,8 +15,7 @@ public class InputElement extends Element {
     }
 
     @Override
-    protected String getClosingTag() {
-        return "/>";
+    protected boolean canHaveChildren() {
+        return false;
     }
-
 }

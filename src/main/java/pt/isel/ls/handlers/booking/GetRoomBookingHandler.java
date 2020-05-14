@@ -9,7 +9,7 @@ import pt.isel.ls.router.response.HandlerResponse;
 import pt.isel.ls.exceptions.router.RouteException;
 import pt.isel.ls.sql.ConnectionProvider;
 import pt.isel.ls.sql.queries.BookingQueries;
-import pt.isel.ls.view.TableView;
+import pt.isel.ls.view.booking.RoomBookingView;
 
 public final class GetRoomBookingHandler extends RouteHandler {
 
@@ -42,7 +42,7 @@ public final class GetRoomBookingHandler extends RouteHandler {
         }
 
         table.addTableRow(b.getUid(), b.getBegin(), b.getEnd());
-        return new HandlerResponse(new TableView("Booking Id: " + bid, table));
+        return new HandlerResponse(new RoomBookingView("Booking Id: " + bid, table, rid));
     }
 
 }

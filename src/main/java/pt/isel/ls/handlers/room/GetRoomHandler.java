@@ -12,7 +12,7 @@ import pt.isel.ls.exceptions.router.RouteException;
 import pt.isel.ls.sql.ConnectionProvider;
 import pt.isel.ls.sql.queries.RoomLabelQueries;
 import pt.isel.ls.sql.queries.RoomQueries;
-import pt.isel.ls.view.TableView;
+import pt.isel.ls.view.room.RoomView;
 
 import java.util.stream.Collectors;
 
@@ -48,7 +48,7 @@ public final class GetRoomHandler extends RouteHandler {
         table.addTableRow(String.valueOf(room.getRid()), room.getName(), room.getLocation(),
                 String.valueOf(room.getCapacity()), room.getDescription(), labels.toString());
 
-        return new HandlerResponse(new TableView("Room " + rid + " details", table));
+        return new HandlerResponse(new RoomView("Room " + rid + " details", table));
     }
 
 }

@@ -73,11 +73,11 @@ public class Router implements Iterable<Router.Route> {
                 .setStatusCode(404);
     }
 
-    public String routeFromName(String routeName, Object... params) {
+    public String routeFromName(Class<? extends RouteHandler> clazz, Object... params) {
         for (Method method : Method.values()) {
             Map<String, Route> map = methodRoutes.get(method);
             if (map != null) {
-                Route route = map.get(routeName);
+                Route route = map.get(clazz.getSimpleName());
                 if (route != null) {
                     return route.getRouteTemplate()
                             .constructPathFromTemplate(params)

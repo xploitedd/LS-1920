@@ -13,6 +13,7 @@ import pt.isel.ls.model.dsl.elements.lists.UnorderedListElement;
 import pt.isel.ls.model.dsl.elements.table.TableElement;
 import pt.isel.ls.model.dsl.elements.table.TableRowElement;
 import pt.isel.ls.model.dsl.text.AnchorText;
+import pt.isel.ls.model.dsl.text.ButtonText;
 import pt.isel.ls.model.dsl.text.HeadText;
 import pt.isel.ls.model.dsl.text.ParagraphText;
 import pt.isel.ls.model.dsl.text.TitleText;
@@ -110,6 +111,10 @@ public class Dsl {
 
     public static LabelText label(String forId, String text) {
         return new LabelText(forId, text);
+    }
+
+    public static ButtonText button(String text) {
+        return new ButtonText(text);
     }
 
 }

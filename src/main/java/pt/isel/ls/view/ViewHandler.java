@@ -1,5 +1,6 @@
 package pt.isel.ls.view;
 
+import pt.isel.ls.handlers.RouteHandler;
 import pt.isel.ls.router.Router;
 
 import java.io.PrintWriter;
@@ -16,8 +17,8 @@ public class ViewHandler {
         view.render(this, type, writer);
     }
 
-    public String route(String name) {
-        return router.routeFromName(name);
+    public String route(Class<? extends RouteHandler> clazz, Object... params) {
+        return router.routeFromName(clazz, params);
     }
 
 }

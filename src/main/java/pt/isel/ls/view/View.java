@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 
 import pt.isel.ls.exceptions.AppException;
+import pt.isel.ls.handlers.misc.GetHomeHandler;
 import pt.isel.ls.model.dsl.Node;
 import pt.isel.ls.model.dsl.elements.Element;
 
@@ -40,7 +41,7 @@ public abstract class View {
         try {
             Element body;
             if (homeLink) {
-                Node homeLink = a(handler.route("GetHomeHandler"),
+                Node homeLink = a(handler.route(GetHomeHandler.class),
                         "Go to home");
                 body = body(homeLink, getHtmlBody(handler));
             } else {

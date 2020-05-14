@@ -15,8 +15,10 @@ public abstract class Element extends Node {
     @Override
     public void write(Writer writer) throws IOException {
         writer.write(getOpeningTag());
-        for (Node n : children) {
-            n.write(writer);
+        if (canHaveChildren()) {
+            for (Node n : children) {
+                n.write(writer);
+            }
         }
 
         writer.write(getClosingTag());

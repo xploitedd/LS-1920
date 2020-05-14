@@ -10,7 +10,7 @@ import pt.isel.ls.router.response.HandlerResponse;
 import pt.isel.ls.exceptions.router.RouteException;
 import pt.isel.ls.sql.ConnectionProvider;
 import pt.isel.ls.sql.queries.UserQueries;
-import pt.isel.ls.view.TableView;
+import pt.isel.ls.view.user.UserView;
 
 public final class GetUserHandler extends RouteHandler {
 
@@ -38,7 +38,7 @@ public final class GetUserHandler extends RouteHandler {
                 .getUser(uid));
 
         table.addTableRow(String.valueOf(user.getUid()), user.getName(), user.getEmail());
-        return new HandlerResponse(new TableView("User: " + uid, table));
+        return new HandlerResponse(new UserView("User: " + uid, table));
     }
 
 }

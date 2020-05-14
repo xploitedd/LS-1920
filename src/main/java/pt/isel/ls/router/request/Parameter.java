@@ -40,6 +40,10 @@ public class Parameter {
         }
     }
 
+    public boolean isEmpty() {
+        return value.isEmpty() || value.isBlank();
+    }
+
     @Override
     public String toString() {
         return value;

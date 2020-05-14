@@ -8,7 +8,7 @@ import pt.isel.ls.router.response.HandlerResponse;
 import pt.isel.ls.exceptions.router.RouteException;
 import pt.isel.ls.sql.ConnectionProvider;
 import pt.isel.ls.sql.queries.BookingQueries;
-import pt.isel.ls.view.TableView;
+import pt.isel.ls.view.booking.RoomBookingsView;
 
 public final class GetRoomBookingsHandler extends RouteHandler {
 
@@ -40,7 +40,7 @@ public final class GetRoomBookingsHandler extends RouteHandler {
                                 booking.getBegin().toString(),
                                 booking.getEnd().toString()));
 
-        return new HandlerResponse(new TableView("Bookings", table));
+        return new HandlerResponse(new RoomBookingsView("Bookings", table, rid));
     }
 
 }

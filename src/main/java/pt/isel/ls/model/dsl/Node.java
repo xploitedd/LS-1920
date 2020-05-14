@@ -15,6 +15,22 @@ public abstract class Node {
     protected abstract String getNodeName();
 
     /**
+     * Get the HTML closing tag for the node
+     * @return closing tag of the node
+     */
+    protected String getClosingTag() {
+        if (canHaveChildren()) {
+            return "</" + getNodeName() + ">";
+        }
+
+        return "/>";
+    }
+
+    protected boolean canHaveChildren() {
+        return true;
+    }
+
+    /**
      * Get the HTML opening tag for the node
      * @return opening tag of the node
      */
@@ -24,15 +40,7 @@ public abstract class Node {
             sb.append(" ").append(a);
         }
 
-        return "<" + getNodeName() + sb.toString() + ">";
-    }
-
-    /**
-     * Get the HTML closing tag for the node
-     * @return closing tag of the node
-     */
-    protected String getClosingTag() {
-        return "</" + getNodeName() + ">";
+        return "<" + getNodeName() + sb.toString() + (canHaveChildren() ? ">" : "");
     }
 
     /**

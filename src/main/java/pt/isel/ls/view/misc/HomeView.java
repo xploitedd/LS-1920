@@ -1,5 +1,9 @@
 package pt.isel.ls.view.misc;
 
+import pt.isel.ls.handlers.label.GetLabelsHandler;
+import pt.isel.ls.handlers.misc.GetTimeHandler;
+import pt.isel.ls.handlers.room.GetRoomSearchHandler;
+import pt.isel.ls.handlers.user.GetUsersHandler;
 import pt.isel.ls.model.dsl.Node;
 import pt.isel.ls.view.View;
 import pt.isel.ls.view.ViewHandler;
@@ -16,14 +20,15 @@ public class HomeView extends View {
 
     @Override
     protected Node getHtmlBody(ViewHandler handler) {
-        String time = handler.route("GetTimeHandler");
-        String users = handler.route("GetUsersHandler");
-        // TODO: search route
-        String labels = handler.route("GetLabelsHandler");
+        String time = handler.route(GetTimeHandler.class);
+        String users = handler.route(GetUsersHandler.class);
+        String search = handler.route(GetRoomSearchHandler.class);
+        String labels = handler.route(GetLabelsHandler.class);
 
         return ul(
                 li(a(time, "Time")),
                 li(a(users, "Users")),
+                li(a(search, "Search Rooms")),
                 li(a(labels, "Labels"))
         );
     }

@@ -1,5 +1,6 @@
 package pt.isel.ls.view.user;
 
+import pt.isel.ls.handlers.user.GetUsersHandler;
 import pt.isel.ls.model.Table;
 import pt.isel.ls.model.dsl.Node;
 import pt.isel.ls.view.TableView;
@@ -15,7 +16,10 @@ public class UserView extends TableView {
     }
 
     protected Node getHtmlBody(ViewHandler handler) {
-        return div(super.getHtmlBody(handler), a(handler.route("GetUsersHandler"),"Users"));
+        return div(
+                super.getHtmlBody(handler),
+                a(handler.route(GetUsersHandler.class), "Users")
+        );
     }
 
 }

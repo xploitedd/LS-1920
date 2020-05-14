@@ -1,5 +1,6 @@
 package pt.isel.ls.view.booking;
 
+import pt.isel.ls.handlers.booking.GetRoomBookingsHandler;
 import pt.isel.ls.model.Table;
 import pt.isel.ls.model.dsl.Node;
 import pt.isel.ls.view.TableView;
@@ -10,13 +11,18 @@ import static pt.isel.ls.model.dsl.Dsl.div;
 
 public class RoomBookingView extends TableView {
 
-    public RoomBookingView(String tableName, Table table) {
+    private final int roomId;
+
+    public RoomBookingView(String tableName, Table table, int roomId) {
         super(tableName, table);
+        this.roomId = roomId;
     }
 
-    //TODO: make the "Room Bookings" link return to the booking list for this room
     protected Node getHtmlBody(ViewHandler handler) {
-        return div(super.getHtmlBody(handler), a(handler.route("GetRoomBookingsHandler"),"Room Bookings"));
+        return div(
+                super.getHtmlBody(handler),
+                a(handler.route(GetRoomBookingsHandler.class, roomId),"Room Bookings")
+        );
     }
 
 }

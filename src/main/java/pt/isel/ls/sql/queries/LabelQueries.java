@@ -45,6 +45,24 @@ public class LabelQueries extends DatabaseQueries {
     }
 
     /**
+     * Get a label by id
+     * @param lid id of the label
+     * @return associated label
+     */
+    public Label getLabelById(int lid) {
+        Optional<Label> label = handler.createQuery("SELECT * FROM label WHERE lid = ?;")
+                .bind(lid)
+                .mapToClass(Label.class)
+                .findFirst();
+
+        if (label.isEmpty()) {
+            throw new RouteException("Label '" + lid + "' not found");
+        }
+
+        return label.get();
+    }
+
+    /**
      * Get all labels
      * @return every label available
      */

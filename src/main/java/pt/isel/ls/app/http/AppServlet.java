@@ -97,11 +97,17 @@ public class AppServlet extends HttpServlet {
         for (String key : parameters.keySet()) {
             String[] values = parameters.get(key);
             ArrayList<Parameter> list = new ArrayList<>(values.length);
+            boolean hasAny = false;
             for (String value : values) {
-                list.add(new Parameter(value));
+                if (!value.isEmpty() && !value.isBlank()) {
+                    list.add(new Parameter(value));
+                    hasAny = true;
+                }
             }
 
-            parameterMap.put(key, list);
+            if (hasAny) {
+                parameterMap.put(key, list);
+            }
         }
 
         return parameterMap;
