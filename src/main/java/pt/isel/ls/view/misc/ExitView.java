@@ -4,6 +4,7 @@ import java.io.PrintWriter;
 
 import pt.isel.ls.exceptions.AppException;
 import pt.isel.ls.view.View;
+import pt.isel.ls.view.ViewHandler;
 
 public final class ExitView extends View {
 
@@ -21,7 +22,7 @@ public final class ExitView extends View {
     }
 
     @Override
-    protected void renderText(PrintWriter writer) {
+    protected void renderText(ViewHandler handler, PrintWriter writer) {
         writer.println(customText);
         writer.close();
         try {

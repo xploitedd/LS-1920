@@ -1,7 +1,6 @@
 package pt.isel.ls.view;
 
 import pt.isel.ls.model.dsl.Node;
-import pt.isel.ls.router.Router;
 
 import java.io.PrintWriter;
 
@@ -14,7 +13,7 @@ public class MessageView extends View {
     }
 
     @Override
-    protected void renderText(PrintWriter writer) {
+    protected void renderText(ViewHandler handler, PrintWriter writer) {
         writer.println(
                 "---------------------------------------------------------------------------\n\t"
                 + title
@@ -23,7 +22,7 @@ public class MessageView extends View {
     }
 
     @Override
-    protected Node getHtmlBody(Router router) {
+    protected Node getHtmlBody(ViewHandler handler) {
         return h1(title);
     }
 

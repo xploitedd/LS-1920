@@ -7,7 +7,6 @@ import pt.isel.ls.router.Router;
 import pt.isel.ls.router.request.HeaderType;
 import pt.isel.ls.router.request.RouteRequest;
 import pt.isel.ls.router.response.HandlerResponse;
-import pt.isel.ls.view.View;
 import pt.isel.ls.view.ViewHandler;
 import pt.isel.ls.view.misc.ExceptionView;
 import pt.isel.ls.view.ViewType;

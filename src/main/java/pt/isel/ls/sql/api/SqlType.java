@@ -7,6 +7,8 @@ import java.sql.Timestamp;
 import java.util.Arrays;
 import java.util.stream.Stream;
 
+import static pt.isel.ls.utils.ExceptionUtils.passException;
+
 public abstract class SqlType<T extends SqlType<T, V>, V> {
 
     protected final PreparedStatement stmt;
@@ -18,7 +20,7 @@ public abstract class SqlType<T extends SqlType<T, V>, V> {
 
     @SuppressWarnings("unchecked")
     public final T bind(BindFunction bindFunction) {
-        return (T) SqlHandler.passException(() -> {
+        return (T) passException(() -> {
             bindFunction.bind();
             return this;
         });

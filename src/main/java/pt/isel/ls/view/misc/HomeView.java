@@ -1,8 +1,8 @@
 package pt.isel.ls.view.misc;
 
 import pt.isel.ls.model.dsl.Node;
-import pt.isel.ls.router.Router;
 import pt.isel.ls.view.View;
+import pt.isel.ls.view.ViewHandler;
 
 import static pt.isel.ls.model.dsl.Dsl.a;
 import static pt.isel.ls.model.dsl.Dsl.li;
@@ -15,11 +15,11 @@ public class HomeView extends View {
     }
 
     @Override
-    protected Node getHtmlBody(Router router) {
-        String time = router.routeFromName("GetTimeHandler");
-        String users = router.routeFromName("GetUsersHandler");
+    protected Node getHtmlBody(ViewHandler handler) {
+        String time = handler.route("GetTimeHandler");
+        String users = handler.route("GetUsersHandler");
         // TODO: search route
-        String labels = router.routeFromName("GetLabelsHandler");
+        String labels = handler.route("GetLabelsHandler");
 
         return ul(
                 li(a(time, "Time")),

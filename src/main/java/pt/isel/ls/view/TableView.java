@@ -11,7 +11,6 @@ import pt.isel.ls.model.dsl.elements.table.TableElement;
 import pt.isel.ls.model.dsl.elements.table.TableRowElement;
 import pt.isel.ls.model.dsl.text.table.TableText;
 import pt.isel.ls.model.Table;
-import pt.isel.ls.router.Router;
 
 import static pt.isel.ls.model.dsl.Dsl.table;
 import static pt.isel.ls.model.dsl.Dsl.tr;

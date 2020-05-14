@@ -16,7 +16,7 @@ public class ViewHandler {
         view.render(this, type, writer);
     }
 
-    String route(String name) {
+    public String route(String name) {
         return router.routeFromName(name);
     }
 

@@ -9,6 +9,8 @@ import pt.isel.ls.sql.api.Update;
 import java.util.List;
 import java.util.stream.Stream;
 
+import static pt.isel.ls.utils.ExceptionUtils.passException;
+
 public class RoomLabelQueries extends DatabaseQueries {
 
     public RoomLabelQueries(SqlHandler handler) {
@@ -67,7 +69,7 @@ public class RoomLabelQueries extends DatabaseQueries {
     }
 
     public boolean isLabelInRoom(int rid, String label) {
-        return SqlHandler.passException(() -> handler
+        return passException(() -> handler
                 .createQuery("SELECT * FROM (room_label rl JOIN label l on rl.lid=l.lid) WHERE rid=? AND l.name=?")
                 .bind(rid)
                 .bind(label)
@@ -76,7 +78,7 @@ public class RoomLabelQueries extends DatabaseQueries {
     }
 
     public boolean doesLabelExist(int lid) {
-        return SqlHandler.passException(() ->
+        return passException(() ->
                 handler.createQuery("SELECT * FROM label WHERE lid=?")
                         .bind(lid)
                         .execute()
