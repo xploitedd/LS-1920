@@ -1,6 +1,7 @@
 package pt.isel.ls.model.dsl;
 
 import pt.isel.ls.model.dsl.elements.BodyElement;
+import pt.isel.ls.model.dsl.elements.BreakElement;
 import pt.isel.ls.model.dsl.elements.DivElement;
 import pt.isel.ls.model.dsl.elements.Element;
 import pt.isel.ls.model.dsl.elements.HeadElement;
@@ -73,6 +74,10 @@ public class Dsl {
         return new TableDataText(data);
     }
 
+    public static TableText td(Node data) {
+        return new TableDataText(data);
+    }
+
     public static UnorderedListElement ul(ListItemElement... items) {
         return new UnorderedListElement(items);
     }
@@ -115,6 +120,10 @@ public class Dsl {
 
     public static ButtonText button(String text) {
         return new ButtonText(text);
+    }
+
+    public static BreakElement br() {
+        return new BreakElement();
     }
 
 }

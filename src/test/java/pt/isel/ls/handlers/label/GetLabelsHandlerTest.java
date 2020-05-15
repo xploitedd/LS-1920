@@ -39,7 +39,7 @@ public class GetLabelsHandlerTest {
         RouteRequest request = RouteRequest.of(
                 "GET /labels");
 
-        HandlerResponse response = router.getHandler(request).execute(request);
+        HandlerResponse response = router.getHandler(request).execute(router, request);
         Assert.assertTrue(response.getView() instanceof TableView);
     }
 }

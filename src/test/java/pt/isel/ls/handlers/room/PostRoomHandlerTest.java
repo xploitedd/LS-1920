@@ -35,7 +35,7 @@ public class PostRoomHandlerTest {
         RouteRequest request = RouteRequest.of(
                 "POST /rooms name=TR1&location=TL1&capacity=32");
 
-        router.getHandler(request).execute(request);
+        router.getHandler(request).execute(router, request);
     }
 
     @Test
@@ -44,7 +44,7 @@ public class PostRoomHandlerTest {
         RouteRequest request = RouteRequest.of(
                 "POST /rooms name=TR1&location=TL1&capacity=32&description=Test+Description+1");
 
-        router.getHandler(request).execute(request);
+        router.getHandler(request).execute(router, request);
     }
 
     @Test
@@ -53,7 +53,7 @@ public class PostRoomHandlerTest {
         RouteRequest request = RouteRequest.of(
                 "POST /rooms name=TR1&location=TL1&capacity=32&label=teste1");
 
-        router.getHandler(request).execute(request);
+        router.getHandler(request).execute(router, request);
     }
 
     @Test(expected = RouteException.class)
@@ -62,7 +62,7 @@ public class PostRoomHandlerTest {
         RouteRequest request = RouteRequest.of(
                 "POST /rooms name=TR1&location=TL1&capacity=0");
 
-        router.getHandler(request).execute(request);
+        router.getHandler(request).execute(router, request);
     }
 
     @Test(expected = RouteException.class)
@@ -71,12 +71,12 @@ public class PostRoomHandlerTest {
         RouteRequest request1 = RouteRequest.of(
                 "POST /rooms name=TR1&location=TL1&capacity=32");
 
-        router.getHandler(request1).execute(request1);
+        router.getHandler(request1).execute(router, request1);
 
         RouteRequest request2 = RouteRequest.of(
                 "POST /rooms name=TR1&location=TL1&capacity=32");
 
-        router.getHandler(request2).execute(request2);
+        router.getHandler(request2).execute(router, request2);
     }
 
 }

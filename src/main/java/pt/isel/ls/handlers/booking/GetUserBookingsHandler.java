@@ -1,11 +1,12 @@
 package pt.isel.ls.handlers.booking;
 
+import pt.isel.ls.exceptions.router.RouteException;
 import pt.isel.ls.handlers.RouteHandler;
 import pt.isel.ls.model.Table;
+import pt.isel.ls.router.Router;
 import pt.isel.ls.router.request.Method;
 import pt.isel.ls.router.request.RouteRequest;
 import pt.isel.ls.router.response.HandlerResponse;
-import pt.isel.ls.exceptions.router.RouteException;
 import pt.isel.ls.sql.ConnectionProvider;
 import pt.isel.ls.sql.queries.BookingQueries;
 import pt.isel.ls.view.TableView;
@@ -28,7 +29,7 @@ public final class GetUserBookingsHandler extends RouteHandler {
      * @throws RouteException Sent to the router
      */
     @Override
-    public HandlerResponse execute(RouteRequest request) {
+    public HandlerResponse execute(Router router, RouteRequest request) {
         int uid = request.getPathParameter("uid").toInt();
         Table table = new Table("Booking Id", "Room Id", "Begin time", "End time");
         provider.execute(handler -> new BookingQueries(handler)

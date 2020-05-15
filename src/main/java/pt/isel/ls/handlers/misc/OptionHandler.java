@@ -28,7 +28,7 @@ public final class OptionHandler extends RouteHandler {
      * @return a new HandlerResponse
      */
     @Override
-    public HandlerResponse execute(RouteRequest request) {
+    public HandlerResponse execute(Router router, RouteRequest request) {
         Table table = new Table("Method", "Template", "Description");
         for (Router.Route route : routes) {
             table.addTableRow(

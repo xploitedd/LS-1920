@@ -38,7 +38,7 @@ public class GetUsersHandlerTest {
         RouteRequest request = RouteRequest.of(
                 "GET /users");
 
-        HandlerResponse response = router.getHandler(request).execute(request);
+        HandlerResponse response = router.getHandler(request).execute(router, request);
 
         Assert.assertTrue(response.getView() instanceof TableView);
     }

@@ -2,6 +2,10 @@ package pt.isel.ls.router.request;
 
 import pt.isel.ls.exceptions.router.RouteException;
 
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeParseException;
+
 public class Parameter {
 
     private final String value;
@@ -17,9 +21,8 @@ public class Parameter {
     /**
      * Tries to convert this parameter to an int
      * @return an integer representation of this parameter
-     * @throws RouteException if there was an error converting to int
      */
-    public int toInt() throws RouteException {
+    public int toInt() {
         try {
             return Integer.parseInt(value);
         } catch (NumberFormatException e) {
@@ -30,9 +33,8 @@ public class Parameter {
     /**
      * Tries to convert this parameter to a long
      * @return a long representation of this parameter
-     * @throws RouteException if there was an error converting to long
      */
-    public long toLong() throws RouteException {
+    public long toLong() {
         try {
             return Long.parseLong(value);
         } catch (NumberFormatException e) {
@@ -40,8 +42,16 @@ public class Parameter {
         }
     }
 
-    public boolean isEmpty() {
-        return value.isEmpty() || value.isBlank();
+    public long toTime() {
+        try {
+            return toLong();
+        } catch (RouteException e) {
+            try {
+                return Timestamp.valueOf(LocalDateTime.parse(value)).getTime();
+            } catch (DateTimeParseException parseException) {
+                throw new RouteException("Invalid time: " + parseException.getMessage());
+            }
+        }
     }
 
     @Override

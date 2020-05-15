@@ -1,9 +1,10 @@
 package pt.isel.ls.handlers.booking;
 
+import pt.isel.ls.exceptions.router.RouteException;
 import pt.isel.ls.handlers.RouteHandler;
 import pt.isel.ls.model.Booking;
+import pt.isel.ls.router.Router;
 import pt.isel.ls.router.request.Method;
-import pt.isel.ls.exceptions.router.RouteException;
 import pt.isel.ls.router.request.RouteRequest;
 import pt.isel.ls.router.response.HandlerResponse;
 import pt.isel.ls.sql.ConnectionProvider;
@@ -31,10 +32,10 @@ public final class PostBookingHandler extends RouteHandler {
      * @throws RouteException Sent to the router
      */
     @Override
-    public HandlerResponse execute(RouteRequest request) {
+    public HandlerResponse execute(Router router, RouteRequest request) {
         int rid = request.getPathParameter("rid").toInt();
         int uid = request.getParameter("uid").get(0).toInt();
-        long b = request.getParameter("begin").get(0).toLong();
+        long b = request.getParameter("begin").get(0).toTime();
         int duration = request.getParameter("duration").get(0).toInt();
 
         Timestamp begin = new Timestamp(b);

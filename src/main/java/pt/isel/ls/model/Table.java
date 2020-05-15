@@ -22,7 +22,8 @@ public class Table {
      * @param columnNames columns of the table
      */
     public Table(String... columnNames) {
-        rows.add(Arrays.asList((Object[]) columnNames));
+        LinkedList<Object> columns = new LinkedList<>(Arrays.asList(columnNames));
+        rows.add(columns);
 
         this.columnCount = columnNames.length;
         this.maxSizes = new ArrayList<>();
@@ -109,13 +110,12 @@ public class Table {
      * @param sb StringBuffer where to append the row
      */
     private void appendRow(int row, StringBuffer sb) {
-        List<Object> rows = this.rows.get(row);
-        int columnCount = this.rows.get(0).size();
+        List<Object> columns = this.rows.get(row);
         for (int i = 0; i < columnCount; i++) {
             int colMax = maxSizes.get(i);
             String separator = i + 1 == columnCount ? "" : COLUMN_SEPARATOR + " ";
             sb.append(String.format("%-" + colMax + "s " + separator,
-                    rows.get(i)));
+                    columns.get(i)));
         }
     }
 

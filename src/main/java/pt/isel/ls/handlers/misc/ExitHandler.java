@@ -1,6 +1,7 @@
 package pt.isel.ls.handlers.misc;
 
 import pt.isel.ls.handlers.RouteHandler;
+import pt.isel.ls.router.Router;
 import pt.isel.ls.router.request.Method;
 import pt.isel.ls.router.request.RouteRequest;
 import pt.isel.ls.router.response.HandlerResponse;
@@ -22,7 +23,7 @@ public final class ExitHandler extends RouteHandler {
      * @return returns a RouteResponse with a ExitView for the router
      */
     @Override
-    public HandlerResponse execute(RouteRequest request) {
+    public HandlerResponse execute(Router router, RouteRequest request) {
         return new HandlerResponse(new ExitView());
     }
 

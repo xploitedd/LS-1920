@@ -64,7 +64,7 @@ public class AppServlet extends HttpServlet {
 
         try {
             HandlerResponse response = router.getHandler(request)
-                    .execute(request);
+                    .execute(router, request);
 
             resp.setStatus(response.getStatusCode());
             StringWriter writer = new StringWriter();

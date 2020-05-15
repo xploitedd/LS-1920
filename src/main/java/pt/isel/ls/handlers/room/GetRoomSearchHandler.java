@@ -2,6 +2,7 @@ package pt.isel.ls.handlers.room;
 
 import pt.isel.ls.handlers.RouteHandler;
 import pt.isel.ls.model.Label;
+import pt.isel.ls.router.Router;
 import pt.isel.ls.router.request.Method;
 import pt.isel.ls.router.request.RouteRequest;
 import pt.isel.ls.router.response.HandlerResponse;
@@ -23,7 +24,7 @@ public class GetRoomSearchHandler extends RouteHandler {
     }
 
     @Override
-    public HandlerResponse execute(RouteRequest request) {
+    public HandlerResponse execute(Router router, RouteRequest request) {
         Stream<Label> availableLabels = provider.execute(handler ->
                 new LabelQueries(handler).getLabels());
 

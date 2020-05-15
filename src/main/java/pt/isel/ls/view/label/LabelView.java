@@ -18,8 +18,7 @@ public class LabelView extends TableView {
     protected Node getHtmlBody(ViewHandler handler) {
         return div(
                 super.getHtmlBody(handler),
-                a(handler.route(GetLabelsHandler.class),
-                        "Labels")
+                a(handler.route(GetLabelsHandler.class), "Labels")
         );
     }
 

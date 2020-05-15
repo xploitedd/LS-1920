@@ -25,7 +25,7 @@ public class ListenHandler extends RouteHandler {
     }
 
     @Override
-    public HandlerResponse execute(RouteRequest request) {
+    public HandlerResponse execute(Router router, RouteRequest request) {
         int port = request.getOptionalParameter("port")
                 .map(s -> s.get(0).toInt())
                 .orElseGet(() -> {

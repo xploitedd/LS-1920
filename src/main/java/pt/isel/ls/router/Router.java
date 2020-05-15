@@ -24,8 +24,6 @@ import pt.isel.ls.view.misc.ExceptionView;
  */
 public class Router implements Iterable<Router.Route> {
 
-    private static final String HOME = "/";
-
     private final HashMap<Method, Map<String, Route>> methodRoutes = new HashMap<>();
 
     /**
@@ -69,7 +67,7 @@ public class Router implements Iterable<Router.Route> {
             }
         }
 
-        return r -> new HandlerResponse(new ExceptionView(new RouteNotFoundException(r.getPath())))
+        return (t, r) -> new HandlerResponse(new ExceptionView(new RouteNotFoundException(r.getPath())))
                 .setStatusCode(404);
     }
 
@@ -86,7 +84,7 @@ public class Router implements Iterable<Router.Route> {
             }
         }
 
-        return HOME;
+        return "";
     }
 
     @Override
