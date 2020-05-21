@@ -30,4 +30,8 @@ public abstract class TextNode extends Node {
         return getOpeningTag() + text + getClosingTag();
     }
 
+    public String getText() {
+        return text;
+    }
+
 }

@@ -4,8 +4,8 @@ import pt.isel.ls.model.dsl.Node;
 
 public class TableDataText extends TableText {
 
-    public TableDataText(String text) {
-        super(text);
+    public TableDataText(Object text) {
+        super(text.toString());
     }
 
     public TableDataText(Node data) {

@@ -66,15 +66,15 @@ public class Dsl {
         return new TableRowElement(tableTexts);
     }
 
-    public static TableText th(String header) {
+    public static TableHeaderText th(String header) {
         return new TableHeaderText(header);
     }
 
-    public static TableText td(String data) {
+    public static TableDataText td(Object data) {
         return new TableDataText(data);
     }
 
-    public static TableText td(Node data) {
+    public static TableDataText td(Node data) {
         return new TableDataText(data);
     }
 

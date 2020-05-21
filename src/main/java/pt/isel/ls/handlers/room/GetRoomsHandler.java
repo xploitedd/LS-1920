@@ -4,7 +4,6 @@ import pt.isel.ls.exceptions.router.RouteException;
 import pt.isel.ls.handlers.RouteHandler;
 import pt.isel.ls.model.Booking;
 import pt.isel.ls.model.Room;
-import pt.isel.ls.model.Table;
 import pt.isel.ls.router.Router;
 import pt.isel.ls.router.request.Method;
 import pt.isel.ls.router.request.Parameter;
@@ -48,8 +47,6 @@ public final class GetRoomsHandler extends RouteHandler {
         Optional<List<Parameter>> paramCapacity = request.getOptionalParameter("capacity");
         Optional<List<Parameter>> paramLabel = request.getOptionalParameter("label");
 
-        Table table = new Table("RID", "Name", "Location", "Capacity", "Description", "Room Details");
-
         Iterable<Room> rooms = provider.execute(handler -> {
             Stream<Room> ret = new RoomQueries(handler).getRooms();
             if (paramCapacity.isPresent()) {
@@ -71,15 +68,7 @@ public final class GetRoomsHandler extends RouteHandler {
             return ret.collect(Collectors.toList());
         });
 
-        rooms.forEach(room -> {
-            int rid = room.getRid();
-            String link = router.routeFromName(GetRoomHandler.class, rid);
-
-            table.addTableRow(rid, room.getName(), room.getLocation(),
-                    room.getCapacity(), room.getDescription(), link);
-        });
-
-        return new HandlerResponse(new RoomsView("Rooms", table));
+        return new HandlerResponse(new RoomsView("Rooms", rooms));
     }
 
     private static Stream<Room> filterByLabels(SqlHandler handler, Stream<Room> ret, List<Parameter> labels) {
