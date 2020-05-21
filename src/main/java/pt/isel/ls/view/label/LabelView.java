@@ -1,25 +1,67 @@
 package pt.isel.ls.view.label;
 
 import pt.isel.ls.handlers.label.GetLabelsHandler;
-import pt.isel.ls.model.Table;
+import pt.isel.ls.handlers.room.GetRoomHandler;
+import pt.isel.ls.model.Label;
+import pt.isel.ls.model.Room;
 import pt.isel.ls.model.dsl.Node;
+import pt.isel.ls.model.dsl.elements.Element;
+import pt.isel.ls.model.dsl.text.AnchorText;
 import pt.isel.ls.view.View;
 import pt.isel.ls.view.ViewHandler;
+import pt.isel.ls.view.utils.detail.HtmlDetailBuilder;
+import pt.isel.ls.view.utils.detail.StringDetailBuilder;
+
+import java.io.PrintWriter;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 import static pt.isel.ls.model.dsl.Dsl.a;
+import static pt.isel.ls.model.dsl.Dsl.br;
 import static pt.isel.ls.model.dsl.Dsl.div;
 
 public class LabelView extends View {
 
-    public LabelView(String tableName, Table table) {
-        super(tableName);
+    private final Label label;
+    private final Iterable<Room> rooms;
+
+    public LabelView(Label label, Iterable<Room> rooms) {
+        super("Label " + label.getName());
+        this.label = label;
+        this.rooms = rooms;
     }
 
+    @Override
     protected Node getHtmlBody(ViewHandler handler) {
+        List<AnchorText> roomsLst = StreamSupport.stream(rooms.spliterator(), false)
+                .map(r -> a(handler.route(GetRoomHandler.class, r.getRid()), r.getName()))
+                .collect(Collectors.toList());
+
+        Element el = new HtmlDetailBuilder()
+                .withDetail("Id", label.getLid())
+                .withDetail("Name", label.getName())
+                .withDetail("Rooms", roomsLst)
+                .build();
+
         return div(
-                super.getHtmlBody(handler),
+                el,
+                br(),
                 a(handler.route(GetLabelsHandler.class), "Labels")
         );
+    }
+
+    @Override
+    protected void renderText(ViewHandler handler, PrintWriter writer) {
+        List<String> roomsLst = StreamSupport.stream(rooms.spliterator(), false)
+                .map(Room::toString)
+                .collect(Collectors.toList());
+
+        writer.write(new StringDetailBuilder()
+                .withDetail("Id", label.getLid())
+                .withDetail("Name", label.getName())
+                .withDetail("Rooms", roomsLst)
+                .build());
     }
 
 }

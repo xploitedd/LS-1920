@@ -65,7 +65,7 @@ public class GetRoomsHandlerTest {
         RouteRequest request = RouteRequest.of(
                 "GET /rooms");
 
-        HandlerResponse response = router.getHandler(request).execute(router, request);
+        HandlerResponse response = router.getHandler(request).execute(request);
         //TableView tableView = (TableView) response.getView();
 
         //Assert.assertEquals(3, tableView.getTable().getRowCount());
@@ -81,7 +81,7 @@ public class GetRoomsHandlerTest {
         RouteRequest request = RouteRequest.of(
                 "GET /rooms begin=" + begin.getTime() + "&duration=1420");
 
-        HandlerResponse response = router.getHandler(request).execute(router, request);
+        HandlerResponse response = router.getHandler(request).execute(request);
         //TableView tableView = (TableView) response.getView();
 
         //Assert.assertEquals(2, tableView.getTable().getRowCount());
@@ -96,7 +96,7 @@ public class GetRoomsHandlerTest {
         RouteRequest request = RouteRequest.of(
                 "GET /rooms begin=" + begin.getTime() + "&duration=1430");
 
-        HandlerResponse response = router.getHandler(request).execute(router, request);
+        HandlerResponse response = router.getHandler(request).execute(request);
         //TableView tableView = (TableView) response.getView();
 
         //Assert.assertEquals(2, tableView.getTable().getRowCount());
@@ -111,7 +111,7 @@ public class GetRoomsHandlerTest {
         RouteRequest request = RouteRequest.of(
                 "GET /rooms begin=" + begin.getTime() + "&duration=10");
 
-        HandlerResponse response = router.getHandler(request).execute(router, request);
+        HandlerResponse response = router.getHandler(request).execute(request);
         //TableView tableView = (TableView) response.getView();
 
         //Assert.assertEquals(2, tableView.getTable().getRowCount());
@@ -126,7 +126,7 @@ public class GetRoomsHandlerTest {
         RouteRequest request = RouteRequest.of(
                 "GET /rooms begin=" + begin.getTime() + "&duration=10");
 
-        HandlerResponse response = router.getHandler(request).execute(router, request);
+        HandlerResponse response = router.getHandler(request).execute(request);
         //TableView tableView = (TableView) response.getView();
 
         //Assert.assertEquals(3, tableView.getTable().getRowCount());
@@ -138,7 +138,7 @@ public class GetRoomsHandlerTest {
         RouteRequest request = RouteRequest.of(
                 "GET /rooms capacity=25");
 
-        HandlerResponse response = router.getHandler(request).execute(router, request);
+        HandlerResponse response = router.getHandler(request).execute(request);
         //TableView tableView = (TableView) response.getView();
 
         //Assert.assertEquals(1, tableView.getTable().getRowCount());
@@ -149,7 +149,7 @@ public class GetRoomsHandlerTest {
         RouteRequest request = RouteRequest.of(
                 "GET /rooms label=teste1");
 
-        HandlerResponse response = router.getHandler(request).execute(router, request);
+        HandlerResponse response = router.getHandler(request).execute(request);
         //TableView tableView = (TableView) response.getView();
 
         //Assert.assertEquals(1, tableView.getTable().getRowCount());

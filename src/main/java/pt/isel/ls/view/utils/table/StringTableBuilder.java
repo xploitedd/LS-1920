@@ -1,4 +1,4 @@
-package pt.isel.ls.view.utils;
+package pt.isel.ls.view.utils.table;
 
 import pt.isel.ls.model.Table;
 
@@ -19,7 +19,7 @@ public class StringTableBuilder<T> extends TableBuilder<T, String, Object, Strin
             table.addTableRow((Object[]) colsArr);
         }
 
-        return table.toString();
+        return table.toString() + '\n';
     }
 
 }

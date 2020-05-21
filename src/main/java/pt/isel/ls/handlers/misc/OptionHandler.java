@@ -1,11 +1,11 @@
 package pt.isel.ls.handlers.misc;
 
 import pt.isel.ls.handlers.RouteHandler;
-import pt.isel.ls.model.Table;
 import pt.isel.ls.router.Router;
 import pt.isel.ls.router.request.Method;
 import pt.isel.ls.router.request.RouteRequest;
 import pt.isel.ls.router.response.HandlerResponse;
+import pt.isel.ls.view.misc.OptionView;
 
 public final class OptionHandler extends RouteHandler {
 
@@ -27,17 +27,8 @@ public final class OptionHandler extends RouteHandler {
      * @return a new HandlerResponse
      */
     @Override
-    public HandlerResponse execute(Router router, RouteRequest request) {
-        Table table = new Table("Method", "Template", "Description");
-        for (Router.Route route : routes) {
-            table.addTableRow(
-                    route.getMethod(),
-                    route.getRouteTemplate(),
-                    route.getHandler().getDescription());
-        }
-
-        //TODO: return new HandlerResponse(new TableView("Options Listing", table));
-        return null;
+    public HandlerResponse execute(RouteRequest request) {
+        return new HandlerResponse(new OptionView(routes));
     }
 
 }

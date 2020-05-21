@@ -4,7 +4,6 @@ import pt.isel.ls.exceptions.router.RouteException;
 import pt.isel.ls.handlers.RouteHandler;
 import pt.isel.ls.model.Label;
 import pt.isel.ls.model.Room;
-import pt.isel.ls.router.Router;
 import pt.isel.ls.router.request.Method;
 import pt.isel.ls.router.request.Parameter;
 import pt.isel.ls.router.request.RouteRequest;
@@ -38,7 +37,7 @@ public final class PostRoomHandler extends RouteHandler {
      * @throws RouteException any exception that occurred
      */
     @Override
-    public HandlerResponse execute(Router router, RouteRequest request) {
+    public HandlerResponse execute(RouteRequest request) {
         Optional<List<Parameter>> optLabels = request.getOptionalParameter("label");
         String desc = request.getOptionalParameter("description")
                 .map(Object::toString).orElse(null);

@@ -55,7 +55,7 @@ public class ConsoleApplication extends Application {
 
             printWriter = getPrintWriter(request);
             HandlerResponse response = router.getHandler(request)
-                    .execute(router, request);
+                    .execute(request);
 
             handler.render(response.getView(), viewType, printWriter);
             printWriter.flush();

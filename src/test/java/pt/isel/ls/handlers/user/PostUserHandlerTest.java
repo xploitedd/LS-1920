@@ -36,7 +36,7 @@ public class PostUserHandlerTest {
         RouteRequest request = RouteRequest.of(
                 "POST /users name=TesteUser1&email=TesteUser1@teste.com");
 
-        HandlerResponse response = router.getHandler(request).execute(router, request);
+        HandlerResponse response = router.getHandler(request).execute(request);
         Assert.assertTrue(response.getView() instanceof IdentifierView);
     }
 
@@ -46,7 +46,7 @@ public class PostUserHandlerTest {
         RouteRequest request = RouteRequest.of(
                 "POST /users name=teste&email=teste@teste.com");
 
-        HandlerResponse response = router.getHandler(request).execute(router, request);
+        HandlerResponse response = router.getHandler(request).execute(request);
         Assert.assertTrue(response.getView() instanceof IdentifierView);
 
     }

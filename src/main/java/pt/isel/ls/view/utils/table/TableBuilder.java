@@ -1,4 +1,4 @@
-package pt.isel.ls.view.utils;
+package pt.isel.ls.view.utils.table;
 
 import java.util.ArrayList;
 import java.util.Iterator;

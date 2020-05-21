@@ -51,7 +51,7 @@ public class PostBookingHandlerTest {
         RouteRequest request = RouteRequest.of(
                 "POST /rooms/1/bookings uid=1&begin=" + begin + "&duration=10");
 
-        router.getHandler(request).execute(router, request);
+        router.getHandler(request).execute(request);
     }
 
     @Test(expected = RouteException.class)
@@ -64,7 +64,7 @@ public class PostBookingHandlerTest {
         RouteRequest request = RouteRequest.of(
                 "POST /rooms/1/bookings uid=1&begin=" + begin + "&duration=5");
 
-        router.getHandler(request).execute(router, request);
+        router.getHandler(request).execute(request);
     }
 
     @Test(expected = RouteException.class)
@@ -76,7 +76,7 @@ public class PostBookingHandlerTest {
         RouteRequest request = RouteRequest.of(
                 "POST /rooms/1/bookings uid=1&begin=" + begin + "&duration=10");
 
-        router.getHandler(request).execute(router, request);
+        router.getHandler(request).execute(request);
     }
 
     @Test(expected = RouteException.class)
@@ -89,7 +89,7 @@ public class PostBookingHandlerTest {
         RouteRequest request1 = RouteRequest.of(
                 "POST /rooms/1/bookings uid=1&begin=" + begin1 + "&duration=10");
 
-        router.getHandler(request1).execute(router, request1);
+        router.getHandler(request1).execute(request1);
 
         long begin2 = Timestamp.valueOf(LocalDateTime.of(
                 now.getYear(), now.getMonth(), now.getDayOfMonth(), now.getHour() + 1, 5
@@ -98,7 +98,7 @@ public class PostBookingHandlerTest {
         RouteRequest request2 = RouteRequest.of(
                 "POST /rooms/1/bookings uid=1&begin=" + begin2 + "&duration=10");
 
-        router.getHandler(request2).execute(router, request2);
+        router.getHandler(request2).execute(request2);
     }
 
     @Test
@@ -111,7 +111,7 @@ public class PostBookingHandlerTest {
         RouteRequest request1 = RouteRequest.of(
                 "POST /rooms/1/bookings uid=1&begin=" + begin1 + "&duration=10");
 
-        router.getHandler(request1).execute(router, request1);
+        router.getHandler(request1).execute(request1);
 
         long begin2 = Timestamp.valueOf(LocalDateTime.of(
                 now.getYear(), now.getMonth(), now.getDayOfMonth(), now.getHour() + 1, 0
@@ -120,7 +120,7 @@ public class PostBookingHandlerTest {
         RouteRequest request2 = RouteRequest.of(
                 "POST /rooms/2/bookings uid=1&begin=" + begin2 + "&duration=20");
 
-        router.getHandler(request2).execute(router, request2);
+        router.getHandler(request2).execute(request2);
     }
 
 }

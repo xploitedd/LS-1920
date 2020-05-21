@@ -37,7 +37,7 @@ public class PostLabelHandlerTest {
         RouteRequest request = RouteRequest.of(
                 "POST /labels name=teste1");
 
-        HandlerResponse response = router.getHandler(request).execute(router, request);
+        HandlerResponse response = router.getHandler(request).execute(request);
         Assert.assertTrue(response.getView() instanceof IdentifierView);
     }
 }

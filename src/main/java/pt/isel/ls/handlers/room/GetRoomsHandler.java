@@ -4,7 +4,6 @@ import pt.isel.ls.exceptions.router.RouteException;
 import pt.isel.ls.handlers.RouteHandler;
 import pt.isel.ls.model.Booking;
 import pt.isel.ls.model.Room;
-import pt.isel.ls.router.Router;
 import pt.isel.ls.router.request.Method;
 import pt.isel.ls.router.request.Parameter;
 import pt.isel.ls.router.request.RouteRequest;
@@ -41,7 +40,7 @@ public final class GetRoomsHandler extends RouteHandler {
      * @throws RouteException Sent to the router
      */
     @Override
-    public HandlerResponse execute(Router router, RouteRequest request) {
+    public HandlerResponse execute(RouteRequest request) {
         Optional<List<Parameter>> paramBegin = request.getOptionalParameter("begin");
         Optional<List<Parameter>> paramDuration = request.getOptionalParameter("duration");
         Optional<List<Parameter>> paramCapacity = request.getOptionalParameter("capacity");
@@ -68,7 +67,7 @@ public final class GetRoomsHandler extends RouteHandler {
             return ret.collect(Collectors.toList());
         });
 
-        return new HandlerResponse(new RoomsView("Rooms", rooms));
+        return new HandlerResponse(new RoomsView(rooms));
     }
 
     private static Stream<Room> filterByLabels(SqlHandler handler, Stream<Room> ret, List<Parameter> labels) {

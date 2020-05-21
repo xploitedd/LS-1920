@@ -4,7 +4,6 @@ import pt.isel.ls.exceptions.router.RouteException;
 import pt.isel.ls.handlers.RouteHandler;
 import pt.isel.ls.model.Label;
 import pt.isel.ls.model.Room;
-import pt.isel.ls.router.Router;
 import pt.isel.ls.router.request.Method;
 import pt.isel.ls.router.request.Parameter;
 import pt.isel.ls.router.request.RouteRequest;
@@ -34,7 +33,7 @@ public final class GetRoomHandler extends RouteHandler {
      * @throws RouteException any exception that occurred
      */
     @Override
-    public HandlerResponse execute(Router router, RouteRequest request) {
+    public HandlerResponse execute(RouteRequest request) {
         Parameter paramRid = request.getPathParameter("rid");
 
         int rid = paramRid.toInt();
@@ -43,7 +42,7 @@ public final class GetRoomHandler extends RouteHandler {
                 .getRoomLabels(rid)
                 .collect(Collectors.toList()));
 
-        return new HandlerResponse(new RoomView("Room " + rid + " details", room, labels));
+        return new HandlerResponse(new RoomView(room, labels));
     }
 
 }

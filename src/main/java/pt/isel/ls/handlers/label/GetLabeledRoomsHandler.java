@@ -2,13 +2,15 @@ package pt.isel.ls.handlers.label;
 
 import pt.isel.ls.exceptions.router.RouteException;
 import pt.isel.ls.handlers.RouteHandler;
-import pt.isel.ls.model.Table;
-import pt.isel.ls.router.Router;
+import pt.isel.ls.model.Room;
 import pt.isel.ls.router.request.Method;
 import pt.isel.ls.router.request.RouteRequest;
 import pt.isel.ls.router.response.HandlerResponse;
 import pt.isel.ls.sql.ConnectionProvider;
 import pt.isel.ls.sql.queries.RoomLabelQueries;
+import pt.isel.ls.view.label.LabeledRoomsView;
+
+import java.util.stream.Collectors;
 
 public final class GetLabeledRoomsHandler extends RouteHandler {
 
@@ -28,18 +30,13 @@ public final class GetLabeledRoomsHandler extends RouteHandler {
      * @throws RouteException Sent to the router
      */
     @Override
-    public HandlerResponse execute(Router router, RouteRequest request) {
+    public HandlerResponse execute(RouteRequest request) {
         int lid = request.getPathParameter("lid").toInt();
-
-        Table table = new Table("RID", "Name", "Location", "Capacity", "Description");
-        provider.execute(handler -> new RoomLabelQueries(handler)
+        Iterable<Room> rooms = provider.execute(handler -> new RoomLabelQueries(handler)
                 .getLabeledRooms(lid))
-                .forEach(room ->
-                        table.addTableRow(String.valueOf(room.getRid()), room.getName(), room.getLocation(),
-                                String.valueOf(room.getCapacity()), room.getDescription()));
+                .collect(Collectors.toList());
 
-        //TODO: return new HandlerResponse(new TableView("Rooms with Label: " + lid, table));
-        return null;
+        return new HandlerResponse(new LabeledRoomsView(lid, rooms));
     }
 
 }

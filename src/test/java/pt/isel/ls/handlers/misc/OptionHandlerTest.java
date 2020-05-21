@@ -22,7 +22,7 @@ public class OptionHandlerTest {
     public void getUserById() throws RouteException {
         RouteRequest request = RouteRequest.of("OPTION /");
 
-        HandlerResponse response = router.getHandler(request).execute(router, request);
+        HandlerResponse response = router.getHandler(request).execute(request);
 
         //Assert.assertTrue(response.getView() instanceof TableView);
     }

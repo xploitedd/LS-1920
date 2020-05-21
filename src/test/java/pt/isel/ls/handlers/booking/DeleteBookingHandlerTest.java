@@ -60,7 +60,7 @@ public class DeleteBookingHandlerTest {
         RouteRequest request = RouteRequest.of(
                 "DELETE /rooms/1/bookings/1");
 
-        HandlerResponse response = router.getHandler(request).execute(router, request);
+        HandlerResponse response = router.getHandler(request).execute(request);
         Assert.assertTrue(response.getView() instanceof IdentifierView);
     }
 
@@ -70,7 +70,7 @@ public class DeleteBookingHandlerTest {
         RouteRequest request = RouteRequest.of(
                 "DELETE /rooms/1/bookings/2");
 
-        router.getHandler(request).execute(router, request);
+        router.getHandler(request).execute(request);
     }
 
 }

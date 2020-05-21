@@ -1,10 +1,8 @@
 package pt.isel.ls.handlers.label;
 
 import pt.isel.ls.handlers.RouteHandler;
-import pt.isel.ls.handlers.room.GetRoomHandler;
 import pt.isel.ls.model.Label;
-import pt.isel.ls.model.Table;
-import pt.isel.ls.router.Router;
+import pt.isel.ls.model.Room;
 import pt.isel.ls.router.request.Method;
 import pt.isel.ls.router.request.RouteRequest;
 import pt.isel.ls.router.response.HandlerResponse;
@@ -27,21 +25,14 @@ public class GetLabelHandler extends RouteHandler {
     }
 
     @Override
-    public HandlerResponse execute(Router router, RouteRequest request) {
+    public HandlerResponse execute(RouteRequest request) {
         int lid = request.getPathParameter("lid").toInt();
-        Table table = new Table("Id", "Name", "Rooms");
-        provider.execute(handler -> {
-            Label label = new LabelQueries(handler).getLabelById(lid);
-            Iterable<String> rooms = new RoomLabelQueries(handler)
+        Label label = provider.execute(handler -> new LabelQueries(handler).getLabelById(lid));
+        Iterable<Room> rooms = provider.execute(handler -> new RoomLabelQueries(handler)
                     .getLabeledRooms(lid)
-                    .map(room -> router.routeFromName(GetRoomHandler.class, room.getRid()))
-                    .collect(Collectors.toList());
+                    .collect(Collectors.toList()));
 
-            table.addTableRow(label.getLid(), label.getName(), rooms);
-            return null;
-        });
-
-        return new HandlerResponse(new LabelView("Label " + lid, table));
+        return new HandlerResponse(new LabelView(label, rooms));
     }
 
 }

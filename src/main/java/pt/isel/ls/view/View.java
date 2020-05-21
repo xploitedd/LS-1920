@@ -10,6 +10,8 @@ import pt.isel.ls.model.dsl.elements.Element;
 
 import static pt.isel.ls.model.dsl.Dsl.a;
 import static pt.isel.ls.model.dsl.Dsl.body;
+import static pt.isel.ls.model.dsl.Dsl.br;
+import static pt.isel.ls.model.dsl.Dsl.div;
 import static pt.isel.ls.model.dsl.Dsl.head;
 import static pt.isel.ls.model.dsl.Dsl.html;
 import static pt.isel.ls.model.dsl.Dsl.p;
@@ -43,7 +45,11 @@ public abstract class View {
             if (homeLink) {
                 Node homeLink = a(handler.route(GetHomeHandler.class),
                         "Go to home");
-                body = body(homeLink, getHtmlBody(handler));
+                body = body(
+                        div(homeLink),
+                        br(),
+                        getHtmlBody(handler)
+                );
             } else {
                 body = body(getHtmlBody(handler));
             }

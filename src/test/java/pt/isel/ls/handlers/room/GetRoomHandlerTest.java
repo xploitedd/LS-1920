@@ -43,7 +43,7 @@ public class GetRoomHandlerTest {
         RouteRequest request = RouteRequest.of(
                 "GET /rooms/1");
 
-        HandlerResponse response = router.getHandler(request).execute(router, request);
+        HandlerResponse response = router.getHandler(request).execute(request);
         //Assert.assertTrue(response.getView() instanceof TableView);
     }
 
@@ -52,6 +52,6 @@ public class GetRoomHandlerTest {
         RouteRequest request = RouteRequest.of(
                 "GET /rooms/2");
 
-        router.getHandler(request).execute(router, request);
+        router.getHandler(request).execute(request);
     }
 }

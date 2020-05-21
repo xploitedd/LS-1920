@@ -35,7 +35,7 @@ public class GetUserHandlerTest {
         RouteRequest request = RouteRequest.of(
                 "GET /users/1");
 
-        HandlerResponse response = router.getHandler(request).execute(router, request);
+        HandlerResponse response = router.getHandler(request).execute(request);
 
         //Assert.assertTrue(response.getView() instanceof TableView);
     }
@@ -45,6 +45,6 @@ public class GetUserHandlerTest {
         RouteRequest request = RouteRequest.of(
                 "GET /users/2");
 
-        router.getHandler(request).execute(router, request);
+        router.getHandler(request).execute(request);
     }
 }

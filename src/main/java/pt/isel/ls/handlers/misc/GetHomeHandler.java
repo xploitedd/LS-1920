@@ -1,7 +1,6 @@
 package pt.isel.ls.handlers.misc;
 
 import pt.isel.ls.handlers.RouteHandler;
-import pt.isel.ls.router.Router;
 import pt.isel.ls.router.request.Method;
 import pt.isel.ls.router.request.RouteRequest;
 import pt.isel.ls.router.response.HandlerResponse;
@@ -18,7 +17,7 @@ public class GetHomeHandler extends RouteHandler {
     }
 
     @Override
-    public HandlerResponse execute(Router router, RouteRequest request) {
+    public HandlerResponse execute(RouteRequest request) {
         return new HandlerResponse(new HomeView());
     }
 

@@ -60,7 +60,7 @@ public class GetRoomBookingsHandlerTest {
         RouteRequest request = RouteRequest.of(
                 "GET /rooms/1/bookings");
 
-        HandlerResponse response = router.getHandler(request).execute(router, request);
+        HandlerResponse response = router.getHandler(request).execute(request);
         //TableView tableView = (TableView) response.getView();
         //Assert.assertEquals(1, tableView.getTable().getRowCount());
     }
@@ -71,7 +71,7 @@ public class GetRoomBookingsHandlerTest {
         RouteRequest request = RouteRequest.of(
                 "GET /rooms/2/bookings");
 
-        HandlerResponse response = router.getHandler(request).execute(router, request);
+        HandlerResponse response = router.getHandler(request).execute(request);
         //TableView tableView = (TableView) response.getView();
         //Assert.assertEquals(0, tableView.getTable().getRowCount());
     }

@@ -67,7 +67,7 @@ public class Router implements Iterable<Router.Route> {
             }
         }
 
-        return (t, r) -> new HandlerResponse(new ExceptionView(new RouteNotFoundException(r.getPath())))
+        return r -> new HandlerResponse(new ExceptionView(new RouteNotFoundException(r.getPath())))
                 .setStatusCode(404);
     }
 

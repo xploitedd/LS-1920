@@ -62,7 +62,7 @@ public class PutBookingHandlerTest {
         RouteRequest request = RouteRequest.of(
                 "PUT /rooms/1/bookings/1 uid=2&begin=" + begin + "&duration=10");
 
-        router.getHandler(request).execute(router, request);
+        router.getHandler(request).execute(request);
     }
 
     @Test(expected = RouteException.class)
@@ -75,7 +75,7 @@ public class PutBookingHandlerTest {
         RouteRequest request = RouteRequest.of(
                 "PUT /rooms/1/bookings/2 uid=2&begin=" + begin + "&duration=10");
 
-        router.getHandler(request).execute(router, request);
+        router.getHandler(request).execute(request);
     }
 
 }

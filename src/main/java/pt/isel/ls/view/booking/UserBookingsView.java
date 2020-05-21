@@ -1,7 +1,7 @@
 package pt.isel.ls.view.booking;
 
 import pt.isel.ls.handlers.booking.GetRoomBookingHandler;
-import pt.isel.ls.handlers.room.GetRoomHandler;
+import pt.isel.ls.handlers.user.GetUserHandler;
 import pt.isel.ls.model.Booking;
 import pt.isel.ls.model.dsl.Node;
 import pt.isel.ls.model.dsl.elements.Element;
@@ -13,16 +13,17 @@ import pt.isel.ls.view.utils.table.StringTableBuilder;
 import java.io.PrintWriter;
 
 import static pt.isel.ls.model.dsl.Dsl.a;
+import static pt.isel.ls.model.dsl.Dsl.br;
 import static pt.isel.ls.model.dsl.Dsl.div;
 
-public class RoomBookingsView extends View {
+public class UserBookingsView extends View {
 
-    private final int roomId;
+    private final int userId;
     private final Iterable<Booking> bookings;
 
-    public RoomBookingsView(int roomId, Iterable<Booking> bookings) {
-        super("Bookings for Room " + roomId);
-        this.roomId = roomId;
+    public UserBookingsView(int userId, Iterable<Booking> bookings) {
+        super("Bookings for User " + userId);
+        this.userId = userId;
         this.bookings = bookings;
     }
 
@@ -30,7 +31,7 @@ public class RoomBookingsView extends View {
     protected Node getHtmlBody(ViewHandler handler) {
         Element el = new HtmlTableBuilder<>(bookings)
                 .withColumn("Id", Booking::getBid)
-                .withColumn("User Id", Booking::getUid)
+                .withColumn("Room Id", Booking::getRid)
                 .withColumn("Begin", Booking::getBegin)
                 .withColumn("End", Booking::getEnd)
                 .withColumn("Booking Link", b -> a(
@@ -41,7 +42,8 @@ public class RoomBookingsView extends View {
 
         return div(
                 el,
-                a(handler.route(GetRoomHandler.class, roomId),"Room")
+                br(),
+                a(handler.route(GetUserHandler.class, userId),"User")
         );
     }
 
@@ -49,7 +51,7 @@ public class RoomBookingsView extends View {
     protected void renderText(ViewHandler handler, PrintWriter writer) {
         writer.write(new StringTableBuilder<>(bookings)
                 .withColumn("Id", Booking::getBid)
-                .withColumn("User Id", Booking::getUid)
+                .withColumn("Room Id", Booking::getRid)
                 .withColumn("Begin", Booking::getBegin)
                 .withColumn("End", Booking::getEnd)
                 .build());

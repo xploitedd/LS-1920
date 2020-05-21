@@ -45,7 +45,7 @@ public class GetLabeledRoomsHandlerTest {
         RouteRequest request = RouteRequest.of(
                 "GET /labels/" + 1 + "/rooms");
 
-        HandlerResponse response = router.getHandler(request).execute(router, request);
+        HandlerResponse response = router.getHandler(request).execute(request);
         //Assert.assertTrue(response.getView() instanceof TableView);
     }
 }

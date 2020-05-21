@@ -1,14 +1,14 @@
-package pt.isel.ls.view.room;
+package pt.isel.ls.view.label;
 
+import pt.isel.ls.handlers.label.GetLabelHandler;
 import pt.isel.ls.handlers.room.GetRoomHandler;
-import pt.isel.ls.handlers.room.GetRoomSearchHandler;
 import pt.isel.ls.model.Room;
 import pt.isel.ls.model.dsl.Node;
 import pt.isel.ls.model.dsl.elements.Element;
-import pt.isel.ls.view.utils.table.HtmlTableBuilder;
-import pt.isel.ls.view.utils.table.StringTableBuilder;
 import pt.isel.ls.view.View;
 import pt.isel.ls.view.ViewHandler;
+import pt.isel.ls.view.utils.table.HtmlTableBuilder;
+import pt.isel.ls.view.utils.table.StringTableBuilder;
 
 import java.io.PrintWriter;
 
@@ -16,12 +16,14 @@ import static pt.isel.ls.model.dsl.Dsl.a;
 import static pt.isel.ls.model.dsl.Dsl.br;
 import static pt.isel.ls.model.dsl.Dsl.div;
 
-public class RoomsView extends View {
+public class LabeledRoomsView extends View {
 
+    private final int lid;
     private final Iterable<Room> rooms;
 
-    public RoomsView(Iterable<Room> rooms) {
-        super("Rooms");
+    public LabeledRoomsView(int lid, Iterable<Room> rooms) {
+        super("Rooms with Label " + lid);
+        this.lid = lid;
         this.rooms = rooms;
     }
 
@@ -42,7 +44,7 @@ public class RoomsView extends View {
         return div(
                 el,
                 br(),
-                a(handler.route(GetRoomSearchHandler.class), "Search Rooms")
+                a(handler.route(GetLabelHandler.class, lid),"Label")
         );
     }
 
