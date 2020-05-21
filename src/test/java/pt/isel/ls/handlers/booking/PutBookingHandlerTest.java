@@ -25,9 +25,13 @@ public class PutBookingHandlerTest {
     public void beforeEach() throws RouteException {
         ConnectionProvider provider = new ConnectionProvider(DatasourceUtils.getDataSource());
         DatasourceUtils.executeFile("CreateTables.sql");
-
-        Timestamp begin = Timestamp.valueOf(LocalDateTime.of(2020, 4, 4, 10, 10));
-        Timestamp end = Timestamp.valueOf(LocalDateTime.of(2020, 4, 5, 10, 10));
+        LocalDateTime now = LocalDateTime.now();
+        Timestamp begin = Timestamp.valueOf(LocalDateTime.of(
+                now.getYear(), now.getMonth(), now.getDayOfMonth(), now.getHour() + 1, 10
+        ));
+        Timestamp end = Timestamp.valueOf(LocalDateTime.of(
+                now.getYear(), now.getMonth(), now.getDayOfMonth() + 1, now.getHour() + 1, 10
+        ));
         provider.execute(conn -> {
             UserQueries userQueries = new UserQueries(conn);
             User u1 = userQueries.createNewUser("teste", "teste@teste.com");
@@ -50,8 +54,10 @@ public class PutBookingHandlerTest {
 
     @Test
     public void modifyBooking() throws RouteException {
-        long begin = Timestamp.valueOf(LocalDateTime.of(2020, 4, 4, 10, 10))
-                .getTime();
+        LocalDateTime now = LocalDateTime.now();
+        long begin = Timestamp.valueOf(LocalDateTime.of(
+                now.getYear(), now.getMonth(), now.getDayOfMonth(), now.getHour() + 1, 10
+        )).getTime();
 
         RouteRequest request = RouteRequest.of(
                 "PUT /rooms/1/bookings/1 uid=2&begin=" + begin + "&duration=10");
@@ -61,8 +67,10 @@ public class PutBookingHandlerTest {
 
     @Test(expected = RouteException.class)
     public void modifyInvalidBooking() throws RouteException {
-        long begin = Timestamp.valueOf(LocalDateTime.of(2020, 4, 4, 10, 10))
-                .getTime();
+        LocalDateTime now = LocalDateTime.now();
+        long begin = Timestamp.valueOf(LocalDateTime.of(
+                now.getYear(), now.getMonth(), now.getDayOfMonth(), now.getHour() + 1, 10
+        )).getTime();
 
         RouteRequest request = RouteRequest.of(
                 "PUT /rooms/1/bookings/2 uid=2&begin=" + begin + "&duration=10");

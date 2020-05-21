@@ -28,9 +28,13 @@ public class GetRoomBookingsHandlerTest {
     public void beforeEach() throws RouteException {
         ConnectionProvider provider = new ConnectionProvider(DatasourceUtils.getDataSource());
         DatasourceUtils.executeFile("CreateTables.sql");
-
-        Timestamp begin = Timestamp.valueOf(LocalDateTime.of(2020, 4, 4, 10, 10));
-        Timestamp end = Timestamp.valueOf(LocalDateTime.of(2020, 4, 5, 10, 10));
+        LocalDateTime now = LocalDateTime.now();
+        Timestamp begin = Timestamp.valueOf(LocalDateTime.of(
+                now.getYear(), now.getMonth(), now.getDayOfMonth(), now.getHour() + 1, 10
+        ));
+        Timestamp end = Timestamp.valueOf(LocalDateTime.of(
+                now.getYear(), now.getMonth(), now.getDayOfMonth() + 1, now.getHour() + 1, 10
+        ));
         provider.execute(conn -> {
             UserQueries userQueries = new UserQueries(conn);
             User u1 = userQueries.createNewUser("teste", "teste@teste.com");

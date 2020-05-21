@@ -1,6 +1,7 @@
 package pt.isel.ls.sql.queries;
 
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.Calendar;
 import java.util.Optional;
 import java.util.stream.Stream;
@@ -29,9 +30,17 @@ public class BookingQueries extends DatabaseQueries {
      */
     public Booking createNewBooking(int rid, int uid, Timestamp begin, Timestamp end) {
         doBookingConstraintCheck(begin, end);
+        // check that begin isn't in the past
+        Timestamp currTime = Timestamp.valueOf(LocalDateTime.now());
+        if (currTime.after(begin)) {
+            throw new RouteException("Begin time cannot come before current time ");
+        }
         // check overlapping bookings
         Interval i2 = new Interval(begin.getTime(), end.getTime());
         getBookingsByRid(rid).forEach(booking -> checkOverlap(booking, i2));
+        // check if rid and uid actually exist
+        new RoomQueries(handler).getRoom(rid);
+        new UserQueries(handler).getUser(uid);
 
         handler.createUpdate("INSERT INTO booking (begin, \"end\", rid, uid) VALUES (?, ?, ?, ?);")
                 .bind(begin)

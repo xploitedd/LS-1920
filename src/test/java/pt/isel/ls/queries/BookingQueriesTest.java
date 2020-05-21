@@ -24,8 +24,13 @@ public class BookingQueriesTest {
 
     private static int userID;
     private static int roomID;
-    private final Timestamp begin = Timestamp.valueOf(LocalDateTime.of(2020,2,3,4,10));
-    private final Timestamp end = Timestamp.valueOf(LocalDateTime.of(2021,2,3,4,10));
+    private static final LocalDateTime now = LocalDateTime.now();
+    private static final Timestamp begin = Timestamp.valueOf(LocalDateTime.of(
+            now.getYear(), now.getMonth(), now.getDayOfMonth(), now.getHour() + 1, 10
+    ));
+    private static final Timestamp end = Timestamp.valueOf(LocalDateTime.of(
+            now.getYear(), now.getMonth(), now.getDayOfMonth() + 1, now.getHour() + 1, 10
+    ));
 
     @Before
     public void beforeEach() throws Throwable {

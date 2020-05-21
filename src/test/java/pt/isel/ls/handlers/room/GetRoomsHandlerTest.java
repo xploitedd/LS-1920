@@ -25,14 +25,19 @@ import java.util.LinkedList;
 public class GetRoomsHandlerTest {
 
     private static Router router;
+    private static final LocalDateTime now = LocalDateTime.now();
 
     @Before
     public void beforeEach() throws RouteException {
         ConnectionProvider provider = new ConnectionProvider(DatasourceUtils.getDataSource());
         DatasourceUtils.executeFile("CreateTables.sql");
         LinkedList<Label> labelList = new LinkedList<>();
-        Timestamp begin = Timestamp.valueOf(LocalDateTime.of(2020, 4, 4, 10, 10));
-        Timestamp end = Timestamp.valueOf(LocalDateTime.of(2021, 4, 4, 10, 10));
+        Timestamp begin = Timestamp.valueOf(LocalDateTime.of(
+                now.getYear(), now.getMonth(), now.getDayOfMonth(), now.getHour() + 1, 10
+        ));
+        Timestamp end = Timestamp.valueOf(LocalDateTime.of(
+                now.getYear(), now.getMonth(), now.getDayOfMonth() + 1, now.getHour() + 1, 10
+        ));
         provider.execute(conn -> {
             LabelQueries labelQueries = new LabelQueries(conn);
             Label l1 = labelQueries.createNewLabel("teste1");
@@ -70,11 +75,13 @@ public class GetRoomsHandlerTest {
 
     @Test
     public void getRoomsByTime1() throws RouteException {
-        Timestamp begin = Timestamp.valueOf(LocalDateTime.of(2020, 4, 5, 10, 10));
+        Timestamp begin = Timestamp.valueOf(LocalDateTime.of(
+                now.getYear(), now.getMonth(), now.getDayOfMonth(), now.getHour() + 1, 20
+        ));
 
         //Well inside the booking
         RouteRequest request = RouteRequest.of(
-                "GET /rooms begin=" + begin.getTime() + "&duration=49980");
+                "GET /rooms begin=" + begin.getTime() + "&duration=1420");
 
         HandlerResponse response = router.getHandler(request).execute(router, request);
         TableView tableView = (TableView) response.getView();
@@ -84,10 +91,12 @@ public class GetRoomsHandlerTest {
 
     @Test
     public void getRoomsByTime2() throws RouteException {
-        Timestamp begin = Timestamp.valueOf(LocalDateTime.of(2020, 4, 4, 10, 10));
+        Timestamp begin = Timestamp.valueOf(LocalDateTime.of(
+                now.getYear(), now.getMonth(), now.getDayOfMonth(), now.getHour() + 1, 10
+        ));
         //same start as booking, different end
         RouteRequest request = RouteRequest.of(
-                "GET /rooms begin=" + begin.getTime() + "&duration=49980");
+                "GET /rooms begin=" + begin.getTime() + "&duration=1430");
 
         HandlerResponse response = router.getHandler(request).execute(router, request);
         TableView tableView = (TableView) response.getView();
@@ -97,7 +106,9 @@ public class GetRoomsHandlerTest {
 
     @Test
     public void getRoomsByTime3() throws RouteException {
-        Timestamp begin = Timestamp.valueOf(LocalDateTime.of(2021, 4, 4, 10, 0));
+        Timestamp begin = Timestamp.valueOf(LocalDateTime.of(
+                now.getYear(), now.getMonth(), now.getDayOfMonth() + 1, now.getHour() + 1, 0
+        ));
         //same end as booking, different start
         RouteRequest request = RouteRequest.of(
                 "GET /rooms begin=" + begin.getTime() + "&duration=10");
@@ -110,7 +121,9 @@ public class GetRoomsHandlerTest {
 
     @Test
     public void getRoomsByTime4() throws RouteException {
-        Timestamp begin = Timestamp.valueOf(LocalDateTime.of(2020, 3, 4, 10, 0));
+        Timestamp begin = Timestamp.valueOf(LocalDateTime.of(
+                now.getYear(), now.getMonth(), now.getDayOfMonth(), now.getHour() + 1, 0
+        ));
         //before booking, should be valid
         RouteRequest request = RouteRequest.of(
                 "GET /rooms begin=" + begin.getTime() + "&duration=10");
