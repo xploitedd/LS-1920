@@ -9,7 +9,6 @@ import pt.isel.ls.router.request.RouteRequest;
 import pt.isel.ls.router.response.HandlerResponse;
 import pt.isel.ls.sql.ConnectionProvider;
 import pt.isel.ls.sql.queries.BookingQueries;
-import pt.isel.ls.view.TableView;
 
 public final class GetUserBookingsHandler extends RouteHandler {
 
@@ -40,7 +39,8 @@ public final class GetUserBookingsHandler extends RouteHandler {
                         booking.getBegin().toString(),
                         booking.getEnd().toString()));
 
-        return new HandlerResponse(new TableView("Bookings of User: " + uid, table));
+        //TODO: return new HandlerResponse(new TableView("Bookings of User: " + uid, table));
+        return null;
     }
 
 }

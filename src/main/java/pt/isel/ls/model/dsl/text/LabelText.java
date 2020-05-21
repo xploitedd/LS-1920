@@ -1,10 +1,8 @@
-package pt.isel.ls.model.dsl.text.forms;
-
-import pt.isel.ls.model.dsl.text.TextNode;
+package pt.isel.ls.model.dsl.text;
 
 public class LabelText extends TextNode {
 
-    public LabelText(String forId, String text) {
+    public LabelText(String forId, Object text) {
         super(text);
         attr("for", forId);
     }

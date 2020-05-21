@@ -9,7 +9,6 @@ import pt.isel.ls.router.request.RouteRequest;
 import pt.isel.ls.router.response.HandlerResponse;
 import pt.isel.ls.sql.ConnectionProvider;
 import pt.isel.ls.sql.queries.LabelQueries;
-import pt.isel.ls.view.TableView;
 
 public final class GetLabelsHandler extends RouteHandler {
 
@@ -45,7 +44,8 @@ public final class GetLabelsHandler extends RouteHandler {
             return null;
         });
 
-        return new HandlerResponse(new TableView("Labels", table));
+        //TODO: return new HandlerResponse(new TableView("Labels", table));
+        return null;
     }
 
 }

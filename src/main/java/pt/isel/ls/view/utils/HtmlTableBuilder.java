@@ -1,4 +1,4 @@
-package pt.isel.ls.utils;
+package pt.isel.ls.view.utils;
 
 import pt.isel.ls.model.dsl.elements.table.TableElement;
 import pt.isel.ls.model.dsl.elements.table.TableRowElement;
@@ -8,8 +8,11 @@ import pt.isel.ls.model.dsl.text.table.TableText;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Function;
 
 import static pt.isel.ls.model.dsl.Dsl.table;
+import static pt.isel.ls.model.dsl.Dsl.td;
+import static pt.isel.ls.model.dsl.Dsl.th;
 import static pt.isel.ls.model.dsl.Dsl.tr;
 
 public class HtmlTableBuilder<T> extends TableBuilder<T, TableHeaderText, TableDataText, TableElement> {
@@ -18,6 +21,10 @@ public class HtmlTableBuilder<T> extends TableBuilder<T, TableHeaderText, TableD
         super(content);
     }
 
+    public HtmlTableBuilder<T> withColumn(String columnName, Function<T, Object> mapper) {
+        super.withColumn(th(columnName), f -> td(mapper.apply(f)));
+        return this;
+    }
 
     public TableElement build() {
         ArrayList<TableRowElement> htmlRows = new ArrayList<>(rows.size() + 1);

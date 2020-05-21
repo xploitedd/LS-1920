@@ -2,10 +2,8 @@ package pt.isel.ls.handlers.room;
 
 import pt.isel.ls.exceptions.router.RouteException;
 import pt.isel.ls.handlers.RouteHandler;
-import pt.isel.ls.handlers.booking.GetRoomBookingsHandler;
-import pt.isel.ls.handlers.label.GetLabelHandler;
+import pt.isel.ls.model.Label;
 import pt.isel.ls.model.Room;
-import pt.isel.ls.model.Table;
 import pt.isel.ls.router.Router;
 import pt.isel.ls.router.request.Method;
 import pt.isel.ls.router.request.Parameter;
@@ -38,32 +36,14 @@ public final class GetRoomHandler extends RouteHandler {
     @Override
     public HandlerResponse execute(Router router, RouteRequest request) {
         Parameter paramRid = request.getPathParameter("rid");
-        Table table = new Table(
-                "RID",
-                "Name",
-                "Location",
-                "Capacity",
-                "Description",
-                "Labels",
-                "Bookings"
-        );
 
         int rid = paramRid.toInt();
-        provider.execute(handler -> {
-            Room room = new RoomQueries(handler).getRoom(rid);
-            Iterable<String> labels = new RoomLabelQueries(handler)
-                    .getRoomLabels(rid)
-                    .map(l -> router.routeFromName(GetLabelHandler.class, l.getLid()))
-                    .collect(Collectors.toList());
+        Room room = provider.execute(handler -> new RoomQueries(handler).getRoom(rid));
+        Iterable<Label> labels = provider.execute(handler -> new RoomLabelQueries(handler)
+                .getRoomLabels(rid)
+                .collect(Collectors.toList()));
 
-            String bookings = router.routeFromName(GetRoomBookingsHandler.class, rid);
-            table.addTableRow(room.getRid(), room.getName(), room.getLocation(),
-                    room.getCapacity(), room.getDescription(), labels, bookings);
-
-            return null;
-        });
-
-        return new HandlerResponse(new RoomView("Room " + rid + " details", table));
+        return new HandlerResponse(new RoomView("Room " + rid + " details", room, labels));
     }
 
 }

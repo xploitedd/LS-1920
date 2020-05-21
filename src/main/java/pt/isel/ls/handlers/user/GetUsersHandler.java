@@ -9,7 +9,6 @@ import pt.isel.ls.router.request.RouteRequest;
 import pt.isel.ls.router.response.HandlerResponse;
 import pt.isel.ls.sql.ConnectionProvider;
 import pt.isel.ls.sql.queries.UserQueries;
-import pt.isel.ls.view.TableView;
 
 public final class GetUsersHandler extends RouteHandler {
 
@@ -41,7 +40,8 @@ public final class GetUsersHandler extends RouteHandler {
                                 router.routeFromName(GetUserHandler.class, user.getUid())
                         ));
 
-        return new HandlerResponse(new TableView("Users", table));
+        //TODO: return new HandlerResponse(new TableView("Users", table));
+        return null;
     }
 
 }

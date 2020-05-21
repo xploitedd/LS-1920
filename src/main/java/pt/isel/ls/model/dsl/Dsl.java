@@ -14,11 +14,13 @@ import pt.isel.ls.model.dsl.elements.lists.UnorderedListElement;
 import pt.isel.ls.model.dsl.elements.table.TableElement;
 import pt.isel.ls.model.dsl.elements.table.TableRowElement;
 import pt.isel.ls.model.dsl.text.AnchorText;
+import pt.isel.ls.model.dsl.text.BoldText;
 import pt.isel.ls.model.dsl.text.ButtonText;
 import pt.isel.ls.model.dsl.text.HeadText;
+import pt.isel.ls.model.dsl.text.LabelText;
 import pt.isel.ls.model.dsl.text.ParagraphText;
+import pt.isel.ls.model.dsl.text.Text;
 import pt.isel.ls.model.dsl.text.TitleText;
-import pt.isel.ls.model.dsl.text.forms.LabelText;
 import pt.isel.ls.model.dsl.text.forms.OptionText;
 import pt.isel.ls.model.dsl.text.table.TableDataText;
 import pt.isel.ls.model.dsl.text.table.TableHeaderText;
@@ -42,19 +44,19 @@ public class Dsl {
         return new TitleText(title);
     }
 
-    public static HeadText h1(String header) {
+    public static HeadText h1(Object header) {
         return new HeadText(1, header);
     }
 
-    public static HeadText h2(String header) {
+    public static HeadText h2(Object header) {
         return new HeadText(2, header);
     }
 
-    public static HeadText h3(String header) {
+    public static HeadText h3(Object header) {
         return new HeadText(3, header);
     }
 
-    public static ParagraphText p(String paragraph) {
+    public static ParagraphText p(Object paragraph) {
         return new ParagraphText(paragraph);
     }
 
@@ -71,10 +73,6 @@ public class Dsl {
     }
 
     public static TableDataText td(Object data) {
-        return new TableDataText(data);
-    }
-
-    public static TableDataText td(Node data) {
         return new TableDataText(data);
     }
 
@@ -114,7 +112,7 @@ public class Dsl {
         return new OptionText(value, text);
     }
 
-    public static LabelText label(String forId, String text) {
+    public static LabelText label(String forId, Object text) {
         return new LabelText(forId, text);
     }
 
@@ -124,6 +122,14 @@ public class Dsl {
 
     public static BreakElement br() {
         return new BreakElement();
+    }
+
+    public static BoldText b(Object text) {
+        return new BoldText(text);
+    }
+
+    public static Text text(Object text) {
+        return new Text(text);
     }
 
 }

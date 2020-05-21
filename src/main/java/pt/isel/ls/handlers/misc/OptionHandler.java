@@ -6,7 +6,6 @@ import pt.isel.ls.router.Router;
 import pt.isel.ls.router.request.Method;
 import pt.isel.ls.router.request.RouteRequest;
 import pt.isel.ls.router.response.HandlerResponse;
-import pt.isel.ls.view.TableView;
 
 public final class OptionHandler extends RouteHandler {
 
@@ -37,7 +36,8 @@ public final class OptionHandler extends RouteHandler {
                     route.getHandler().getDescription());
         }
 
-        return new HandlerResponse(new TableView("Options Listing", table));
+        //TODO: return new HandlerResponse(new TableView("Options Listing", table));
+        return null;
     }
 
 }

@@ -2,9 +2,9 @@ package pt.isel.ls.model.dsl.text;
 
 public class HeadText extends TextNode {
 
-    private int headerLevel;
+    private final int headerLevel;
 
-    public HeadText(int headerLevel, String text) {
+    public HeadText(int headerLevel, Object text) {
         super(text);
         this.headerLevel = headerLevel;
     }

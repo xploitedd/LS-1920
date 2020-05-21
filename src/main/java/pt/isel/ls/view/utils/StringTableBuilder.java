@@ -1,10 +1,10 @@
-package pt.isel.ls.utils;
+package pt.isel.ls.view.utils;
 
 import pt.isel.ls.model.Table;
 
 import java.util.List;
 
-public class StringTableBuilder<T> extends TableBuilder<T, String, String, String> {
+public class StringTableBuilder<T> extends TableBuilder<T, String, Object, String> {
 
     public StringTableBuilder(Iterable<T> content) {
         super(content);
@@ -14,8 +14,8 @@ public class StringTableBuilder<T> extends TableBuilder<T, String, String, Strin
     public String build() {
         String[] columnNames = header.toArray(String[]::new);
         Table table = new Table(columnNames);
-        for (List<String> cols : rows) {
-            String[] colsArr = cols.toArray(String[]::new);
+        for (List<Object> cols : rows) {
+            Object[] colsArr = cols.toArray();
             table.addTableRow((Object[]) colsArr);
         }
 

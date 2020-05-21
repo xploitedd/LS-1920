@@ -9,7 +9,6 @@ import pt.isel.ls.router.request.RouteRequest;
 import pt.isel.ls.router.response.HandlerResponse;
 import pt.isel.ls.sql.ConnectionProvider;
 import pt.isel.ls.sql.queries.RoomLabelQueries;
-import pt.isel.ls.view.TableView;
 
 public final class GetLabeledRoomsHandler extends RouteHandler {
 
@@ -39,7 +38,8 @@ public final class GetLabeledRoomsHandler extends RouteHandler {
                         table.addTableRow(String.valueOf(room.getRid()), room.getName(), room.getLocation(),
                                 String.valueOf(room.getCapacity()), room.getDescription()));
 
-        return new HandlerResponse(new TableView("Rooms with Label: " + lid, table));
+        //TODO: return new HandlerResponse(new TableView("Rooms with Label: " + lid, table));
+        return null;
     }
 
 }

@@ -1,14 +1,14 @@
 package pt.isel.ls.model.dsl.text;
 
-public class ButtonText extends TextNode {
+public class BoldText extends TextNode {
 
-    public ButtonText(Object text) {
+    public BoldText(Object text) {
         super(text);
     }
 
     @Override
     protected String getNodeName() {
-        return "button";
+        return "b";
     }
 
 }

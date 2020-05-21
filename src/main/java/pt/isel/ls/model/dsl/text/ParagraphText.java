@@ -2,7 +2,7 @@ package pt.isel.ls.model.dsl.text;
 
 public class ParagraphText extends TextNode {
 
-    public ParagraphText(String text) {
+    public ParagraphText(Object text) {
         super(text);
     }
 

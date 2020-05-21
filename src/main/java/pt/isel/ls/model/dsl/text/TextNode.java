@@ -8,8 +8,8 @@ public abstract class TextNode extends Node {
 
     protected String text;
 
-    public TextNode(String text) {
-        this.text = text;
+    public TextNode(Object text) {
+        this.text = text.toString();
     }
 
     @Override
