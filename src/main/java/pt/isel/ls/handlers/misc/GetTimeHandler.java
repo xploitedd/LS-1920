@@ -19,11 +19,6 @@ public class GetTimeHandler extends RouteHandler {
         );
     }
 
-    /**
-     * Gets the current time in ISO format
-     * @param request The route request
-     * @return returns a HandlerResponse with a MessageView for the router
-     */
     @Override
     public HandlerResponse execute(RouteRequest request) {
         return new HandlerResponse(new MessageView("Current time: "

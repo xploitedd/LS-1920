@@ -16,6 +16,12 @@ public class HttpApplication extends Application {
     private final HttpPool httpPool;
     private final int port;
 
+    /**
+     * Creates a new HTTP Application
+     * @param httpPool Pool of the HTTP servers
+     * @param router App Router
+     * @param port Port for this server instance
+     */
     public HttpApplication(HttpPool httpPool, Router router, int port) {
         super(router);
         this.httpPool = httpPool;

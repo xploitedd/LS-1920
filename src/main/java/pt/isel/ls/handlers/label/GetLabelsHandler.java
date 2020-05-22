@@ -1,6 +1,5 @@
 package pt.isel.ls.handlers.label;
 
-import pt.isel.ls.exceptions.router.RouteException;
 import pt.isel.ls.handlers.RouteHandler;
 import pt.isel.ls.model.Label;
 import pt.isel.ls.router.request.Method;
@@ -23,12 +22,6 @@ public final class GetLabelsHandler extends RouteHandler {
         );
     }
 
-    /**
-     * Gets all existing Labels
-     * @param request The route request
-     * @return returns a HandlerResponse with a tableView for the router
-     * @throws RouteException Sent to the router
-     */
     @Override
     public HandlerResponse execute(RouteRequest request) {
         Iterable<Label> labels = provider.execute(handler -> new LabelQueries(handler)

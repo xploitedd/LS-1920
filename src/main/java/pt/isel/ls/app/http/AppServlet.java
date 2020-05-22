@@ -13,9 +13,11 @@ import pt.isel.ls.router.response.HandlerResponse;
 import pt.isel.ls.view.ViewHandler;
 import pt.isel.ls.view.ViewType;
 
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.nio.charset.Charset;
@@ -44,6 +46,26 @@ public class AppServlet extends HttpServlet {
         processRequest(req, resp);
     }
 
+    @Override
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) {
+        processRequest(req, resp);
+    }
+
+    @Override
+    protected void doPut(HttpServletRequest req, HttpServletResponse resp) {
+        processRequest(req, resp);
+    }
+
+    @Override
+    protected void doDelete(HttpServletRequest req, HttpServletResponse resp) {
+        processRequest(req, resp);
+    }
+
+    /**
+     * Processes an HTTP request
+     * @param req Request to be processed
+     * @param resp Response container
+     */
     private void processRequest(HttpServletRequest req, HttpServletResponse resp) {
         RouteRequest request = getRequest(req);
         try {
@@ -78,6 +100,11 @@ public class AppServlet extends HttpServlet {
         }
     }
 
+    /**
+     * Get a RouteRequest instance from a HttpServletRequest
+     * @param req HTTP request
+     * @return a new RouteRequest
+     */
     private static RouteRequest getRequest(HttpServletRequest req) {
         Optional<Path> path = Path.of(req.getRequestURI());
         if (path.isEmpty()) {
@@ -96,6 +123,11 @@ public class AppServlet extends HttpServlet {
         );
     }
 
+    /**
+     * Process the parameters from a HTTP request
+     * @param req request where the parameters are
+     * @return a new HashMap with the non-empty parameters
+     */
     private static HashMap<String, List<Parameter>> processParameters(HttpServletRequest req) {
         Map<String, String[]> parameters = req.getParameterMap();
         HashMap<String, List<Parameter>> parameterMap = new HashMap<>();
@@ -120,6 +152,11 @@ public class AppServlet extends HttpServlet {
         return parameterMap;
     }
 
+    /**
+     * Process the headers from a HTTP request
+     * @param req request with headers
+     * @return a new HashMap with the application-supported headers
+     */
     private static HashMap<HeaderType, String> processHeaders(HttpServletRequest req) {
         HashMap<HeaderType, String> headers = new HashMap<>();
         Enumeration<String> headerNames = req.getHeaderNames();

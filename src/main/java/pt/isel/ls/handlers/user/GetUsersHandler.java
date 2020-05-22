@@ -1,6 +1,5 @@
 package pt.isel.ls.handlers.user;
 
-import pt.isel.ls.exceptions.router.RouteException;
 import pt.isel.ls.handlers.RouteHandler;
 import pt.isel.ls.model.User;
 import pt.isel.ls.router.request.Method;
@@ -23,12 +22,6 @@ public final class GetUsersHandler extends RouteHandler {
         );
     }
 
-    /**
-     * Get all users
-     * @param request The route request
-     * @return returns a RouteResponse with a tableView for the router
-     * @throws RouteException Sent to the router
-     */
     @Override
     public HandlerResponse execute(RouteRequest request) {
         Iterable<User> users = provider.execute(handler -> new UserQueries(handler)

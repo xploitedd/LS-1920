@@ -18,7 +18,7 @@ public class ViewHandler {
     }
 
     public String route(Class<? extends RouteHandler> clazz, Object... params) {
-        return router.routeFromName(clazz, params);
+        return router.route(clazz, params);
     }
 
 }

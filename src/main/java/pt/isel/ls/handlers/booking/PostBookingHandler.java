@@ -1,6 +1,5 @@
 package pt.isel.ls.handlers.booking;
 
-import pt.isel.ls.exceptions.router.RouteException;
 import pt.isel.ls.handlers.RouteHandler;
 import pt.isel.ls.model.Booking;
 import pt.isel.ls.router.request.Method;
@@ -24,12 +23,6 @@ public final class PostBookingHandler extends RouteHandler {
         );
     }
 
-    /**
-     * Creates a new booking
-     * @param request The route request
-     * @return returns a new HandlerResponse
-     * @throws RouteException Sent to the router
-     */
     @Override
     public HandlerResponse execute(RouteRequest request) {
         int rid = request.getPathParameter("rid").toInt();

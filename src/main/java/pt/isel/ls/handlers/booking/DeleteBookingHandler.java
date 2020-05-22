@@ -20,12 +20,6 @@ public final class DeleteBookingHandler extends RouteHandler {
         );
     }
 
-    /**
-     * Deletes a Specific Booking
-     * @param request The route request
-     * @return returns a HandlerResponse with a IdentifierView for the router
-     * @throws RouteException Sent to the router
-     */
     @Override
     public HandlerResponse execute(RouteRequest request) {
         int rid = request.getPathParameter("rid").toInt();

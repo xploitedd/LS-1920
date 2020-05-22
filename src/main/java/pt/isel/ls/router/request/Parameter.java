@@ -42,6 +42,13 @@ public class Parameter {
         }
     }
 
+    /**
+     * Tries to convert this parameter to a long
+     * This parameter must be a valid time in one of the following formats:
+     *      - a unix millisecond timestamp
+     *      - ISO_LOCAL_DATE_TIME, as specified in LocalDateTime
+     * @return a long representation of the time
+     */
     public long toTime() {
         try {
             return toLong();

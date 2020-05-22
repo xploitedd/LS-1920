@@ -6,6 +6,10 @@ import static pt.isel.ls.utils.ExceptionUtils.passException;
 
 public class Update extends SqlType<Update, Integer> {
 
+    /**
+     * Creates a new Update
+     * @param stmt statement with the update
+     */
     Update(PreparedStatement stmt) {
         super(stmt);
     }

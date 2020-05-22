@@ -1,6 +1,5 @@
 package pt.isel.ls.handlers.room;
 
-import pt.isel.ls.exceptions.router.RouteException;
 import pt.isel.ls.handlers.RouteHandler;
 import pt.isel.ls.model.Booking;
 import pt.isel.ls.model.Room;
@@ -33,12 +32,6 @@ public final class GetRoomsHandler extends RouteHandler {
         );
     }
 
-    /**
-     * Gets all of the Rooms
-     * @param request The route request
-     * @return returns a RouteResponse with a tableView for the router
-     * @throws RouteException Sent to the router
-     */
     @Override
     public HandlerResponse execute(RouteRequest request) {
         Optional<List<Parameter>> paramBegin = request.getOptionalParameter("begin");
@@ -70,6 +63,14 @@ public final class GetRoomsHandler extends RouteHandler {
         return new HandlerResponse(new RoomsView(rooms));
     }
 
+    /**
+     * Filter the specified stream by elements that have all of the
+     * specified labels
+     * @param handler SQL Handler
+     * @param ret Stream to be filtered
+     * @param labels Labels to filter for
+     * @return The filtered stream
+     */
     private static Stream<Room> filterByLabels(SqlHandler handler, Stream<Room> ret, List<Parameter> labels) {
         RoomLabelQueries rlq = new RoomLabelQueries(handler);
         for (Parameter labelPar : labels) {
@@ -80,6 +81,15 @@ public final class GetRoomsHandler extends RouteHandler {
         return ret;
     }
 
+    /**
+     * Filter the specified stream by elements that are available
+     * in the specified time slot
+     * @param handler SQL Handler
+     * @param ret Stream to be filtered
+     * @param begin begin instant of the time slot
+     * @param end end instant of the time slot
+     * @return The filtered stream
+     */
     private static Stream<Room> filterByTime(SqlHandler handler, Stream<Room> ret, long begin, long end) {
         Interval i = new Interval(begin, end);
         return ret.filter(room -> {

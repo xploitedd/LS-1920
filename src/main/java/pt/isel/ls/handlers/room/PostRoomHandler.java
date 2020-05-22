@@ -30,12 +30,6 @@ public final class PostRoomHandler extends RouteHandler {
         );
     }
 
-    /**
-     * Creates a new room
-     * @param request The request to be executed
-     * @return a new HandlerResponse
-     * @throws RouteException any exception that occurred
-     */
     @Override
     public HandlerResponse execute(RouteRequest request) {
         Optional<List<Parameter>> optLabels = request.getOptionalParameter("label");

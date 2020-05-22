@@ -1,6 +1,5 @@
 package pt.isel.ls.handlers.user;
 
-import pt.isel.ls.exceptions.router.RouteException;
 import pt.isel.ls.handlers.RouteHandler;
 import pt.isel.ls.model.User;
 import pt.isel.ls.router.request.Method;
@@ -21,12 +20,6 @@ public final class PostUserHandler extends RouteHandler {
         );
     }
 
-    /**
-     * Creates a new user
-     * @param request The request to be executed
-     * @return a new HandlerResponse
-     * @throws RouteException any exception that occurred
-     */
     @Override
     public HandlerResponse execute(RouteRequest request) {
         String name = request.getParameter("name").get(0).toString();

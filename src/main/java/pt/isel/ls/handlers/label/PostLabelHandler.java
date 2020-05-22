@@ -1,6 +1,5 @@
 package pt.isel.ls.handlers.label;
 
-import pt.isel.ls.exceptions.router.RouteException;
 import pt.isel.ls.handlers.RouteHandler;
 import pt.isel.ls.model.Label;
 import pt.isel.ls.router.request.Method;
@@ -21,12 +20,6 @@ public final class PostLabelHandler extends RouteHandler {
         );
     }
 
-    /**
-     * Creates a new label
-     * @param request The RouteRequest to be executed
-     * @return a new HandlerResponse
-     * @throws RouteException any exception that occurred
-     */
     @Override
     public HandlerResponse execute(RouteRequest request) {
         String labelName = request.getParameter("name").get(0).toString();

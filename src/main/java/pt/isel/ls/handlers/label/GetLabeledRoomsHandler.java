@@ -1,6 +1,5 @@
 package pt.isel.ls.handlers.label;
 
-import pt.isel.ls.exceptions.router.RouteException;
 import pt.isel.ls.handlers.RouteHandler;
 import pt.isel.ls.model.Room;
 import pt.isel.ls.router.request.Method;
@@ -23,12 +22,6 @@ public final class GetLabeledRoomsHandler extends RouteHandler {
         );
     }
 
-    /**
-     * Gets all of the rooms with a certain label
-     * @param request The route request
-     * @return returns a HandlerResponse with a tableView for the router
-     * @throws RouteException Sent to the router
-     */
     @Override
     public HandlerResponse execute(RouteRequest request) {
         int lid = request.getPathParameter("lid").toInt();

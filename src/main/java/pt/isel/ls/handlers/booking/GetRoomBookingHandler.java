@@ -21,12 +21,6 @@ public final class GetRoomBookingHandler extends RouteHandler {
         );
     }
 
-    /**
-     * Gets a specific booking from a room
-     * @param request The route request
-     * @return returns a HandlerResponse with a tableView for the router
-     * @throws RouteException Sent to the router
-     */
     @Override
     public HandlerResponse execute(RouteRequest request) {
         int rid = request.getPathParameter("rid").toInt();

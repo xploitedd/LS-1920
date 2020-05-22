@@ -102,16 +102,15 @@ public class RouteRequest {
      * Parses a string request into a new RouteRequest instance
      * @param request request to be parsed
      * @return a new instance of RouteRequest
-     * @throws RouteException if an error occurs while parsing
      */
-    public static RouteRequest of(String request) throws RouteException {
+    public static RouteRequest of(String request) {
         try {
             String[] requestParts = request.split(" ");
             if (requestParts.length < 2) {
                 throw new RouteException("Path not valid!");
             }
 
-            Method method = getMethodFromString(requestParts[0]);
+            Method method = Method.fromString(requestParts[0]);
             Optional<Path> path = Path.of(requestParts[1]);
             if (path.isEmpty()) {
                 throw new RouteException("Path not valid!");
@@ -147,10 +146,8 @@ public class RouteRequest {
      * Parse the parameters of a parameter section
      * @param parameterSection parameter section to be parsed
      * @return parameter map
-     * @throws RouteException if an error occurs
      */
-    private static HashMap<String, List<Parameter>> parseParameters(String parameterSection)
-            throws RouteException {
+    private static HashMap<String, List<Parameter>> parseParameters(String parameterSection) {
 
         HashMap<String, List<Parameter>> parameters = new HashMap<>();
         RouterUtils.forEachKeyValue(parameterSection, "&", "=", (key, value) -> {
@@ -164,9 +161,12 @@ public class RouteRequest {
         return parameters;
     }
 
-    private static HashMap<HeaderType, String> parseHeaders(String headerSection)
-            throws RouteException {
-
+    /**
+     * Parse the headers from a string
+     * @param headerSection headers string
+     * @return headers map
+     */
+    private static HashMap<HeaderType, String> parseHeaders(String headerSection) {
         HashMap<HeaderType, String> headers = new HashMap<>();
         RouterUtils.forEachKeyValue(headerSection, "\\|", ":", (key, value) -> {
             HeaderType type = HeaderType.of(key);
@@ -174,15 +174,6 @@ public class RouteRequest {
         });
 
         return headers;
-    }
-
-    private static Method getMethodFromString(String method) throws RouteException {
-        method = method.toUpperCase();
-        try {
-            return Method.valueOf(method);
-        } catch (IllegalArgumentException e) {
-            throw new RouteException("Method " + method + " does not exist");
-        }
     }
 
 }

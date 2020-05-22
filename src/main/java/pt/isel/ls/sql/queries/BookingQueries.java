@@ -127,7 +127,7 @@ public class BookingQueries extends DatabaseQueries {
                 .mapToClass(Booking.class);
     }
 
-    public Booking editBooking(int rid, int bid, int newUid, Timestamp newBegin, Timestamp newEnd) throws Exception {
+    public Booking editBooking(int rid, int bid, int newUid, Timestamp newBegin, Timestamp newEnd) {
         doBookingConstraintCheck(newBegin, newEnd);
         Interval newInt = new Interval(newBegin.getTime(), newEnd.getTime());
         getBookingsByRid(rid)
@@ -163,7 +163,7 @@ public class BookingQueries extends DatabaseQueries {
         }
     }
 
-    private static void doBookingConstraintCheck(Timestamp begin, Timestamp end) throws RouteException {
+    private static void doBookingConstraintCheck(Timestamp begin, Timestamp end) {
         long lbegin = begin.getTime() / 1000;
         long lend = end.getTime() / 1000;
         if (lend - lbegin < BOOKING_MIN_TIME) {

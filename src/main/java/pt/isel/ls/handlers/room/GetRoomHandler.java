@@ -1,6 +1,5 @@
 package pt.isel.ls.handlers.room;
 
-import pt.isel.ls.exceptions.router.RouteException;
 import pt.isel.ls.handlers.RouteHandler;
 import pt.isel.ls.model.Label;
 import pt.isel.ls.model.Room;
@@ -26,12 +25,6 @@ public final class GetRoomHandler extends RouteHandler {
         );
     }
 
-    /**
-     * Get a specific room
-     * @param request The request to be executed
-     * @return a new HandlerResponse
-     * @throws RouteException any exception that occurred
-     */
     @Override
     public HandlerResponse execute(RouteRequest request) {
         Parameter paramRid = request.getPathParameter("rid");

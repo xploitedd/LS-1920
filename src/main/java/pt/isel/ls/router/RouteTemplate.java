@@ -60,6 +60,11 @@ public class RouteTemplate {
         return Optional.of(pathParameters);
     }
 
+    /**
+     * Construct this path with the specified path parameters
+     * @param params path parameters
+     * @return path with parameters in place
+     */
     public Path constructPathFromTemplate(Object... params) {
         StringBuilder sb = new StringBuilder();
         int paramIdx = 0;

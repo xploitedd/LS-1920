@@ -21,11 +21,6 @@ public final class ExitHandler extends RouteHandler {
         this.httpPool = httpPool;
     }
 
-    /**
-     * Exits the application
-     * @param request The route request
-     * @return returns a RouteResponse with a ExitView for the router
-     */
     @Override
     public HandlerResponse execute(RouteRequest request) {
         httpPool.terminate();

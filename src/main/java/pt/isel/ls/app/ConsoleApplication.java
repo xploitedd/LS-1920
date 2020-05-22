@@ -26,6 +26,10 @@ public class ConsoleApplication extends Application {
 
     private final ViewHandler handler;
 
+    /**
+     * Creates a new Console Application
+     * @param router Application Router
+     */
     public ConsoleApplication(Router router) {
         super(router);
         this.handler = new ViewHandler(router);

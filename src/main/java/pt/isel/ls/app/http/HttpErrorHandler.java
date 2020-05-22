@@ -15,6 +15,10 @@ public class HttpErrorHandler extends ErrorHandler {
 
     private final Router router;
 
+    /**
+     * Creates a new HTTP error handler
+     * @param router Application Router
+     */
     public HttpErrorHandler(Router router) {
         this.router = router;
     }
@@ -23,7 +27,8 @@ public class HttpErrorHandler extends ErrorHandler {
     protected void writeErrorPage(HttpServletRequest req, Writer wr, int code, String msg, boolean ss) {
         ViewHandler viewHandler = new ViewHandler(router);
 
-        String error = msg.split(":", 2)[1];
+        // just get the exception message, without the exception fully-qualified name
+        String error = msg.split(": ", 2)[1];
         ExceptionView view = new ExceptionView(new AppException(code + " " + error));
 
         PrintWriter pw = new PrintWriter(wr);

@@ -1,6 +1,5 @@
 package pt.isel.ls.handlers.booking;
 
-import pt.isel.ls.exceptions.router.RouteException;
 import pt.isel.ls.handlers.RouteHandler;
 import pt.isel.ls.model.Booking;
 import pt.isel.ls.router.request.Method;
@@ -23,12 +22,6 @@ public final class GetUserBookingsHandler extends RouteHandler {
         );
     }
 
-    /**
-     * Gets bookings booked by a user
-     * @param request The route request
-     * @return returns a HandlerResponse with a tableView for the router
-     * @throws RouteException Sent to the router
-     */
     @Override
     public HandlerResponse execute(RouteRequest request) {
         int uid = request.getPathParameter("uid").toInt();

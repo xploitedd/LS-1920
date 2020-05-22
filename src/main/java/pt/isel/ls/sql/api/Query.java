@@ -26,14 +26,29 @@ public class Query extends SqlType<Query, ResultSet> {
         return passException(stmt::executeQuery);
     }
 
+    /**
+     * Map the ResultSet of this query to a data class
+     * @param clazz data class that represents this result set
+     * @param <T> type of the data class
+     * @return a new Stream with the data
+     */
     public <T> Stream<T> mapToClass(Class<T> clazz) {
         ResultSet rs = execute();
         Stream<ResultSet> rsStream = StreamSupport.stream(new ResultSetSpliterator(rs), false);
         return rsStream.map(set -> mapToClass(clazz, set));
     }
 
+    /**
+     * Map the ResultSet of this query to a data class
+     * @param clazz data class that represents this result set
+     * @param rs result set to be mapped
+     * @param <T> type of the data class
+     * @return a class with a row of the result set
+     */
     private static <T> T mapToClass(Class<T> clazz, ResultSet rs) {
         return passException(() -> {
+            // get the necessary values from the result set
+            // all non-static fields must be included in the result set
             Field[] fields = getFields(clazz);
             Object[] fieldValues = new Object[fields.length];
             for (int i = 0; i < fields.length; i++) {
@@ -41,14 +56,23 @@ public class Query extends SqlType<Query, ResultSet> {
                 fieldValues[i] = rs.getObject(f.getName());
             }
 
+            // get the first constructor of this class
             Constructor<T> ctor = getConstructor(clazz);
+            // ... and create a new instance (fields must be in the same order)
             return ctor.newInstance(fieldValues);
         });
     }
 
+    /**
+     * Get non-static fields from a data class
+     * @param clazz data class
+     * @return field array
+     */
     private static synchronized Field[] getFields(Class<?> clazz) {
+        // use cache to optimize field retrieval
         Field[] fields = FIELD_CACHE.get(clazz);
         if (fields == null) {
+            // we only want non-static fields
             fields = getClassNonStaticFields(clazz)
                     .toArray(Field[]::new);
 
@@ -58,8 +82,16 @@ public class Query extends SqlType<Query, ResultSet> {
         return fields;
     }
 
+    /**
+     * Get data constructor from the specified data class
+     * @param clazz data class
+     * @param <T> type of the class
+     * @return constructor
+     */
     @SuppressWarnings("unchecked")
     private static synchronized <T> Constructor<T> getConstructor(Class<T> clazz) {
+        // the data constructor must be the only constructor in the class
+        // cache is also used to optimize constructor retrieval
         return (Constructor<T>) CONSTRUCTOR_CACHE.computeIfAbsent(clazz, k ->
                 clazz.getDeclaredConstructors()[0]);
     }

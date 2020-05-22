@@ -6,7 +6,6 @@ import pt.isel.ls.view.View;
 public class HandlerResponse {
 
     private final View view;
-    private String contentType;
     private int statusCode;
 
     /**
@@ -15,7 +14,6 @@ public class HandlerResponse {
      */
     public HandlerResponse(View view) {
         this.view = view;
-        this.contentType = "application/text";
         this.statusCode = 200;
     }
 
@@ -29,31 +27,12 @@ public class HandlerResponse {
     }
 
     /**
-     * Gets this Response content type
-     * Default: application/text
-     * @return content type
-     */
-    public String getContentType() {
-        return contentType;
-    }
-
-    /**
      * Sets the status code for this Response
      * @param statusCode status code to be set
      * @return the modified instance of RouteResponse
      */
     public HandlerResponse setStatusCode(int statusCode) {
         this.statusCode = statusCode;
-        return this;
-    }
-
-    /**
-     * Sets the content type for this response
-     * @param contentType content type to be set
-     * @return the modified instance of RouteResponse
-     */
-    public HandlerResponse setContentType(String contentType) {
-        this.contentType = contentType;
         return this;
     }
 
@@ -77,13 +56,12 @@ public class HandlerResponse {
 
         HandlerResponse that = (HandlerResponse) o;
         return statusCode == that.statusCode
-                && view.equals(that.view)
-                && contentType.equals(that.contentType);
+                && view.equals(that.view);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(view, contentType, statusCode);
+        return Objects.hash(view, statusCode);
     }
 
 }

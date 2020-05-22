@@ -71,7 +71,13 @@ public class Router implements Iterable<Router.Route> {
                 .setStatusCode(404);
     }
 
-    public String routeFromName(Class<? extends RouteHandler> clazz, Object... params) {
+    /**
+     * Get the route path that is handled by the specified RouteHandler
+     * @param clazz RouteHandler class to get the path from
+     * @param params path parameters
+     * @return a path if the router has the specified class, otherwise null
+     */
+    public String route(Class<? extends RouteHandler> clazz, Object... params) {
         for (Method method : Method.values()) {
             Map<String, Route> map = methodRoutes.get(method);
             if (map != null) {
@@ -84,7 +90,7 @@ public class Router implements Iterable<Router.Route> {
             }
         }
 
-        return "";
+        return null;
     }
 
     @Override
