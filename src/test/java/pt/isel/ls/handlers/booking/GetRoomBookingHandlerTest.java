@@ -1,5 +1,6 @@
 package pt.isel.ls.handlers.booking;
 
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import pt.isel.ls.DatasourceUtils;
@@ -13,6 +14,7 @@ import pt.isel.ls.sql.ConnectionProvider;
 import pt.isel.ls.sql.queries.BookingQueries;
 import pt.isel.ls.sql.queries.RoomQueries;
 import pt.isel.ls.sql.queries.UserQueries;
+import pt.isel.ls.view.booking.RoomBookingView;
 
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
@@ -59,7 +61,7 @@ public class GetRoomBookingHandlerTest {
                 "GET /rooms/1/bookings/1");
 
         HandlerResponse response = router.getHandler(request).execute(request);
-        //Assert.assertTrue(response.getView() instanceof TableView);
+        Assert.assertTrue(response.getView() instanceof RoomBookingView);
     }
 
     @Test(expected = RouteException.class)

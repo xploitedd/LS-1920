@@ -1,5 +1,6 @@
 package pt.isel.ls.handlers.room;
 
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import pt.isel.ls.DatasourceUtils;
@@ -15,6 +16,7 @@ import pt.isel.ls.sql.queries.BookingQueries;
 import pt.isel.ls.sql.queries.LabelQueries;
 import pt.isel.ls.sql.queries.RoomQueries;
 import pt.isel.ls.sql.queries.UserQueries;
+import pt.isel.ls.view.room.RoomsView;
 
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
@@ -66,8 +68,8 @@ public class GetRoomsHandlerTest {
                 "GET /rooms");
 
         HandlerResponse response = router.getHandler(request).execute(request);
+        Assert.assertTrue(response.getView() instanceof RoomsView);
         //TableView tableView = (TableView) response.getView();
-
         //Assert.assertEquals(3, tableView.getTable().getRowCount());
     }
 
@@ -82,8 +84,8 @@ public class GetRoomsHandlerTest {
                 "GET /rooms begin=" + begin.getTime() + "&duration=1420");
 
         HandlerResponse response = router.getHandler(request).execute(request);
+        Assert.assertTrue(response.getView() instanceof RoomsView);
         //TableView tableView = (TableView) response.getView();
-
         //Assert.assertEquals(2, tableView.getTable().getRowCount());
     }
 
@@ -97,8 +99,8 @@ public class GetRoomsHandlerTest {
                 "GET /rooms begin=" + begin.getTime() + "&duration=1430");
 
         HandlerResponse response = router.getHandler(request).execute(request);
+        Assert.assertTrue(response.getView() instanceof RoomsView);
         //TableView tableView = (TableView) response.getView();
-
         //Assert.assertEquals(2, tableView.getTable().getRowCount());
     }
 
@@ -112,8 +114,8 @@ public class GetRoomsHandlerTest {
                 "GET /rooms begin=" + begin.getTime() + "&duration=10");
 
         HandlerResponse response = router.getHandler(request).execute(request);
+        Assert.assertTrue(response.getView() instanceof RoomsView);
         //TableView tableView = (TableView) response.getView();
-
         //Assert.assertEquals(2, tableView.getTable().getRowCount());
     }
 
@@ -127,8 +129,8 @@ public class GetRoomsHandlerTest {
                 "GET /rooms begin=" + begin.getTime() + "&duration=10");
 
         HandlerResponse response = router.getHandler(request).execute(request);
+        Assert.assertTrue(response.getView() instanceof RoomsView);
         //TableView tableView = (TableView) response.getView();
-
         //Assert.assertEquals(3, tableView.getTable().getRowCount());
     }
 
@@ -139,8 +141,8 @@ public class GetRoomsHandlerTest {
                 "GET /rooms capacity=25");
 
         HandlerResponse response = router.getHandler(request).execute(request);
+        Assert.assertTrue(response.getView() instanceof RoomsView);
         //TableView tableView = (TableView) response.getView();
-
         //Assert.assertEquals(1, tableView.getTable().getRowCount());
     }
 
@@ -150,8 +152,8 @@ public class GetRoomsHandlerTest {
                 "GET /rooms label=teste1");
 
         HandlerResponse response = router.getHandler(request).execute(request);
+        Assert.assertTrue(response.getView() instanceof RoomsView);
         //TableView tableView = (TableView) response.getView();
-
         //Assert.assertEquals(1, tableView.getTable().getRowCount());
     }
 

@@ -1,11 +1,13 @@
 package pt.isel.ls.handlers.misc;
 
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import pt.isel.ls.router.Router;
 import pt.isel.ls.router.request.RouteRequest;
 import pt.isel.ls.router.response.HandlerResponse;
 import pt.isel.ls.exceptions.router.RouteException;
+import pt.isel.ls.view.misc.OptionView;
 
 public class OptionHandlerTest {
 
@@ -24,6 +26,6 @@ public class OptionHandlerTest {
 
         HandlerResponse response = router.getHandler(request).execute(request);
 
-        //Assert.assertTrue(response.getView() instanceof TableView);
+        Assert.assertTrue(response.getView() instanceof OptionView);
     }
 }
