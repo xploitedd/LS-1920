@@ -24,15 +24,15 @@ public class HttpApplication extends Application {
 
     @Override
     public void run() {
-        Server server = new Server(port);
-        ServletHandler handler = new ServletHandler();
-        AppServlet appServlet = new AppServlet(router);
-
-        handler.addServletWithMapping(new ServletHolder(appServlet), "/*");
-
-        server.setHandler(handler);
-
         try {
+            Server server = new Server(port);
+            ServletHandler handler = new ServletHandler();
+            AppServlet appServlet = new AppServlet(router);
+
+            handler.addServletWithMapping(new ServletHolder(appServlet), "/*");
+
+            server.setHandler(handler);
+            server.setErrorHandler(new HttpErrorHandler(router));
             server.start();
             LOG.info("Server listening on port {}", port);
             httpPool.addServer(server);

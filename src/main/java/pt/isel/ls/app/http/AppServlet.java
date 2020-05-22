@@ -2,6 +2,7 @@ package pt.isel.ls.app.http;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import pt.isel.ls.exceptions.AppException;
 import pt.isel.ls.router.Router;
 import pt.isel.ls.router.request.HeaderType;
 import pt.isel.ls.router.request.Method;
@@ -44,27 +45,15 @@ public class AppServlet extends HttpServlet {
     }
 
     private void processRequest(HttpServletRequest req, HttpServletResponse resp) {
-        Optional<Path> path = Path.of(req.getRequestURI());
-        if (path.isEmpty()) {
-            LOG.error("Invalid request received: {}", req.getRequestURI());
-            // bad request
-            return;
-        }
-
-        LOG.debug("new request received. path: {}", path.get());
-        Method method = Method.valueOf(req.getMethod());
-        RouteRequest request = new RouteRequest(
-                method,
-                path.get(),
-                processParameters(req),
-                processHeaders(req)
-        );
-
+        RouteRequest request = getRequest(req);
         try {
             HandlerResponse response = router.getHandler(request)
                     .execute(request);
 
             resp.setStatus(response.getStatusCode());
+
+            // need to use a StringWriter because we need to obtain the content length
+            // before sending the actual content
             StringWriter writer = new StringWriter();
             PrintWriter pw = new PrintWriter(writer);
 
@@ -84,9 +73,27 @@ public class AppServlet extends HttpServlet {
             resp.setContentLength(content.length);
             resp.getOutputStream().write(content);
         } catch (Exception e) {
-            resp.setStatus(500);
-            LOG.error("Error while executing the request: {}", e.getMessage());
+            LOG.error(e.toString());
+            throw new AppException("Internal Server Error");
         }
+    }
+
+    private static RouteRequest getRequest(HttpServletRequest req) {
+        Optional<Path> path = Path.of(req.getRequestURI());
+        if (path.isEmpty()) {
+            LOG.error("Invalid request received: {}", req.getRequestURI());
+            // ??? this error should never happen, but just in case
+            throw new AppException("Unexpected Invalid Http Path!");
+        }
+
+        LOG.debug("new request received. path: {}", path.get());
+        Method method = Method.valueOf(req.getMethod());
+        return new RouteRequest(
+                method,
+                path.get(),
+                processParameters(req),
+                processHeaders(req)
+        );
     }
 
     private static HashMap<String, List<Parameter>> processParameters(HttpServletRequest req) {
@@ -94,16 +101,18 @@ public class AppServlet extends HttpServlet {
         HashMap<String, List<Parameter>> parameterMap = new HashMap<>();
         for (String key : parameters.keySet()) {
             String[] values = parameters.get(key);
-            ArrayList<Parameter> list = new ArrayList<>(values.length);
-            boolean hasAny = false;
+            ArrayList<Parameter> list = null;
             for (String value : values) {
                 if (!value.isEmpty() && !value.isBlank()) {
+                    if (list == null) {
+                        list = new ArrayList<>(values.length);
+                    }
+
                     list.add(new Parameter(value));
-                    hasAny = true;
                 }
             }
 
-            if (hasAny) {
+            if (list != null) {
                 parameterMap.put(key, list);
             }
         }
