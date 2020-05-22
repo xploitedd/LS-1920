@@ -3,23 +3,32 @@ package pt.isel.ls.app.http;
 import org.eclipse.jetty.server.Server;
 import pt.isel.ls.exceptions.AppException;
 
-import java.util.HashSet;
+import java.util.HashMap;
 
 public class HttpPool {
 
-    private final HashSet<Server> pool = new HashSet<>();
+    private final HashMap<Integer, Server> pool = new HashMap<>();
 
-    public void addServer(Server server) {
-        pool.add(server);
+    public void addServer(int port, Server server) {
+        pool.put(port, server);
     }
 
     public void terminate() {
+        for (int port : pool.keySet()) {
+            terminate(port);
+        }
+    }
+
+    public void terminate(int port) {
+        Server server = pool.get(port);
+        if (server == null) {
+            throw new AppException("There is no server running on port " + port);
+        }
+
         try {
-            for (Server server : pool) {
-                if (server.isRunning()) {
-                    server.stop();
-                    pool.remove(server);
-                }
+            if (server.isRunning()) {
+                server.stop();
+                pool.remove(port);
             }
         } catch (Exception e) {
             throw new AppException(e.getMessage());

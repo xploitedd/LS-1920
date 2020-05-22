@@ -8,6 +8,7 @@ public enum Method {
     OPTION,
     PUT,
     DELETE,
-    LISTEN
+    LISTEN,
+    CLOSE
 
 }

@@ -35,7 +35,7 @@ public class HttpApplication extends Application {
             server.setErrorHandler(new HttpErrorHandler(router));
             server.start();
             LOG.info("Server listening on port {}", port);
-            httpPool.addServer(server);
+            httpPool.addServer(port, server);
         } catch (Exception e) {
             throw new AppException(e.getMessage());
         }
