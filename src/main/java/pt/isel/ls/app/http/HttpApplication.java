@@ -12,10 +12,13 @@ import pt.isel.ls.router.Router;
 public class HttpApplication extends Application {
 
     private static final Logger LOG = LoggerFactory.getLogger(HttpApplication.class);
+
+    private final HttpPool httpPool;
     private final int port;
 
-    public HttpApplication(Router router, int port) {
+    public HttpApplication(HttpPool httpPool, Router router, int port) {
         super(router);
+        this.httpPool = httpPool;
         this.port = port;
     }
 
@@ -32,7 +35,7 @@ public class HttpApplication extends Application {
         try {
             server.start();
             LOG.info("Server listening on port {}", port);
-            //server.join();
+            httpPool.addServer(server);
         } catch (Exception e) {
             throw new AppException(e.getMessage());
         }

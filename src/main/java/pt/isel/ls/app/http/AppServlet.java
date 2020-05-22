@@ -2,7 +2,6 @@ package pt.isel.ls.app.http;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import pt.isel.ls.exceptions.AppException;
 import pt.isel.ls.router.Router;
 import pt.isel.ls.router.request.HeaderType;
 import pt.isel.ls.router.request.Method;
@@ -16,7 +15,6 @@ import pt.isel.ls.view.ViewType;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.nio.charset.Charset;
@@ -85,7 +83,7 @@ public class AppServlet extends HttpServlet {
             byte[] content = writer.toString().getBytes();
             resp.setContentLength(content.length);
             resp.getOutputStream().write(content);
-        } catch (AppException | IOException e) {
+        } catch (Exception e) {
             resp.setStatus(500);
             LOG.error("Error while executing the request: {}", e.getMessage());
         }

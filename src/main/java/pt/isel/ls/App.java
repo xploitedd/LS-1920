@@ -7,6 +7,7 @@ import javax.sql.DataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import pt.isel.ls.app.ConsoleApplication;
+import pt.isel.ls.app.http.HttpPool;
 import pt.isel.ls.exceptions.AppException;
 import pt.isel.ls.handlers.booking.DeleteBookingHandler;
 import pt.isel.ls.handlers.booking.GetRoomBookingHandler;
@@ -40,6 +41,7 @@ public class App {
 
     private final ConnectionProvider connProvider;
     private final Router router;
+    private final HttpPool httpPool;
 
     private App() {
         String url = System.getenv(DATABASE_CONNECTION_ENV);
@@ -49,6 +51,7 @@ public class App {
 
         this.connProvider = new ConnectionProvider(getDataSource(url));
         this.router = new Router();
+        this.httpPool = new HttpPool();
 
         registerRoutes();
     }
@@ -80,10 +83,10 @@ public class App {
      */
     private void registerRoutes() {
         // Register All Routes
-        router.registerRoute(new ExitHandler());
+        router.registerRoute(new ExitHandler(httpPool));
         router.registerRoute(new GetTimeHandler());
         router.registerRoute(new OptionHandler(router));
-        router.registerRoute(new ListenHandler(router));
+        router.registerRoute(new ListenHandler(router, httpPool));
         router.registerRoute(new GetHomeHandler());
 
         // Room Handlers

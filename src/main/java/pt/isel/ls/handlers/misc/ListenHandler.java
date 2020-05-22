@@ -1,6 +1,7 @@
 package pt.isel.ls.handlers.misc;
 
 import pt.isel.ls.app.http.HttpApplication;
+import pt.isel.ls.app.http.HttpPool;
 import pt.isel.ls.handlers.RouteHandler;
 import pt.isel.ls.router.Router;
 import pt.isel.ls.router.request.Method;
@@ -13,8 +14,9 @@ public class ListenHandler extends RouteHandler {
     private static final int DEFAULT_PORT = 8080;
 
     private final Router router;
+    private final HttpPool httpPool;
 
-    public ListenHandler(Router router) {
+    public ListenHandler(Router router, HttpPool httpPool) {
         super(
                 Method.LISTEN,
                 "/",
@@ -22,6 +24,7 @@ public class ListenHandler extends RouteHandler {
         );
 
         this.router = router;
+        this.httpPool = httpPool;
     }
 
     @Override
@@ -37,7 +40,7 @@ public class ListenHandler extends RouteHandler {
                     return Integer.valueOf(System.getenv("PORT"));
                 });
 
-        new HttpApplication(router, port).run();
+        new HttpApplication(httpPool, router, port).run();
         return new HandlerResponse(new MessageView("New HTTP server created on port " + port));
     }
 

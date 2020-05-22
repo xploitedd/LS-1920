@@ -1,5 +1,6 @@
 package pt.isel.ls.handlers.misc;
 
+import pt.isel.ls.app.http.HttpPool;
 import pt.isel.ls.handlers.RouteHandler;
 import pt.isel.ls.router.request.Method;
 import pt.isel.ls.router.request.RouteRequest;
@@ -8,12 +9,16 @@ import pt.isel.ls.view.misc.ExitView;
 
 public final class ExitHandler extends RouteHandler {
 
-    public ExitHandler() {
+    private final HttpPool httpPool;
+
+    public ExitHandler(HttpPool httpPool) {
         super(
                 Method.EXIT,
                 "/",
                 "Exits the application"
         );
+
+        this.httpPool = httpPool;
     }
 
     /**
@@ -23,6 +28,7 @@ public final class ExitHandler extends RouteHandler {
      */
     @Override
     public HandlerResponse execute(RouteRequest request) {
+        httpPool.terminate();
         return new HandlerResponse(new ExitView());
     }
 
