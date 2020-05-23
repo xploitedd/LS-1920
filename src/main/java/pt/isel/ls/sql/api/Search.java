@@ -12,12 +12,12 @@ import java.util.stream.StreamSupport;
 
 import static pt.isel.ls.utils.ExceptionUtils.passException;
 
-public class Query extends SqlType<Query, ResultSet> {
+public class Search extends SqlType<Search, ResultSet> {
 
     private static final ConcurrentHashMap<Class<?>, Field[]> FIELD_CACHE = new ConcurrentHashMap<>();
     private static final ConcurrentHashMap<Class<?>, Constructor<?>> CONSTRUCTOR_CACHE = new ConcurrentHashMap<>();
 
-    Query(PreparedStatement stmt) {
+    Search(PreparedStatement stmt) {
         super(stmt);
     }
 
@@ -35,21 +35,25 @@ public class Query extends SqlType<Query, ResultSet> {
     public <T> Stream<T> mapToClass(Class<T> clazz) {
         ResultSet rs = execute();
         Stream<ResultSet> rsStream = StreamSupport.stream(new ResultSetSpliterator(rs), false);
-        return rsStream.map(set -> mapToClass(clazz, set));
+
+        Field[] fields = getFields(clazz);
+        Constructor<T> ctor = getConstructor(clazz);
+
+        return rsStream.map(set -> mapToClass(fields, ctor, set));
     }
 
     /**
      * Map the ResultSet of this query to a data class
-     * @param clazz data class that represents this result set
+     * @param fields field objects of the data class
+     * @param ctor constructor of the data class
      * @param rs result set to be mapped
      * @param <T> type of the data class
      * @return a class with a row of the result set
      */
-    private static <T> T mapToClass(Class<T> clazz, ResultSet rs) {
+    private static <T> T mapToClass(Field[] fields, Constructor<T> ctor, ResultSet rs) {
         return passException(() -> {
             // get the necessary values from the result set
             // all non-static fields must be included in the result set
-            Field[] fields = getFields(clazz);
             Object[] fieldValues = new Object[fields.length];
             for (int i = 0; i < fields.length; i++) {
                 Field f = fields[i];
@@ -57,7 +61,6 @@ public class Query extends SqlType<Query, ResultSet> {
             }
 
             // get the first constructor of this class
-            Constructor<T> ctor = getConstructor(clazz);
             // ... and create a new instance (fields must be in the same order)
             return ctor.newInstance(fieldValues);
         });

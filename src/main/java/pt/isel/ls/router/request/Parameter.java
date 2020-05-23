@@ -51,13 +51,10 @@ public class Parameter {
      */
     public long toTime() {
         try {
+            // ISO_LOCAL_DATE_TIME is the preferred representation
+            return Timestamp.valueOf(LocalDateTime.parse(value)).getTime();
+        } catch (DateTimeParseException e) {
             return toLong();
-        } catch (RouteException e) {
-            try {
-                return Timestamp.valueOf(LocalDateTime.parse(value)).getTime();
-            } catch (DateTimeParseException parseException) {
-                throw new RouteException("Invalid time: " + parseException.getMessage());
-            }
         }
     }
 

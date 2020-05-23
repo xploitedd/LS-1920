@@ -24,8 +24,9 @@ O modelo conceptual apresenta ainda as seguintes restrições:
 * ROOM:
     - o valor capacity não pode ser inferior a 1 
 * BOOKING:
-    - begin e end têm minutos multiplos de 10
+    - begin e end têm minutos múltiplos de 10
     - o tempo entre begin e end tem de ser superior a 10 minutos
+    - o tempo de início deve ser superior ao atual
 
  
 ### Modelação física ###
@@ -36,15 +37,52 @@ O modelo físico da base de dados está presente em [ResetTables.sql](../src/mai
 
 ### Processamento de comandos
 
-##### Interface com o utilizador
+##### Interface com o utilizador (via Consola)
 
-Para a interface com a consola foi criada uma nova classe `ConsoleApplication` que define como se obtém
-o *input* do utilizador. Com o *input* obtido, esta nova classe passa o mesmo para ser processado a uma
-instância de `AppProcessor`, previamente criado pela `App`.
+Para o processamento dos comandos via consola existe a partir da fase 3 a classe `ConsoleApplication`, que
+junta as funcionalidades das classes `ConsoleApplication` e `AppProcessor` da fase 2, e que extende a classe
+`Application`.
 
-A classe `AppProcessor` tem como objectivo processar os comandos, obtendo a sua resposta, mas também
-tem como objectivo modificar o tipo de *output* do comando (nesta fase encontram-se disponíveis `TEXT/HTML` 
-e `TEXT/PLAIN`), bem como modificar o destino do *output*, através dos *headers* passados ao *request*.
+A classe `ConsoleApplication` tem como objetivo ficar a aguardar que o utilizado especifique comandos na janela
+de consola, e quando existir um comando para ser processado então este será através do método `ConsoleApplication#processInput`.
+
+##### Interface com o utilizador (via HTTP)
+
+Na fase 3 foi implementada a interface com o utilizador através de **HTTP**. Esta nova interface permite
+que possam ser lançadas instâncias de servidores **HTTP** pela consola através do comando `LISTEN`
+(e.g. `LISTEN /`).
+
+Para a criação de um servidor **HTTP** existe a classe `HttpApplication` que é responsável pela configuração
+do novo servidor a ser criado, ou seja, é responsável por definir qual é o *servlet*, qual são as *routes* que
+estão associadas a esse *servlet* e por iniciar o servidor, adicionando o mesmo à *pool* de servidores
+gerida pela classe *HttpPool*. De modo a suportar a implementação do servidor **HTTP** foram usadas as 
+bibliotecas *Jetty* e *JavaX Servlet*.
+
+Para processar e responder aos pedidos feitos via **HTTP** foi usado um *servlet*, com implementação
+em `AppServlet`. Este *servlet* tem como responsabilidade processar pedidos `GET`, `POST`, `PUT` e `DELETE`
+através do `Router` da aplicação e responder a estes emitindo por defeito uma resposta em `TEXT/HTML`.
+
+Para especificar a porta do servidor no comando `LISTEN` é possível através de duas diferentes formas
+listadas abaixo por ordem de prioridade:
+
+- Parâmetro do comando `LISTEN` (e.g. `LISTEN / port=8080`)
+- Variável de ambiente `PORT`
+
+Caso nenhuma porta seja especificada através destas duas formas então o comando recorre à porta padrão 8080.
+
+Ainda existe a classe `HttpErrorHandler` que é usada durante a configuração do servidor para especificar
+a resposta que deve ser apresentada ao utilizador na ocorrência de uma exceção durante o processamento
+do pedido (`AppServlet`), sendo que a resposta apenas contém:
+
+- O código de erro `HTTP` associado à exceção
+- Uma mensagem breve
+- Um *link* para a página inicial
+
+De modo a existir um melhor controlo das instâncias **HTTP** criadas pela aplicação, foi ainda desenvolvido
+o comando `CLOSE`, não especificado pelo enunciado do trabalho. Este comando tem como objetivo fechar uma
+determinada instância de **HTTP** numa determinada porta, ou seja, a execução de `CLOSE / port=8080` na consola
+fecha a instância que está associada à porta 8080 caso exista, caso contrário é enviada uma mensagem
+de erro ao utilizador.
 
 ##### Handlers e Parâmetros de Request
 
@@ -54,18 +92,16 @@ A interface `RouteHandler` contém um único método `execute` resposável
 por executar o pedido e responder através de um `HandlerResponse`.
 
 Cada *handler* devolve um `HandlerResponse` que, nesta fase do trabalho,
-contém um `View`. O `View` é o responsável por apresentar a informação
-obtida no *request* ao utilizador no formato pretendido, sendo que para
-tal existem vários tipos de `View` (e.g `TableView`, `MessageView`, ...).
+contém um `View`.
 
 Os parâmetros dos comandos são passados através da classe `RouteRequest`
 que para além da informação sobre o request, como o `Path`, contém métodos
 para obter parâmetros de *path* (e.g `/user/{uid}`, onde `uid` é o parâmetro) 
 e parâmetros do *request* em sí (e.g `?name=Jose`).
 
-Enquanto que os parâmetros do *path* são processados durante o processo
+Enquanto os parâmetros do *path* são processados durante o processo
 de *routing*, os parâmetros do *request* são processados pela classe
-`RouteRequest` na chamada do método `of`, que tem como objectivo criar
+`RouteRequest` na chamada do método `of`, que tem como objetivo criar
 um novo `RouteRequest` através de uma `String` de *request* (e.g 
 `POST /users ?name=a&email=a@b.c`).
 
@@ -90,9 +126,6 @@ execução com acesso a uma instância de `RouteRequest` poderão obter um deter
 estão ainda especificados na classe `HeaderType`, sendo que se o utilizador não passar um *header* válido
 uma exceção será lançada.
 
-A resolução do valor dos *headers* `accept` e `file-name` é feita na classe `AppProcessor`, visto que é esta
-classe que tem como objectivo redirecionar e modificar o tipo de *output*.
-
 ### Encaminhamento dos comandos
 
 Para o `Router` poder encaminhar os comandos estes devem ser registados no ínicio
@@ -111,6 +144,8 @@ contrário um *handler* padrão (*handler* de 404) é passado ao *caller*.
 - `OPTION` que lista as *routes* disponíveis e a sua descrição
 - `PUT` que altera um recurso
 - `DELETE` que elimina um determinado recurso
+- `LISTEN` que inicia um novo servidor **HTTP** numa determinada porta
+- `CLOSE` que fecha um servidor **HTTP** associado a uma porta
 
 ##### Template da Route
 
@@ -156,10 +191,9 @@ como parâmetro o bloco transacional a ser processado na forma da interface func
 Para além do processamento transacional, a classe `ConnectionProvider` gere também o tempo de vida de
 cada conexão à base de dados, sendo que este deve ser o mesmo que o tempo de vida de cada transação.
 
-Caso algum *handler* necessite de realizar pedidos ao *data source* corrente
-da aplicação, esse mesmo *handler* deverá conter um constructor público
-no qual recebe uma classe do tipo `ConnectionProvider`. Cada método do *handler* poderá assim
-realizar *queries* transacionais à fonte de dados presente no `ConnectionProvider`.
+De modo a realizar *queries* à base de dados é necessário passar uma instância de `SqlHandler` às classes
+de *queries*. Esta instância é passada através da interface `Provider` como argumento da função `apply`, e
+pode ser usada por todos os *handlers* na forma de expressão lambda.
 
 ### Acesso a dados
 
@@ -168,15 +202,45 @@ Para realizar o acesso a dados (obter e inserir informação na fonte de dados) 
 de dados, isto é, para cada relação da base de dados deve existir uma classe de *queries* que
 operará sob esta relação.
 
-Todas as classes de *queries* deve extender a classe abstracta `DatabaseQueries`. Esta classe abstracta
+Todas as classes de *queries* deve extender a classe abstrata `DatabaseQueries`. Esta classe abstrata
 obriga a que cada momento de criação de uma nova classe deste tipo tenha de receber pelo constructor
-uma instância de `Connection` (que será obtida através do uso do `ConnectionProvider` nos *handlers*).
+uma instância de `SqlHandler` (que será obtida através do uso do `ConnectionProvider` nos *handlers*).
+
+#### API fluente SQL
+
+Para melhorar as *queries* à Base de Dados foi criada uma classe de alto nível que gere os `PreparedStatement`
+e os `ResultSet` da *query*, `SqlHandler`. Esta nova *api* permite executar pesquisas na base de dados
+facilmente através dos métodos disponíveis.
+
+Para diferentes categorias de *queries* existem classes distintas (`Update`, `Search`), sendo que é possível ao
+método que está a realizar a interrogação obter instâncias destas classes através dos métodos presentes
+em `SqlHandler`.
+
+Em todas as classes de tipo existem métodos para fazer *bind* de parâmetros ao `PreparedStatement`, para isto
+é apenas necessário o programador passar o parâmetro como argumento da função `bind` (presente em `SqlType`)
+e esta função tratará de associar o parâmetro ao *statement* que está a ser gerido pela instância.
+
+Adicionalmente a classe `Search` da *api* permite realizar `map` de um `ResultSet` para instâncias de classes do
+modelo, por exemplo, dado um `ResultSet` que incluí uma lista de utilizadores é possível mapear este resultado
+para `Stream<User>` através da chamada à função terminal `mapToClass(User.class)`.
+
+(Inspirado em [JDBI Fluent API](http://jdbi.org/#_fluent_api))
 
 ### Processamento de erros
 
-Todos os erros que ocorrentes durante o processamento de uma *route* são lançados através de exceções,
-nomeadamente através de `RouteException` ou seus derivados. Estas exceções apenas devem ser tratadas
-no `AppProcessor`, classe que decidirá qual é a melhor forma de apresentar os erros lançados.
+Todos os erros são tratados como exceções, ou seja, uma exceção representa um erro. Para este efeito
+existem exceções dedicadas para diversas categorias de erro ocorrentes durante a aplicação, tais como:
+
+- `AppException` - quando existe um erro da aplicação
+- `RouteException : AppException` - que pode ocorrer durante o processamento de uma `Route`/`Handler`
+
+Existem ainda mais exceções que determinam erros específicos, contudo, as classes apresentadas
+constituem a principal representação de erros no decorrer da aplicação.
+
+No caso da ocorrência de um erro via consola então o erro ocorrido é apresentado nesta, sendo que a classe
+responsável por apresentar a `View` da exceção é `ConsoleApplication`.
+
+No caso em que o erro ocorreu sob um pedido `HTTP`, a classe responsável por atender este é `HttpErrorHandler`.
 
 ### Domain Specific Language (DSL)
 
@@ -198,6 +262,21 @@ que recebe como parâmetro a chave e o valor do atributo a ser adicionado.
 Para utilizar a **DSL** existe uma classe auxiliar `Dsl`, que permite ao utilizador desta especificar a árvore
 de uma forma semelhante ao que faria se especificasse esta árvore num ficheiro **HTML**.
 
+### Views
+
+Na aplicação existem diversas *views* que representam diferentes respostas ao utilizador. Estas `Views`
+representam, até à fase 3, apresentações textuais e no formato **HTML**. Cada `View` recebe através
+de parâmetros do constructor os dados necessários a apresentar na mesma.
+
+Para apresentar os dados podem ser usadas as classes `HtmlTableBuilder`, no caso de pretender uma tabela
+em **HTML**, ou a classe `StringDetailBuilder` se o objetivo for apresentar uma lista de detalhes em formato
+textual, por exemplo. Estas classes utilitárias estão presentes em `pt.isel.ls.view.utils` e implementam
+uma *api* fluente de utilização fácil para o programador das *views*.
+
+Para que aplicação possa mostrar uma determinada `View` ao utilizador é necessário existir um `ViewHandler`.
+Este `ViewHandler` é responsável por implementar uma camada de abstração entre a aplicação e a visualização,
+passando a informação necessária.
+
 ## Avaliação crítica
 
 Na fase 1 do projecto *bookings* que fossem criados no mesmo horário e na mesma sala eram considerados
@@ -206,9 +285,13 @@ como válidos, contudo este problema foi resolvido na fase 2 pelo que isto não 
 Na fase 2 foram ainda modificados os `RouteHandler`, sendo que são estes os responsáveis por fornecer
 informação sobre a `Route` ao `Router` (e.g *path*, *method*, *description*, ...).
 
-Pretendem-se ainda melhorar os seguintes aspectos:
-- API de construção de *queries sql* (ver [JDBI Fluent API](http://jdbi.org/#_fluent_api) por exemplo)
-- Adicionar outro tipo de exceções (derivadas ou não de `RouteException`).
-- `GetRoomsHandler` dado que se encontra mal optimizado e propenso a erros futuros.
-- Criar uma tabela "vertical" de modo a que resultados em que apenas seja esperado uma linha
-possa ser apresentados de uma forma mais conveniente para o utilizador da aplicação.
+Na fase 3 foram feitas melhorias significativas no código, principalmente no código de interrogações
+à base de dados e nas *views*. Simplificou-se a utilização de exceções na aplicação, dado que `AppException`
+passa a ser uma `RuntimeException`, não sendo obrigatória a criação de blocos de `try-catch` em expressões
+*lamba*, por exemplo.
+
+Os objetivos para a próxima fase são:
+
+- Optimizar o código e realizar análises de complexidade em partes críticas.
+    - Nomeadamente, optimizar `StringTableBuilder`
+- Incluir imagens demonstrativas no relatório.

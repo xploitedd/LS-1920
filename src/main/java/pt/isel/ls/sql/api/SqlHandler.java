@@ -49,8 +49,8 @@ public class SqlHandler {
      * @param query query
      * @return a new Query
      */
-    public Query createQuery(String query) {
-        return passException(() -> new Query(conn.prepareStatement(query)));
+    public Search createQuery(String query) {
+        return passException(() -> new Search(conn.prepareStatement(query)));
     }
 
 }
