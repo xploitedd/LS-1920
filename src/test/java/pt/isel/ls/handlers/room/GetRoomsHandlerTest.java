@@ -25,19 +25,18 @@ import java.util.LinkedList;
 public class GetRoomsHandlerTest {
 
     private static Router router;
-    private static final LocalDateTime now = LocalDateTime.now();
+    private LocalDateTime begin2h;
+    private LocalDateTime end1d;
 
     @Before
     public void beforeEach() throws RouteException {
+        begin2h = LocalDateTime.now().plusHours(2).withMinute(10);
+        end1d = begin2h.plusDays(1);
+        Timestamp begin = Timestamp.valueOf(begin2h);
+        Timestamp end = Timestamp.valueOf(end1d);
         ConnectionProvider provider = new ConnectionProvider(DatasourceUtils.getDataSource());
         DatasourceUtils.executeFile("CreateTables.sql");
         LinkedList<Label> labelList = new LinkedList<>();
-        Timestamp begin = Timestamp.valueOf(LocalDateTime.of(
-                now.getYear(), now.getMonth(), now.getDayOfMonth(), now.getHour() + 1, 10
-        ));
-        Timestamp end = Timestamp.valueOf(LocalDateTime.of(
-                now.getYear(), now.getMonth(), now.getDayOfMonth() + 1, now.getHour() + 1, 10
-        ));
         provider.execute(conn -> {
             LabelQueries labelQueries = new LabelQueries(conn);
             Label l1 = labelQueries.createNewLabel("teste1");
@@ -75,9 +74,7 @@ public class GetRoomsHandlerTest {
 
     @Test
     public void getRoomsByTime1() throws RouteException {
-        Timestamp begin = Timestamp.valueOf(LocalDateTime.of(
-                now.getYear(), now.getMonth(), now.getDayOfMonth(), now.getHour() + 1, 20
-        ));
+        Timestamp begin = Timestamp.valueOf(begin2h.plusMinutes(10));
 
         //Well inside the booking
         RouteRequest request = RouteRequest.of(
@@ -91,9 +88,7 @@ public class GetRoomsHandlerTest {
 
     @Test
     public void getRoomsByTime2() throws RouteException {
-        Timestamp begin = Timestamp.valueOf(LocalDateTime.of(
-                now.getYear(), now.getMonth(), now.getDayOfMonth(), now.getHour() + 1, 10
-        ));
+        Timestamp begin = Timestamp.valueOf(begin2h);
         //same start as booking, different end
         RouteRequest request = RouteRequest.of(
                 "GET /rooms begin=" + begin.getTime() + "&duration=1430");
@@ -106,9 +101,7 @@ public class GetRoomsHandlerTest {
 
     @Test
     public void getRoomsByTime3() throws RouteException {
-        Timestamp begin = Timestamp.valueOf(LocalDateTime.of(
-                now.getYear(), now.getMonth(), now.getDayOfMonth() + 1, now.getHour() + 1, 0
-        ));
+        Timestamp begin = Timestamp.valueOf(end1d.minusMinutes(10));
         //same end as booking, different start
         RouteRequest request = RouteRequest.of(
                 "GET /rooms begin=" + begin.getTime() + "&duration=10");
@@ -121,9 +114,7 @@ public class GetRoomsHandlerTest {
 
     @Test
     public void getRoomsByTime4() throws RouteException {
-        Timestamp begin = Timestamp.valueOf(LocalDateTime.of(
-                now.getYear(), now.getMonth(), now.getDayOfMonth(), now.getHour() + 1, 0
-        ));
+        Timestamp begin = Timestamp.valueOf(begin2h.minusMinutes(10));
         //before booking, should be valid
         RouteRequest request = RouteRequest.of(
                 "GET /rooms begin=" + begin.getTime() + "&duration=10");

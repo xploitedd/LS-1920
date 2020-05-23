@@ -17,11 +17,13 @@ import java.util.LinkedList;
 public class PostBookingHandlerTest {
 
     private static Router router;
+    private LocalDateTime begin2h;
 
     @Before
     public void beforeEach() throws RouteException {
         ConnectionProvider provider = new ConnectionProvider(DatasourceUtils.getDataSource());
         DatasourceUtils.executeFile("CreateTables.sql");
+        begin2h = LocalDateTime.now().plusHours(2).withMinute(10);
         provider.execute(conn -> {
             UserQueries userQueries = new UserQueries(conn);
             userQueries.createNewUser("teste", "teste@teste.com");
@@ -43,10 +45,7 @@ public class PostBookingHandlerTest {
 
     @Test
     public void createNewBooking() throws RouteException {
-        LocalDateTime now = LocalDateTime.now();
-        long begin = Timestamp.valueOf(LocalDateTime.of(
-                now.getYear(), now.getMonth(), now.getDayOfMonth(), now.getHour() + 1, 10
-        )).getTime();
+        long begin = Timestamp.valueOf(begin2h).getTime();
 
         RouteRequest request = RouteRequest.of(
                 "POST /rooms/1/bookings uid=1&begin=" + begin + "&duration=10");
@@ -56,10 +55,7 @@ public class PostBookingHandlerTest {
 
     @Test(expected = RouteException.class)
     public void createNewInvalidBooking() throws RouteException {
-        LocalDateTime now = LocalDateTime.now();
-        long begin = Timestamp.valueOf(LocalDateTime.of(
-                now.getYear(), now.getMonth(), now.getDayOfMonth(), now.getHour() + 1, 10
-        )).getTime();
+        long begin = Timestamp.valueOf(begin2h).getTime();
 
         RouteRequest request = RouteRequest.of(
                 "POST /rooms/1/bookings uid=1&begin=" + begin + "&duration=5");
@@ -81,44 +77,34 @@ public class PostBookingHandlerTest {
 
     @Test(expected = RouteException.class)
     public void createNewOverlappingBooking_1() throws RouteException {
-        LocalDateTime now = LocalDateTime.now();
-        long begin1 = Timestamp.valueOf(LocalDateTime.of(
-                now.getYear(), now.getMonth(), now.getDayOfMonth(), now.getHour() + 1, 10
-        )).getTime();
+        long begin1 = Timestamp.valueOf(begin2h).getTime();
 
         RouteRequest request1 = RouteRequest.of(
                 "POST /rooms/1/bookings uid=1&begin=" + begin1 + "&duration=10");
 
         router.getHandler(request1).execute(request1);
 
-        long begin2 = Timestamp.valueOf(LocalDateTime.of(
-                now.getYear(), now.getMonth(), now.getDayOfMonth(), now.getHour() + 1, 5
-        )).getTime();
+        long begin2 = Timestamp.valueOf(begin2h.minusMinutes(10)).getTime();
 
         RouteRequest request2 = RouteRequest.of(
-                "POST /rooms/1/bookings uid=1&begin=" + begin2 + "&duration=10");
+                "POST /rooms/1/bookings uid=1&begin=" + begin2 + "&duration=20");
 
         router.getHandler(request2).execute(request2);
     }
 
     @Test
     public void createNewNoOverlappingBooking_1() throws RouteException {
-        LocalDateTime now = LocalDateTime.now();
-        long begin1 = Timestamp.valueOf(LocalDateTime.of(
-                now.getYear(), now.getMonth(), now.getDayOfMonth(), now.getHour() + 1, 10
-        )).getTime();
+        long begin1 = Timestamp.valueOf(begin2h).getTime();
 
         RouteRequest request1 = RouteRequest.of(
                 "POST /rooms/1/bookings uid=1&begin=" + begin1 + "&duration=10");
 
         router.getHandler(request1).execute(request1);
 
-        long begin2 = Timestamp.valueOf(LocalDateTime.of(
-                now.getYear(), now.getMonth(), now.getDayOfMonth(), now.getHour() + 1, 0
-        )).getTime();
+        long begin2 = Timestamp.valueOf(begin2h.minusMinutes(10)).getTime();
 
         RouteRequest request2 = RouteRequest.of(
-                "POST /rooms/2/bookings uid=1&begin=" + begin2 + "&duration=20");
+                "POST /rooms/1/bookings uid=1&begin=" + begin2 + "&duration=10");
 
         router.getHandler(request2).execute(request2);
     }

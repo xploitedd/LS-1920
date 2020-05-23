@@ -46,7 +46,7 @@ public class GetLabelHandlerTest {
         RouteRequest request = RouteRequest.of(
                 "GET /labels/2");
 
-        HandlerResponse response = router.getHandler(request).execute(request);
+        router.getHandler(request).execute(request);
     }
 
 }
