@@ -11,7 +11,7 @@ import pt.isel.ls.sql.queries.LabelQueries;
 import pt.isel.ls.sql.queries.RoomLabelQueries;
 import pt.isel.ls.view.label.LabelView;
 
-import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class GetLabelHandler extends RouteHandler {
 
@@ -28,9 +28,8 @@ public class GetLabelHandler extends RouteHandler {
     public HandlerResponse execute(RouteRequest request) {
         int lid = request.getPathParameter("lid").toInt();
         Label label = provider.execute(handler -> new LabelQueries(handler).getLabelById(lid));
-        Iterable<Room> rooms = provider.execute(handler -> new RoomLabelQueries(handler)
-                    .getLabeledRooms(lid)
-                    .collect(Collectors.toList()));
+        Stream<Room> rooms = provider.execute(handler -> new RoomLabelQueries(handler)
+                    .getLabeledRooms(lid));
 
         return new HandlerResponse(new LabelView(label, rooms));
     }

@@ -1,7 +1,6 @@
 package pt.isel.ls.handlers.room;
 
 import pt.isel.ls.handlers.RouteHandler;
-import pt.isel.ls.model.Booking;
 import pt.isel.ls.model.Room;
 import pt.isel.ls.router.request.Method;
 import pt.isel.ls.router.request.Parameter;
@@ -18,6 +17,7 @@ import pt.isel.ls.view.room.RoomsView;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -39,15 +39,19 @@ public final class GetRoomsHandler extends RouteHandler {
         Optional<List<Parameter>> paramCapacity = request.getOptionalParameter("capacity");
         Optional<List<Parameter>> paramLabel = request.getOptionalParameter("label");
 
-        Iterable<Room> rooms = provider.execute(handler -> {
-            Stream<Room> ret = new RoomQueries(handler).getRooms();
+        Set<Room> rooms = provider.execute(handler -> {
+            Stream<Room> str = new RoomQueries(handler).getRooms();
             if (paramCapacity.isPresent()) {
                 int minCapacity = paramCapacity.get().get(0).toInt();
-                ret = ret.filter(room -> room.getCapacity() >= minCapacity);
+                str = str.filter(room -> room.getCapacity() >= minCapacity);
             }
 
+            Set<Room> ret = str.collect(Collectors.toSet());
             if (paramLabel.isPresent()) {
-                ret = filterByLabels(handler, ret, paramLabel.get());
+                ret = filterByLabels(handler, ret, paramLabel.get()
+                        .stream()
+                        .map(Parameter::toString)
+                        .collect(Collectors.toList()));
             }
 
             if (paramBegin.isPresent() && paramDuration.isPresent()) {
@@ -56,8 +60,7 @@ public final class GetRoomsHandler extends RouteHandler {
                 ret = filterByTime(handler, ret, begin, end);
             }
 
-            // collect the results due to the queries being made on filter operations
-            return ret.collect(Collectors.toList());
+            return ret;
         });
 
         return new HandlerResponse(new RoomsView(rooms));
@@ -67,45 +70,32 @@ public final class GetRoomsHandler extends RouteHandler {
      * Filter the specified stream by elements that have all of the
      * specified labels
      * @param handler SQL Handler
-     * @param ret Stream to be filtered
+     * @param ret Set to be filtered
      * @param labels Labels to filter for
-     * @return The filtered stream
+     * @return The filtered set
      */
-    private static Stream<Room> filterByLabels(SqlHandler handler, Stream<Room> ret, List<Parameter> labels) {
+    private static Set<Room> filterByLabels(SqlHandler handler, final Set<Room> ret, List<String> labels) {
         RoomLabelQueries rlq = new RoomLabelQueries(handler);
-        for (Parameter labelPar : labels) {
-            ret = ret.filter(room ->
-                    rlq.isLabelInRoom(room.getRid(), labelPar.toString()));
-        }
-
-        return ret;
+        return rlq.getRoomsWithLabels(labels)
+                .filter(ret::contains)
+                .collect(Collectors.toSet());
     }
 
     /**
      * Filter the specified stream by elements that are available
      * in the specified time slot
      * @param handler SQL Handler
-     * @param ret Stream to be filtered
+     * @param ret Set to be filtered
      * @param begin begin instant of the time slot
      * @param end end instant of the time slot
-     * @return The filtered stream
+     * @return The filtered set
      */
-    private static Stream<Room> filterByTime(SqlHandler handler, Stream<Room> ret, long begin, long end) {
+    private static Set<Room> filterByTime(SqlHandler handler, final Set<Room> ret, long begin, long end) {
         Interval i = new Interval(begin, end);
-        return ret.filter(room -> {
-            Iterable<Booking> bookings = new BookingQueries(handler)
-                    .getBookingsByRid(room.getRid())
-                    .collect(Collectors.toList());
-
-            for (Booking b : bookings) {
-                Interval bi = new Interval(b.getBegin().getTime(), b.getEnd().getTime());
-                if (i.isOverlapping(bi)) {
-                    return false;
-                }
-            }
-
-            return true;
-        });
+        return new BookingQueries(handler)
+                .getRoomsAvailable(i)
+                .filter(ret::contains)
+                .collect(Collectors.toSet());
     }
 
 }

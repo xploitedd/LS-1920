@@ -34,7 +34,8 @@ public final class PostRoomHandler extends RouteHandler {
     public HandlerResponse execute(RouteRequest request) {
         Optional<List<Parameter>> optLabels = request.getOptionalParameter("label");
         String desc = request.getOptionalParameter("description")
-                .map(Object::toString).orElse(null);
+                .map(Object::toString)
+                .orElse(null);
 
         String name = request.getParameter("name").get(0).toString();
         int capacity = request.getParameter("capacity").get(0).toInt();
@@ -56,7 +57,7 @@ public final class PostRoomHandler extends RouteHandler {
             return new RoomQueries(handler).createNewRoom(name, location, capacity, desc, labels);
         });
 
-        return new HandlerResponse(new IdentifierView("room",inserted.getRid()));
+        return new HandlerResponse(new IdentifierView("room", inserted.getRid()));
     }
 
 }

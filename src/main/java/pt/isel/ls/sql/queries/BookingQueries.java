@@ -8,6 +8,7 @@ import java.util.stream.Stream;
 
 import pt.isel.ls.model.Booking;
 import pt.isel.ls.exceptions.router.RouteException;
+import pt.isel.ls.model.Room;
 import pt.isel.ls.sql.api.SqlHandler;
 import pt.isel.ls.utils.Interval;
 
@@ -30,11 +31,6 @@ public class BookingQueries extends DatabaseQueries {
      */
     public Booking createNewBooking(int rid, int uid, Timestamp begin, Timestamp end) {
         doBookingConstraintCheck(begin, end);
-        // check that begin isn't in the past
-        Timestamp currTime = Timestamp.valueOf(LocalDateTime.now());
-        if (currTime.after(begin)) {
-            throw new RouteException("Begin time cannot come before current time ");
-        }
         // check overlapping bookings
         Interval i2 = new Interval(begin.getTime(), end.getTime());
         getBookingsByRid(rid).forEach(booking -> checkOverlap(booking, i2));
@@ -142,11 +138,11 @@ public class BookingQueries extends DatabaseQueries {
                 .bind(bid)
                 .execute();
 
-        if (res > 0) {
-            return new Booking(bid, rid, newUid, newBegin, newEnd);
+        if (res == 0) {
+            throw new RouteException("Couldn't update the booking!");
         }
 
-        throw new RouteException("Couldn't update the booking!");
+        return new Booking(bid, rid, newUid, newBegin, newEnd);
     }
 
     public int deleteBooking(int rid, int bid) {
@@ -154,6 +150,15 @@ public class BookingQueries extends DatabaseQueries {
             .bind(rid)
             .bind(bid)
             .execute();
+    }
+
+    public Stream<Room> getRoomsAvailable(Interval interval) {
+        return handler.createQuery("select r.rid, \"name\", location, capacity, description "
+                + "from (room r join description d on r.rid = d.rid) "
+                + "where r.rid in (select rid from booking where not (\"end\" <= ? or begin >= ?));")
+                .bind(new Timestamp(interval.getEnd()))
+                .bind(new Timestamp(interval.getEnd()))
+                .mapToClass(Room.class);
     }
 
     private static void checkOverlap(Booking b1, Interval i2) throws RouteException {
@@ -164,6 +169,12 @@ public class BookingQueries extends DatabaseQueries {
     }
 
     private static void doBookingConstraintCheck(Timestamp begin, Timestamp end) {
+        // check that begin isn't in the past
+        Timestamp currTime = Timestamp.valueOf(LocalDateTime.now());
+        if (currTime.after(begin)) {
+            throw new RouteException("Begin time cannot come before current time ");
+        }
+
         long lbegin = begin.getTime() / 1000;
         long lend = end.getTime() / 1000;
         if (lend - lbegin < BOOKING_MIN_TIME) {

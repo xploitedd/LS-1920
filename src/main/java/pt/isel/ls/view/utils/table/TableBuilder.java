@@ -5,8 +5,6 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.function.Function;
-import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
 
 public abstract class TableBuilder<T, V, R, U> {
 
@@ -21,8 +19,7 @@ public abstract class TableBuilder<T, V, R, U> {
     }
 
     public TableBuilder<T, V, R, U> withColumn(V columnName, Function<T, R> mapper) {
-        Stream<T> content = StreamSupport.stream(this.content.spliterator(), false);
-        Iterator<R> iter = content.map(mapper)
+        Iterator<R> iter = new MappingIterable<>(content, mapper)
                 .iterator();
 
         addColumnData(iter);
@@ -43,5 +40,35 @@ public abstract class TableBuilder<T, V, R, U> {
     }
 
     public abstract U build();
+
+    private static class MappingIterable<T, R> implements Iterable<R> {
+
+        private final Iterable<T> iterable;
+        private final Function<T, R> mapper;
+
+        public MappingIterable(Iterable<T> iterable, Function<T, R> mapper) {
+            this.iterable = iterable;
+            this.mapper = mapper;
+        }
+
+        @Override
+        public Iterator<R> iterator() {
+            return new Iterator<>() {
+                final Iterator<T> iter = iterable.iterator();
+
+                @Override
+                public boolean hasNext() {
+                    return iter.hasNext();
+                }
+
+                @Override
+                public R next() {
+                    return mapper.apply(iter.next());
+                }
+
+            };
+        }
+
+    }
 
 }

@@ -3,6 +3,7 @@ package pt.isel.ls.sql.queries;
 import pt.isel.ls.model.Label;
 import pt.isel.ls.model.Room;
 import pt.isel.ls.exceptions.router.RouteException;
+import pt.isel.ls.sql.api.Search;
 import pt.isel.ls.sql.api.SqlHandler;
 import pt.isel.ls.sql.api.Update;
 
@@ -68,13 +69,21 @@ public class RoomLabelQueries extends DatabaseQueries {
                 .mapToClass(Label.class);
     }
 
-    public boolean isLabelInRoom(int rid, String label) {
-        return passException(() -> handler
-                .createQuery("SELECT * FROM (room_label rl JOIN label l on rl.lid=l.lid) WHERE rid=? AND l.name=?")
-                .bind(rid)
-                .bind(label)
-                .execute()
-                .next());
+    public Stream<Room> getRoomsWithLabels(List<String> labels) {
+        int count = labels.size();
+        String params = "?,".repeat(count);
+        Search query = handler.createQuery("select r.rid, \"name\", location, capacity, description"
+                + " from (room r join description d on r.rid = d.rid) where r.rid in ("
+                + "select rid from (room_label rl join label l on rl.lid = l.lid) "
+                + "where l.name in (" + params.substring(0, params.length() - 1) + ") "
+                + "group by rid having count(rid) = ?);");
+
+        for (String label : labels) {
+            query.bind(label);
+        }
+
+        return query.bind(count)
+                .mapToClass(Room.class);
     }
 
     public boolean doesLabelExist(int lid) {

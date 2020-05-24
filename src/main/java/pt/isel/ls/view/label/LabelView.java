@@ -15,7 +15,7 @@ import pt.isel.ls.view.utils.detail.StringDetailBuilder;
 import java.io.PrintWriter;
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
+import java.util.stream.Stream;
 
 import static pt.isel.ls.model.dsl.Dsl.a;
 import static pt.isel.ls.model.dsl.Dsl.br;
@@ -24,9 +24,9 @@ import static pt.isel.ls.model.dsl.Dsl.div;
 public class LabelView extends View {
 
     private final Label label;
-    private final Iterable<Room> rooms;
+    private final Stream<Room> rooms;
 
-    public LabelView(Label label, Iterable<Room> rooms) {
+    public LabelView(Label label, Stream<Room> rooms) {
         super("Label " + label.getName());
         this.label = label;
         this.rooms = rooms;
@@ -34,7 +34,7 @@ public class LabelView extends View {
 
     @Override
     protected Node getHtmlBody(ViewHandler handler) {
-        List<AnchorText> roomsLst = StreamSupport.stream(rooms.spliterator(), false)
+        List<AnchorText> roomsLst = rooms
                 .map(r -> a(handler.route(GetRoomHandler.class, r.getRid()), r.getName()))
                 .collect(Collectors.toList());
 
@@ -53,7 +53,7 @@ public class LabelView extends View {
 
     @Override
     protected void renderText(ViewHandler handler, PrintWriter writer) {
-        List<String> roomsLst = StreamSupport.stream(rooms.spliterator(), false)
+        List<String> roomsLst = rooms
                 .map(Room::toString)
                 .collect(Collectors.toList());
 
