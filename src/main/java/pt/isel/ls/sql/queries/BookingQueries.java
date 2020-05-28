@@ -155,7 +155,7 @@ public class BookingQueries extends DatabaseQueries {
     public Stream<Room> getRoomsAvailable(Interval interval) {
         return handler.createQuery("select r.rid, \"name\", location, capacity, description "
                 + "from (room r join description d on r.rid = d.rid) "
-                + "where r.rid in (select rid from booking where not (\"end\" <= ? or begin >= ?));")
+                + "where r.rid in (select rid from booking where \"end\" <= ? or begin >= ?);")
                 .bind(new Timestamp(interval.getEnd()))
                 .bind(new Timestamp(interval.getEnd()))
                 .mapToClass(Room.class);
