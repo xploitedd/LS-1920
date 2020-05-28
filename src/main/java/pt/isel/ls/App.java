@@ -47,6 +47,7 @@ public class App {
     private App() {
         String url = System.getenv(DATABASE_CONNECTION_ENV);
         if (url == null) {
+            LOGGER.error("Database environment variable not set!");
             throw new AppException("Please set the " + DATABASE_CONNECTION_ENV + " environment variable");
         }
 

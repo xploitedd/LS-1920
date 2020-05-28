@@ -12,23 +12,33 @@ repositories {
 }
 
 dependencies {
-    compile fileTree(dir: 'vendor/main', include: '*.jar')
-    testCompile fileTree(dir: 'vendor/test', include: '*.jar')
+    compile 'org.postgresql:postgresql:42.2.12'
+    compile 'javax.servlet:javax.servlet-api:4.0.1'
+    compile 'org.eclipse.jetty:jetty-servlet:9.4.29.v20200521'
+    runtime 'org.slf4j:slf4j-simple:1.7.30'
+    compile 'org.slf4j:slf4j-api:1.7.30'
+
+    testCompile 'junit:junit:4.13'
 }
 
 compileJava.options.encoding = 'UTF-8'
 
+def libFolder = "libraries"
 jar {
-    from {
-        configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
-    }
-
     manifest {
         attributes(
-                'Main-Class': 'pt.isel.ls.App'
+                'Main-Class': 'pt.isel.ls.App',
+                'Class-Path': configurations.runtime.collect { "$libFolder/${it.getName()}" }.join(' ')
         )
     }
 }
+
+task copyDependencies(type: Copy) {
+    from configurations.runtime
+    into "$buildDir/libs/$libFolder"
+}
+
+task stage(dependsOn: ['assemble', 'copyDependencies'])
 
 /******************************************************************************
  * Helper tasks to run postgres via docker
