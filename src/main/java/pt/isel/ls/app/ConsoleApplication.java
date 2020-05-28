@@ -53,7 +53,7 @@ public class ConsoleApplication extends Application {
         try {
             RouteRequest request = RouteRequest.of(input);
             ViewType viewType = Optional.ofNullable(
-                    ViewType.of(request.getHeaderValue(HeaderType.Accept)
+                    ViewType.of(request.getHeaderValue(HeaderType.ACCEPT)
                             .orElse(null))
             ).orElse(ViewType.TEXT);
 
@@ -86,7 +86,7 @@ public class ConsoleApplication extends Application {
      * @return request PrintWriter, or the fallback one
      */
     private static PrintWriter getPrintWriter(RouteRequest request) {
-        return request.getHeaderValue(HeaderType.FileName)
+        return request.getHeaderValue(HeaderType.FILENAME)
                 .map(ConsoleApplication::fileToPrintWriter)
                 .orElse(DEFAULT_WRITER);
     }

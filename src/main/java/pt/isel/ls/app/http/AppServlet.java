@@ -10,6 +10,7 @@ import pt.isel.ls.router.request.Parameter;
 import pt.isel.ls.router.request.Path;
 import pt.isel.ls.router.request.RouteRequest;
 import pt.isel.ls.router.response.HandlerResponse;
+import pt.isel.ls.router.response.Redirect;
 import pt.isel.ls.view.ViewHandler;
 import pt.isel.ls.view.ViewType;
 
@@ -72,13 +73,24 @@ public class AppServlet extends HttpServlet {
 
             resp.setStatus(response.getStatusCode());
 
+            if (response.hasRedirect()) {
+                Redirect redirect = response.getRedirect();
+                String route = router.route(redirect.getHandler(), redirect.getPathParameters());
+                if (route != null) {
+                    // valid redirect
+                    String redStr = route + redirect.getParametersString();
+                    resp.setHeader(Redirect.LOCATION_HEADER, redStr);
+                    return;
+                }
+            }
+
             // need to use a StringWriter because we need to obtain the content length
             // before sending the actual content
             StringWriter writer = new StringWriter();
             PrintWriter pw = new PrintWriter(writer);
 
             // default view type is ViewType.HTML
-            ViewType viewType = request.getHeaderValue(HeaderType.Accept)
+            ViewType viewType = request.getHeaderValue(HeaderType.ACCEPT)
                     .map(ViewType::of)
                     .orElse(ViewType.HTML);
 

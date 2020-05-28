@@ -1,12 +1,26 @@
 package pt.isel.ls.router.response;
 
 import java.util.Objects;
+
+import pt.isel.ls.handlers.RouteHandler;
 import pt.isel.ls.view.View;
+import pt.isel.ls.view.misc.EmptyView;
 
 public class HandlerResponse {
 
+    private static final int DEFAULT_STATUS_CODE = 200;
+    private static final int REDIRECT_STATUS_CODE = 303;
+
     private final View view;
+    private Redirect redirect;
     private int statusCode;
+
+    /**
+     * Creates a new RouteResponse with EmptyView
+     */
+    public HandlerResponse() {
+        this(new EmptyView());
+    }
 
     /**
      * Creates a new RouteResponse with a view
@@ -14,7 +28,7 @@ public class HandlerResponse {
      */
     public HandlerResponse(View view) {
         this.view = view;
-        this.statusCode = 200;
+        this.statusCode = DEFAULT_STATUS_CODE;
     }
 
     /**
@@ -32,8 +46,31 @@ public class HandlerResponse {
      * @return the modified instance of RouteResponse
      */
     public HandlerResponse setStatusCode(int statusCode) {
-        this.statusCode = statusCode;
+        if (redirect == null) {
+            // only can change the status code if this is not a redirect
+            this.statusCode = statusCode;
+        }
+
         return this;
+    }
+
+    public HandlerResponse redirect(Class<? extends RouteHandler> handler, Object... params) {
+        if (redirect != null) {
+            // can't change the response redirect later
+            return this;
+        }
+
+        setStatusCode(REDIRECT_STATUS_CODE);
+        this.redirect = new Redirect(this, handler, params);
+        return this;
+    }
+
+    public Redirect getRedirect() {
+        return redirect;
+    }
+
+    public boolean hasRedirect() {
+        return redirect != null;
     }
 
     /**

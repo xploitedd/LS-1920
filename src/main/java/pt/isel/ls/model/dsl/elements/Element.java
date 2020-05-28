@@ -17,7 +17,9 @@ public abstract class Element extends Node {
         writer.write(getOpeningTag());
         if (canHaveChildren()) {
             for (Node n : children) {
-                n.write(writer);
+                if (n != null) {
+                    n.write(writer);
+                }
             }
         }
 

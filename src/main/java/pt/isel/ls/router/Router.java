@@ -24,27 +24,27 @@ import pt.isel.ls.view.misc.ExceptionView;
  */
 public class Router implements Iterable<Router.Route> {
 
-    private final HashMap<Method, Map<String, Route>> methodRoutes = new HashMap<>();
+    private final HashMap<Method, Map<Class<? extends RouteHandler>, Route>> methodRoutes = new HashMap<>();
 
     /**
      * Registers a new Route to this Router
      * @param handler Handler for the Route to be registered
      */
     public void registerRoute(RouteHandler handler) {
-        String handlerName = handler.getClass().getSimpleName();
-        if (handlerName.equals("")) {
+        Class<? extends RouteHandler> clazz = handler.getClass();
+        if (clazz.isAnonymousClass()) {
             throw new RouteException("Handler class cannot be anonymous!");
         }
 
         Method method = handler.getMethod();
-        Route route = new Route(handlerName, handler.getTemplate(), handler, method);
-        Map<String, Route> routes = methodRoutes.get(method);
+        Route route = new Route(clazz, handler.getTemplate(), handler, method);
+        Map<Class<? extends RouteHandler>, Route> routes = methodRoutes.get(method);
         if (routes == null) {
             routes = new HashMap<>();
-            routes.put(handlerName, route);
+            routes.put(clazz, route);
             methodRoutes.put(method, routes);
         } else {
-            routes.put(handlerName, route);
+            routes.put(clazz, route);
         }
     }
 
@@ -55,7 +55,7 @@ public class Router implements Iterable<Router.Route> {
      * if not found the default 404 handler
      */
     public Handler getHandler(RouteRequest request) {
-        Map<String, Route> routes = methodRoutes.get(request.getMethod());
+        Map<Class<? extends RouteHandler>, Route> routes = methodRoutes.get(request.getMethod());
         if (routes != null) {
             for (Route r : routes.values()) {
                 RouteTemplate template = r.getRouteTemplate();
@@ -78,15 +78,26 @@ public class Router implements Iterable<Router.Route> {
      * @return a path if the router has the specified class, otherwise null
      */
     public String route(Class<? extends RouteHandler> clazz, Object... params) {
-        for (Method method : Method.values()) {
-            Map<String, Route> map = methodRoutes.get(method);
-            if (map != null) {
-                Route route = map.get(clazz.getSimpleName());
-                if (route != null) {
-                    return route.getRouteTemplate()
-                            .constructPathFromTemplate(params)
-                            .toString();
-                }
+        Route route = getRoute(clazz);
+        if (route != null) {
+            return route.getRouteTemplate()
+                    .constructPathFromTemplate(params)
+                    .toString();
+        }
+
+        return null;
+    }
+
+    /**
+     * Get the route that is handled by the specified RouteHandler
+     * @param clazz RouteHandler class to get the path from
+     * @return a route if the router has the specified class, otherwise null
+     */
+    public Route getRoute(Class<? extends RouteHandler> clazz) {
+        for (Map<Class<? extends RouteHandler>, Route> routes : methodRoutes.values()) {
+            Route route = routes.get(clazz);
+            if (route != null) {
+                return route;
             }
         }
 
@@ -103,7 +114,7 @@ public class Router implements Iterable<Router.Route> {
 
     public static class Route {
 
-        private final String name;
+        private final Class<? extends RouteHandler> handlerClass;
         private final RouteTemplate routeTemplate;
         private final RouteHandler handler;
         private final Method method;
@@ -114,15 +125,20 @@ public class Router implements Iterable<Router.Route> {
          * @param handler Handler of this route
          * @param method the method of this route
          */
-        private Route(String name, RouteTemplate routeTemplate, RouteHandler handler, Method method) {
-            this.name = name;
+        private Route(
+                Class<? extends RouteHandler> handlerClass,
+                RouteTemplate routeTemplate,
+                RouteHandler handler,
+                Method method) {
+
+            this.handlerClass = handlerClass;
             this.routeTemplate = routeTemplate;
             this.handler = handler;
             this.method = method;
         }
 
-        public String getName() {
-            return name;
+        public Class<? extends RouteHandler> getHandlerClass() {
+            return handlerClass;
         }
 
         /**

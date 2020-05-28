@@ -12,6 +12,8 @@ import java.util.Optional;
 
 public class RouteRequest {
 
+    public static final String ERR_KEY = "__ERROR";
+
     private final Method method;
     private final Path path;
     private final HashMap<String, List<Parameter>> parameters;
@@ -55,7 +57,7 @@ public class RouteRequest {
      * Gets a mandatory parameter
      * If the parameter does not exist it throws an exception
      * @param parameterName name of the parameter
-     * @return parameter string value
+     * @return parameter list
      * @throws ParameterNotFoundException in case the parameter does not exist
      */
     public List<Parameter> getParameter(String parameterName) throws ParameterNotFoundException {
@@ -66,10 +68,18 @@ public class RouteRequest {
     /**
      * Gets an optional parameter
      * @param parameterName name of the parameter
-     * @return parameter string value
+     * @return parameter list
      */
     public Optional<List<Parameter>> getOptionalParameter(String parameterName) {
         return Optional.ofNullable(parameters.get(parameterName));
+    }
+
+    /**
+     * Gets any existing errors from redirects
+     * @return error list
+     */
+    public Optional<List<Parameter>> getErrors() {
+        return getOptionalParameter(ERR_KEY);
     }
 
     /**

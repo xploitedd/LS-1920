@@ -2,8 +2,8 @@ package pt.isel.ls.router.request;
 
 public enum HeaderType {
 
-    Accept("accept"),
-    FileName("file-name");
+    ACCEPT("accept"),
+    FILENAME("file-name");
 
     private final String name;
 
@@ -11,8 +11,12 @@ public enum HeaderType {
         this.name = name;
     }
 
+    public String getName() {
+        return name;
+    }
+
     public static HeaderType of(String name) {
-        for (HeaderType type : values()) {
+        for (HeaderType type : HeaderType.values()) {
             if (type.name.equalsIgnoreCase(name)) {
                 return type;
             }
