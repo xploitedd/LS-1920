@@ -1,1 +1,1 @@
-web: java -Dfile.encoding=utf-8 -jar build/libs/1920-2-LI41D-G01.jar
+web: java -Dfile.encoding=utf-8 -jar build/libs/1920-2-LI41D-G01.jar LISTEN /
