@@ -34,7 +34,7 @@ public final class PostRoomHandler extends RouteHandler {
     public HandlerResponse execute(RouteRequest request) {
         Optional<List<Parameter>> optLabels = request.getOptionalParameter("label");
         String desc = request.getOptionalParameter("description")
-                .map(Object::toString)
+                .map(l -> l.get(0).toString())
                 .orElse(null);
 
         String name = request.getParameter("name").get(0).toString();
