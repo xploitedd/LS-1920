@@ -32,6 +32,12 @@ public final class PostRoomHandler extends RouteHandler {
 
     @Override
     public HandlerResponse execute(RouteRequest request) {
+        Room inserted = createRoom(request);
+
+        return new HandlerResponse(new IdentifierView("room", inserted.getRid()));
+    }
+
+    Room createRoom(RouteRequest request) {
         Optional<List<Parameter>> optLabels = request.getOptionalParameter("label");
         String desc = request.getOptionalParameter("description")
                 .map(l -> l.get(0).toString())
@@ -45,7 +51,7 @@ public final class PostRoomHandler extends RouteHandler {
             throw new RouteException("Room capacity should be at least " + MIN_CAPACITY);
         }
 
-        Room inserted = provider.execute(handler -> {
+        return provider.execute(handler -> {
             List<Label> labels = new LinkedList<>();
             if (optLabels.isPresent()) {
                 LabelQueries labelQueries = new LabelQueries(handler);
@@ -56,8 +62,6 @@ public final class PostRoomHandler extends RouteHandler {
 
             return new RoomQueries(handler).createNewRoom(name, location, capacity, desc, labels);
         });
-
-        return new HandlerResponse(new IdentifierView("room", inserted.getRid()));
     }
 
 }

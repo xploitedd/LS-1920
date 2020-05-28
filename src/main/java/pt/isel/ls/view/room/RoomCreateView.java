@@ -49,12 +49,16 @@ public class RoomCreateView extends View {
                                 .attr("min", "0")
                 ),
                 div(
+                        label("desc", "Description"),
+                        input("text", "description")
+                ),
+                div(
                         label("labels", "Labels"),
                         getLabelSelector()
                                 .attr("id", "labels")
                 ),
                 div(
-                        button("Search")
+                        button("Create")
                                 .attr("type", "submit")
                 )
         );

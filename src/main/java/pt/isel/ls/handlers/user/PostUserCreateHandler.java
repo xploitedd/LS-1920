@@ -1,20 +1,19 @@
-package pt.isel.ls.handlers.room;
+package pt.isel.ls.handlers.user;
 
 import pt.isel.ls.exceptions.AppException;
 import pt.isel.ls.handlers.RouteHandler;
-import pt.isel.ls.model.Room;
+import pt.isel.ls.model.User;
 import pt.isel.ls.router.request.Method;
 import pt.isel.ls.router.request.RouteRequest;
 import pt.isel.ls.router.response.HandlerResponse;
 import pt.isel.ls.sql.ConnectionProvider;
 
-public class PostRoomCreateHandler extends RouteHandler {
-
-    public PostRoomCreateHandler(ConnectionProvider provider) {
+public class PostUserCreateHandler extends RouteHandler {
+    public PostUserCreateHandler(ConnectionProvider provider) {
         super(
                 Method.POST,
-                "/rooms/create",
-                "Creates a new Room",
+                "/users/create",
+                "Creates a new User",
                 provider
         );
     }
@@ -22,12 +21,12 @@ public class PostRoomCreateHandler extends RouteHandler {
     @Override
     public HandlerResponse execute(RouteRequest request) {
         try {
-            Room newRoom = new PostRoomHandler(provider).createRoom(request);
+            User newUser = new PostUserHandler(provider).createUser(request);
             return new HandlerResponse()
-                    .redirect(GetRoomHandler.class, newRoom.getRid());
+                    .redirect(GetUserHandler.class, newUser.getUid());
         } catch (AppException e) {
             return new HandlerResponse()
-                    .redirect(GetRoomCreateHandler.class)
+                    .redirect(GetUserCreateHandler.class)
                     .getRedirect()
                     .setError(e.getMessage())
                     .getResponse();

@@ -28,10 +28,13 @@ import pt.isel.ls.handlers.room.GetRoomCreateHandler;
 import pt.isel.ls.handlers.room.GetRoomHandler;
 import pt.isel.ls.handlers.room.GetRoomSearchHandler;
 import pt.isel.ls.handlers.room.GetRoomsHandler;
+import pt.isel.ls.handlers.room.PostRoomCreateHandler;
 import pt.isel.ls.handlers.room.PostRoomHandler;
-import pt.isel.ls.handlers.user.GetUserHandler;
 import pt.isel.ls.handlers.label.PostLabelHandler;
+import pt.isel.ls.handlers.user.GetUserCreateHandler;
+import pt.isel.ls.handlers.user.GetUserHandler;
 import pt.isel.ls.handlers.user.GetUsersHandler;
+import pt.isel.ls.handlers.user.PostUserCreateHandler;
 import pt.isel.ls.handlers.user.PostUserHandler;
 import pt.isel.ls.router.Router;
 import pt.isel.ls.sql.ConnectionProvider;
@@ -96,9 +99,11 @@ public class App {
         // Room Handlers
         router.registerRoute(new PostRoomHandler(connProvider));
         router.registerRoute(new GetRoomsHandler(connProvider));
+        router.registerRoute(new GetRoomSearchHandler(connProvider));
+        router.registerRoute(new PostRoomCreateHandler(connProvider));
         router.registerRoute(new GetRoomCreateHandler(connProvider));
         router.registerRoute(new GetRoomHandler(connProvider));
-        router.registerRoute(new GetRoomSearchHandler(connProvider));
+
 
         // Booking Handlers
         router.registerRoute(new PostBookingHandler(connProvider));
@@ -108,6 +113,8 @@ public class App {
         router.registerRoute(new DeleteBookingHandler(connProvider));
 
         // User Handlers
+        router.registerRoute(new GetUserCreateHandler(connProvider));
+        router.registerRoute(new PostUserCreateHandler(connProvider));
         router.registerRoute(new PostUserHandler(connProvider));
         router.registerRoute(new GetUsersHandler(connProvider));
         router.registerRoute(new GetUserHandler(connProvider));
