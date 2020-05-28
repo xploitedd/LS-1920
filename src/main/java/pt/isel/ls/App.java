@@ -96,9 +96,9 @@ public class App {
         // Room Handlers
         router.registerRoute(new PostRoomHandler(connProvider));
         router.registerRoute(new GetRoomsHandler(connProvider));
+        router.registerRoute(new GetRoomCreateHandler(connProvider));
         router.registerRoute(new GetRoomHandler(connProvider));
         router.registerRoute(new GetRoomSearchHandler(connProvider));
-        router.registerRoute(new GetRoomCreateHandler(connProvider));
 
         // Booking Handlers
         router.registerRoute(new PostBookingHandler(connProvider));
