@@ -1,7 +1,7 @@
 package pt.isel.ls.view.label;
 
+import pt.isel.ls.handlers.label.GetLabelCreateHandler;
 import pt.isel.ls.handlers.label.GetLabelHandler;
-import pt.isel.ls.handlers.label.GetLabelsHandler;
 import pt.isel.ls.model.Label;
 import pt.isel.ls.model.dsl.Node;
 import pt.isel.ls.model.dsl.elements.Element;
@@ -39,7 +39,8 @@ public class LabelsView extends View {
         return div(
                 el,
                 br(),
-                a(handler.route(GetLabelsHandler.class), "Labels")
+                a(handler.route(GetLabelCreateHandler.class), "Create Label")
+
         );
     }
 

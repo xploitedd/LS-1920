@@ -1,5 +1,6 @@
 package pt.isel.ls.view.user;
 
+import pt.isel.ls.handlers.user.GetUserCreateHandler;
 import pt.isel.ls.handlers.user.GetUserHandler;
 import pt.isel.ls.model.User;
 import pt.isel.ls.model.dsl.Node;
@@ -12,6 +13,7 @@ import pt.isel.ls.view.utils.table.StringTableBuilder;
 import java.io.PrintWriter;
 
 import static pt.isel.ls.model.dsl.Dsl.a;
+import static pt.isel.ls.model.dsl.Dsl.br;
 import static pt.isel.ls.model.dsl.Dsl.div;
 
 public class UsersView extends View {
@@ -35,7 +37,11 @@ public class UsersView extends View {
                 ))
                 .build();
 
-        return div(el);
+        return div(
+                el,
+                br(),
+                a(handler.route(GetUserCreateHandler.class), "Create User")
+        );
     }
 
     @Override

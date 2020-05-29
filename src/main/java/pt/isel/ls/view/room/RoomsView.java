@@ -1,14 +1,15 @@
 package pt.isel.ls.view.room;
 
+import pt.isel.ls.handlers.room.GetRoomCreateHandler;
 import pt.isel.ls.handlers.room.GetRoomHandler;
 import pt.isel.ls.handlers.room.GetRoomSearchHandler;
 import pt.isel.ls.model.Room;
 import pt.isel.ls.model.dsl.Node;
 import pt.isel.ls.model.dsl.elements.Element;
-import pt.isel.ls.view.utils.table.HtmlTableBuilder;
-import pt.isel.ls.view.utils.table.StringTableBuilder;
 import pt.isel.ls.view.View;
 import pt.isel.ls.view.ViewHandler;
+import pt.isel.ls.view.utils.table.HtmlTableBuilder;
+import pt.isel.ls.view.utils.table.StringTableBuilder;
 
 import java.io.PrintWriter;
 
@@ -41,6 +42,8 @@ public class RoomsView extends View {
 
         return div(
                 el,
+                br(),
+                a(handler.route(GetRoomCreateHandler.class), "Create Room"),
                 br(),
                 a(handler.route(GetRoomSearchHandler.class), "Search Rooms")
         );

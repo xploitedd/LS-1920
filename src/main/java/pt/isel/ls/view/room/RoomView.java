@@ -1,5 +1,6 @@
 package pt.isel.ls.view.room;
 
+import pt.isel.ls.handlers.booking.GetRoomBookingCreateHandler;
 import pt.isel.ls.handlers.booking.GetRoomBookingsHandler;
 import pt.isel.ls.handlers.label.GetLabelHandler;
 import pt.isel.ls.handlers.room.GetRoomsHandler;
@@ -52,6 +53,8 @@ public class RoomView extends View {
                 details,
                 br(),
                 a(handler.route(GetRoomBookingsHandler.class, room.getRid()), "Check Room Bookings"),
+                br(),
+                a(handler.route(GetRoomBookingCreateHandler.class), "Create Room Booking"),
                 br(),
                 a(handler.route(GetRoomsHandler.class), "Rooms")
         );

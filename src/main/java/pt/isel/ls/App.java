@@ -1,23 +1,25 @@
 package pt.isel.ls;
 
 import org.postgresql.ds.PGSimpleDataSource;
-
-import javax.sql.DataSource;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import pt.isel.ls.app.ConsoleApplication;
 import pt.isel.ls.app.http.HttpPool;
 import pt.isel.ls.exceptions.AppException;
 import pt.isel.ls.handlers.booking.DeleteBookingHandler;
+import pt.isel.ls.handlers.booking.GetRoomBookingCreateHandler;
 import pt.isel.ls.handlers.booking.GetRoomBookingHandler;
 import pt.isel.ls.handlers.booking.GetRoomBookingsHandler;
 import pt.isel.ls.handlers.booking.GetUserBookingsHandler;
 import pt.isel.ls.handlers.booking.PostBookingHandler;
+import pt.isel.ls.handlers.booking.PostRoomBookingCreateHandler;
 import pt.isel.ls.handlers.booking.PutBookingHandler;
+import pt.isel.ls.handlers.label.GetLabelCreateHandler;
 import pt.isel.ls.handlers.label.GetLabelHandler;
 import pt.isel.ls.handlers.label.GetLabeledRoomsHandler;
 import pt.isel.ls.handlers.label.GetLabelsHandler;
+import pt.isel.ls.handlers.label.PostLabelCreateHandler;
+import pt.isel.ls.handlers.label.PostLabelHandler;
 import pt.isel.ls.handlers.misc.CloseHandler;
 import pt.isel.ls.handlers.misc.ExitHandler;
 import pt.isel.ls.handlers.misc.GetHomeHandler;
@@ -30,7 +32,6 @@ import pt.isel.ls.handlers.room.GetRoomSearchHandler;
 import pt.isel.ls.handlers.room.GetRoomsHandler;
 import pt.isel.ls.handlers.room.PostRoomCreateHandler;
 import pt.isel.ls.handlers.room.PostRoomHandler;
-import pt.isel.ls.handlers.label.PostLabelHandler;
 import pt.isel.ls.handlers.user.GetUserCreateHandler;
 import pt.isel.ls.handlers.user.GetUserHandler;
 import pt.isel.ls.handlers.user.GetUsersHandler;
@@ -38,6 +39,8 @@ import pt.isel.ls.handlers.user.PostUserCreateHandler;
 import pt.isel.ls.handlers.user.PostUserHandler;
 import pt.isel.ls.router.Router;
 import pt.isel.ls.sql.ConnectionProvider;
+
+import javax.sql.DataSource;
 
 public class App {
 
@@ -110,6 +113,8 @@ public class App {
         router.registerRoute(new GetRoomBookingHandler(connProvider));
         router.registerRoute(new GetRoomBookingsHandler(connProvider));
         router.registerRoute(new PutBookingHandler(connProvider));
+        router.registerRoute(new PostRoomBookingCreateHandler(connProvider));
+        router.registerRoute(new GetRoomBookingCreateHandler(connProvider));
         router.registerRoute(new DeleteBookingHandler(connProvider));
 
         // User Handlers
@@ -124,6 +129,8 @@ public class App {
         router.registerRoute(new PostLabelHandler(connProvider));
         router.registerRoute(new GetLabelsHandler(connProvider));
         router.registerRoute(new GetLabeledRoomsHandler(connProvider));
+        router.registerRoute(new PostLabelCreateHandler(connProvider));
+        router.registerRoute(new GetLabelCreateHandler(connProvider));
         router.registerRoute(new GetLabelHandler(connProvider));
     }
 

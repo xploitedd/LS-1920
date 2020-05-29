@@ -25,6 +25,12 @@ public final class PostBookingHandler extends RouteHandler {
 
     @Override
     public HandlerResponse execute(RouteRequest request) {
+        Booking booking = createBooking(request);
+
+        return new HandlerResponse(new IdentifierView("booking", booking.getBid()));
+    }
+
+    public Booking createBooking(RouteRequest request) {
         int rid = request.getPathParameter("rid").toInt();
         int uid = request.getParameter("uid").get(0).toInt();
         long b = request.getParameter("begin").get(0).toTime();
@@ -34,10 +40,7 @@ public final class PostBookingHandler extends RouteHandler {
         // duration in minutes
         Timestamp end = new Timestamp(b + Time.minutesToMillis(duration));
 
-        Booking booking = provider.execute(handler ->
+        return provider.execute(handler ->
                 new BookingQueries(handler).createNewBooking(rid, uid, begin, end));
-
-        return new HandlerResponse(new IdentifierView("booking", booking.getBid()));
     }
-
 }
