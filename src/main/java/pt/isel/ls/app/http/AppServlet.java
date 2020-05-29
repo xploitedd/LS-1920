@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import pt.isel.ls.exceptions.AppException;
 import pt.isel.ls.router.Router;
+import pt.isel.ls.router.StatusCode;
 import pt.isel.ls.router.request.HeaderType;
 import pt.isel.ls.router.request.Method;
 import pt.isel.ls.router.request.Parameter;
@@ -17,6 +18,7 @@ import pt.isel.ls.view.ViewType;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.nio.charset.Charset;
@@ -41,22 +43,22 @@ public class AppServlet extends HttpServlet {
     }
 
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         processRequest(req, resp);
     }
 
     @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) {
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         processRequest(req, resp);
     }
 
     @Override
-    protected void doPut(HttpServletRequest req, HttpServletResponse resp) {
+    protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         processRequest(req, resp);
     }
 
     @Override
-    protected void doDelete(HttpServletRequest req, HttpServletResponse resp) {
+    protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         processRequest(req, resp);
     }
 
@@ -65,13 +67,13 @@ public class AppServlet extends HttpServlet {
      * @param req Request to be processed
      * @param resp Response container
      */
-    private void processRequest(HttpServletRequest req, HttpServletResponse resp) {
+    private void processRequest(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         RouteRequest request = getRequest(req);
         try {
             HandlerResponse response = router.getHandler(request)
                     .execute(request);
 
-            resp.setStatus(response.getStatusCode());
+            resp.setStatus(response.getStatusCode().getCode());
 
             if (response.hasRedirect()) {
                 Redirect redirect = response.getRedirect();
@@ -104,9 +106,12 @@ public class AppServlet extends HttpServlet {
             byte[] content = writer.toString().getBytes();
             resp.setContentLength(content.length);
             resp.getOutputStream().write(content);
+        } catch (AppException e) {
+            resp.sendError(e.getStatusCode().getCode(),
+                    e.getMessage());
         } catch (Exception e) {
             LOG.error(e.toString());
-            throw new AppException("Internal Server Error");
+            resp.sendError(StatusCode.INTERNAL_SEVER_ERROR.getCode(), e.getMessage());
         }
     }
 

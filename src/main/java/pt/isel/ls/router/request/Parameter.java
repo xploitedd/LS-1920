@@ -1,6 +1,7 @@
 package pt.isel.ls.router.request;
 
 import pt.isel.ls.exceptions.router.RouteException;
+import pt.isel.ls.router.StatusCode;
 
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
@@ -26,7 +27,8 @@ public class Parameter {
         try {
             return Integer.parseInt(value);
         } catch (NumberFormatException e) {
-            throw new RouteException("Invalid conversion to integer. Value: " + value);
+            throw new RouteException("Invalid Parameter. Value: " + value,
+                    StatusCode.BAD_REQUEST);
         }
     }
 
@@ -38,7 +40,8 @@ public class Parameter {
         try {
             return Long.parseLong(value);
         } catch (NumberFormatException e) {
-            throw new RouteException("Invalid conversion to long. Value: " + value);
+            throw new RouteException("Invalid Parameter. Value: " + value,
+                    StatusCode.BAD_REQUEST);
         }
     }
 

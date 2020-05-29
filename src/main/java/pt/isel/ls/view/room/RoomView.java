@@ -54,7 +54,7 @@ public class RoomView extends View {
                 br(),
                 a(handler.route(GetRoomBookingsHandler.class, room.getRid()), "Check Room Bookings"),
                 br(),
-                a(handler.route(GetRoomBookingCreateHandler.class), "Create Room Booking"),
+                a(handler.route(GetRoomBookingCreateHandler.class, room.getRid()), "Create Room Booking"),
                 br(),
                 a(handler.route(GetRoomsHandler.class), "Rooms")
         );

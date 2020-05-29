@@ -21,13 +21,14 @@ public class PostRoomBookingCreateHandler extends RouteHandler {
 
     @Override
     public HandlerResponse execute(RouteRequest request) {
+        int rid = request.getPathParameter("rid").toInt();
         try {
             Booking newBooking = new PostBookingHandler(provider).createBooking(request);
             return new HandlerResponse()
-                    .redirect(GetRoomBookingHandler.class, newBooking.getRid());
+                    .redirect(GetRoomBookingHandler.class, rid, newBooking.getBid());
         } catch (AppException e) {
             return new HandlerResponse()
-                    .redirect(GetRoomBookingCreateHandler.class)
+                    .redirect(GetRoomBookingCreateHandler.class, rid)
                     .getRedirect()
                     .setError(e.getMessage())
                     .getResponse();

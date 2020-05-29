@@ -7,6 +7,7 @@ import java.util.stream.Stream;
 import pt.isel.ls.model.Label;
 import pt.isel.ls.model.Room;
 import pt.isel.ls.exceptions.router.RouteException;
+import pt.isel.ls.router.StatusCode;
 import pt.isel.ls.sql.api.SqlHandler;
 
 public class RoomQueries extends DatabaseQueries {
@@ -69,7 +70,7 @@ public class RoomQueries extends DatabaseQueries {
                 .findFirst();
 
         if (room.isEmpty()) {
-            throw new RouteException("No room found");
+            throw new RouteException("No room found", StatusCode.NOT_FOUND);
         }
 
         return room.get();
@@ -90,7 +91,7 @@ public class RoomQueries extends DatabaseQueries {
                 .findFirst();
 
         if (room.isEmpty()) {
-            throw new RouteException("No room found with id " + rid);
+            throw new RouteException("No room found with id " + rid, StatusCode.NOT_FOUND);
         }
 
         return room.get();

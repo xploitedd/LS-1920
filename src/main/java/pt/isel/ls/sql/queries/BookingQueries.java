@@ -9,6 +9,7 @@ import java.util.stream.Stream;
 import pt.isel.ls.model.Booking;
 import pt.isel.ls.exceptions.router.RouteException;
 import pt.isel.ls.model.Room;
+import pt.isel.ls.router.StatusCode;
 import pt.isel.ls.sql.api.SqlHandler;
 import pt.isel.ls.utils.Interval;
 
@@ -67,7 +68,7 @@ public class BookingQueries extends DatabaseQueries {
                 .findFirst();
 
         if (booking.isEmpty()) {
-            throw new RouteException("A booking was not found!");
+            throw new RouteException("A booking was not found!", StatusCode.NOT_FOUND);
         }
 
         return booking.get();
@@ -86,7 +87,7 @@ public class BookingQueries extends DatabaseQueries {
                 .findFirst();
 
         if (booking.isEmpty()) {
-            throw new RouteException("A booking with id " + bid + " was not found!");
+            throw new RouteException("A booking with id " + bid + " was not found!", StatusCode.NOT_FOUND);
         }
 
         return booking.get();
@@ -139,7 +140,7 @@ public class BookingQueries extends DatabaseQueries {
                 .execute();
 
         if (res == 0) {
-            throw new RouteException("Couldn't update the booking!");
+            throw new RouteException("Couldn't update the booking!", StatusCode.BAD_REQUEST);
         }
 
         return new Booking(bid, rid, newUid, newBegin, newEnd);
@@ -164,7 +165,8 @@ public class BookingQueries extends DatabaseQueries {
     private static void checkOverlap(Booking b1, Interval i2) throws RouteException {
         Interval i1 = new Interval(b1.getBegin().getTime(), b1.getEnd().getTime());
         if (i1.isOverlapping(i2)) {
-            throw new RouteException("This booking overlaps with another booking!");
+            throw new RouteException("This booking overlaps with another booking!",
+                    StatusCode.BAD_REQUEST);
         }
     }
 
@@ -172,13 +174,15 @@ public class BookingQueries extends DatabaseQueries {
         // check that begin isn't in the past
         Timestamp currTime = Timestamp.valueOf(LocalDateTime.now());
         if (currTime.after(begin)) {
-            throw new RouteException("Begin time cannot come before current time ");
+            throw new RouteException("Begin time cannot come before current time",
+                    StatusCode.BAD_REQUEST);
         }
 
         long lbegin = begin.getTime() / 1000;
         long lend = end.getTime() / 1000;
         if (lend - lbegin < BOOKING_MIN_TIME) {
-            throw new RouteException("A booking should last for at least " + BOOKING_MIN_TIME);
+            throw new RouteException("A booking should last for at least " + BOOKING_MIN_TIME,
+                    StatusCode.BAD_REQUEST);
         }
 
         Calendar cal = Calendar.getInstance();
@@ -188,7 +192,8 @@ public class BookingQueries extends DatabaseQueries {
         long min2 = cal.get(Calendar.MINUTE);
 
         if (min1 % BOOKING_MINUTE_MUL != 0 || min2 % BOOKING_MINUTE_MUL != 0) {
-            throw new RouteException("Minutes should be multiples of " + BOOKING_MINUTE_MUL);
+            throw new RouteException("Minutes should be multiples of " + BOOKING_MINUTE_MUL,
+                    StatusCode.BAD_REQUEST);
         }
     }
 

@@ -5,6 +5,7 @@ import java.util.stream.Stream;
 
 import pt.isel.ls.exceptions.router.RouteException;
 import pt.isel.ls.model.Label;
+import pt.isel.ls.router.StatusCode;
 import pt.isel.ls.sql.api.SqlHandler;
 
 public class LabelQueries extends DatabaseQueries {
@@ -38,7 +39,7 @@ public class LabelQueries extends DatabaseQueries {
                 .findFirst();
 
         if (label.isEmpty()) {
-            throw new RouteException("Label '" + name + "' not found");
+            throw new RouteException("Label '" + name + "' not found", StatusCode.NOT_FOUND);
         }
 
         return label.get();
@@ -56,7 +57,7 @@ public class LabelQueries extends DatabaseQueries {
                 .findFirst();
 
         if (label.isEmpty()) {
-            throw new RouteException("Label '" + lid + "' not found");
+            throw new RouteException("Label '" + lid + "' not found", StatusCode.NOT_FOUND);
         }
 
         return label.get();

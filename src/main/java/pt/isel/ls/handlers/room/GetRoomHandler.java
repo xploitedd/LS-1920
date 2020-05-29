@@ -31,6 +31,7 @@ public final class GetRoomHandler extends RouteHandler {
 
         int rid = paramRid.toInt();
         Room room = provider.execute(handler -> new RoomQueries(handler).getRoom(rid));
+
         Iterable<Label> labels = provider.execute(handler -> new RoomLabelQueries(handler)
                 .getRoomLabels(rid)
                 .collect(Collectors.toList()));

@@ -3,6 +3,8 @@ package pt.isel.ls.sql;
 import java.sql.Connection;
 import java.sql.SQLException;
 import javax.sql.DataSource;
+
+import pt.isel.ls.exceptions.AppException;
 import pt.isel.ls.exceptions.router.RouteException;
 import pt.isel.ls.sql.api.SqlHandler;
 
@@ -39,6 +41,8 @@ public class ConnectionProvider {
                 conn.rollback();
                 throw new RouteException(e.getMessage());
             }
+        } catch (AppException e) {
+            throw new RouteException(e.getMessage(), e.getStatusCode());
         } catch (Throwable e) {
             throw new RouteException(e.getMessage());
         }

@@ -27,9 +27,7 @@ public class HttpErrorHandler extends ErrorHandler {
     protected void writeErrorPage(HttpServletRequest req, Writer wr, int code, String msg, boolean ss) {
         ViewHandler viewHandler = new ViewHandler(router);
 
-        // just get the exception message, without the exception fully-qualified name
-        String error = msg.split(": ", 2)[1];
-        ExceptionView view = new ExceptionView(new AppException(code + " " + error));
+        ExceptionView view = new ExceptionView(new AppException(code + " " + msg));
 
         PrintWriter pw = new PrintWriter(wr);
         viewHandler.render(view, ViewType.HTML, pw);

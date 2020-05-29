@@ -3,6 +3,7 @@ package pt.isel.ls.sql.queries;
 import pt.isel.ls.model.Label;
 import pt.isel.ls.model.Room;
 import pt.isel.ls.exceptions.router.RouteException;
+import pt.isel.ls.router.StatusCode;
 import pt.isel.ls.sql.api.Search;
 import pt.isel.ls.sql.api.SqlHandler;
 import pt.isel.ls.sql.api.Update;
@@ -47,7 +48,7 @@ public class RoomLabelQueries extends DatabaseQueries {
      */
     public Stream<Room> getLabeledRooms(int lid) {
         if (!doesLabelExist(lid)) {
-            throw new RouteException("A label with id " + lid + " does not exist!");
+            throw new RouteException("A label with id " + lid + " does not exist!", StatusCode.NOT_FOUND);
         }
 
         return handler.createQuery("SELECT r.rid, \"name\", location, capacity, description "

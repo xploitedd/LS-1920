@@ -5,6 +5,7 @@ import java.util.stream.Stream;
 
 import pt.isel.ls.model.User;
 import pt.isel.ls.exceptions.router.RouteException;
+import pt.isel.ls.router.StatusCode;
 import pt.isel.ls.sql.api.SqlHandler;
 
 public class UserQueries extends DatabaseQueries {
@@ -41,7 +42,7 @@ public class UserQueries extends DatabaseQueries {
                 .findFirst();
 
         if (user.isEmpty()) {
-            throw new RouteException("A user with uid " + uid + " was not found!");
+            throw new RouteException("A user with uid " + uid + " was not found!", StatusCode.NOT_FOUND);
         }
 
         return user.get();
@@ -62,7 +63,7 @@ public class UserQueries extends DatabaseQueries {
                 .findFirst();
 
         if (user.isEmpty()) {
-            throw new RouteException("A user was not found!");
+            throw new RouteException("A user was not found!", StatusCode.NOT_FOUND);
         }
 
         return user.get();

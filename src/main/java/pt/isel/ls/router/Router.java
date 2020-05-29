@@ -57,18 +57,36 @@ public class Router implements Iterable<Router.Route> {
     public Handler getHandler(RouteRequest request) {
         Map<Class<? extends RouteHandler>, Route> routes = methodRoutes.get(request.getMethod());
         if (routes != null) {
+            Route lastMatch = null;
             for (Route r : routes.values()) {
                 RouteTemplate template = r.getRouteTemplate();
                 Optional<HashMap<String, Parameter>> match = template.match(request.getPath());
+                // TODO: optimize this??????
                 if (match.isPresent()) {
                     request.setPathParameters(match.get());
-                    return r.getHandler();
+                    if (template.getParameterSegmentCount() == 0) {
+                        // if the template has no parameter segments then
+                        // it is the one that's going to be used, otherwise
+                        // continue searching for a better suited template
+                        lastMatch = r;
+                        break;
+                    } else if (lastMatch == null) {
+                        lastMatch = r;
+                    } else if (template.getParameterSegmentCount()
+                            < lastMatch.getRouteTemplate().getParameterSegmentCount()) {
+                        // prefer the templates which have a lower parameter segment count
+                        lastMatch = r;
+                    }
                 }
+            }
+
+            if (lastMatch != null) {
+                return lastMatch.getHandler();
             }
         }
 
         return r -> new HandlerResponse(new ExceptionView(new RouteNotFoundException(r.getPath())))
-                .setStatusCode(404);
+                .setStatusCode(StatusCode.NOT_FOUND);
     }
 
     /**

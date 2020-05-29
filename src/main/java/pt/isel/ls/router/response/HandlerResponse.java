@@ -3,17 +3,15 @@ package pt.isel.ls.router.response;
 import java.util.Objects;
 
 import pt.isel.ls.handlers.RouteHandler;
+import pt.isel.ls.router.StatusCode;
 import pt.isel.ls.view.View;
 import pt.isel.ls.view.misc.EmptyView;
 
 public class HandlerResponse {
 
-    private static final int DEFAULT_STATUS_CODE = 200;
-    private static final int REDIRECT_STATUS_CODE = 303;
-
     private final View view;
     private Redirect redirect;
-    private int statusCode;
+    private StatusCode statusCode;
 
     /**
      * Creates a new RouteResponse with EmptyView
@@ -28,7 +26,7 @@ public class HandlerResponse {
      */
     public HandlerResponse(View view) {
         this.view = view;
-        this.statusCode = DEFAULT_STATUS_CODE;
+        this.statusCode = StatusCode.OK;
     }
 
     /**
@@ -36,7 +34,7 @@ public class HandlerResponse {
      * Default: 200
      * @return status code
      */
-    public int getStatusCode() {
+    public StatusCode getStatusCode() {
         return statusCode;
     }
 
@@ -45,7 +43,7 @@ public class HandlerResponse {
      * @param statusCode status code to be set
      * @return the modified instance of RouteResponse
      */
-    public HandlerResponse setStatusCode(int statusCode) {
+    public HandlerResponse setStatusCode(StatusCode statusCode) {
         if (redirect == null) {
             // only can change the status code if this is not a redirect
             this.statusCode = statusCode;
@@ -60,7 +58,7 @@ public class HandlerResponse {
             return this;
         }
 
-        setStatusCode(REDIRECT_STATUS_CODE);
+        setStatusCode(StatusCode.SEE_OTHER);
         this.redirect = new Redirect(this, handler, params);
         return this;
     }

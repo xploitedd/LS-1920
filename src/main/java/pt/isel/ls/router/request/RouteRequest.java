@@ -1,6 +1,6 @@
 package pt.isel.ls.router.request;
 
-import pt.isel.ls.exceptions.ParameterNotFoundException;
+import pt.isel.ls.exceptions.router.ParameterNotFoundException;
 import pt.isel.ls.exceptions.router.RouteParsingException;
 import pt.isel.ls.router.RouterUtils;
 import pt.isel.ls.exceptions.router.RouteException;

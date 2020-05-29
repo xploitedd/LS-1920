@@ -1,6 +1,7 @@
 package pt.isel.ls.router;
 
 import pt.isel.ls.exceptions.AppException;
+import pt.isel.ls.exceptions.router.NotEnoughParametersException;
 import pt.isel.ls.router.request.Parameter;
 import pt.isel.ls.router.request.Path;
 
@@ -13,16 +14,20 @@ public class RouteTemplate {
 
     private final ArrayList<TemplateSegment> templateSegments;
     private final String stringRepresentation;
+    private final int parameterSegmentCount;
 
     /**
      * Creates a new RouteTemplate with template segments
      * @param templateSegments template segments of this template
      */
-    private RouteTemplate(ArrayList<TemplateSegment> templateSegments) {
+    private RouteTemplate(ArrayList<TemplateSegment> templateSegments, int parameterSegmentCount) {
         this.templateSegments = templateSegments;
-        this.stringRepresentation = '/' + String.join("/", templateSegments.stream()
+        this.stringRepresentation = "/" + templateSegments.stream()
                 .map(TemplateSegment::toString)
-                .toArray(CharSequence[]::new));
+                .reduce((a, b) -> a + "/" + b)
+                .orElse("");
+
+        this.parameterSegmentCount = parameterSegmentCount;
     }
 
     /**
@@ -66,6 +71,11 @@ public class RouteTemplate {
      * @return path with parameters in place
      */
     public Path constructPathFromTemplate(Object... params) {
+        int requiredParams = getParameterSegmentCount();
+        if (requiredParams != params.length) {
+            throw new NotEnoughParametersException(requiredParams, params.length);
+        }
+
         StringBuilder sb = new StringBuilder();
         int paramIdx = 0;
         for (TemplateSegment ts : templateSegments) {
@@ -92,6 +102,10 @@ public class RouteTemplate {
         return path.get();
     }
 
+    public int getParameterSegmentCount() {
+        return parameterSegmentCount;
+    }
+
     /**
      * Parses a template string into a RouteTemplate
      * @param routeString template string to be parsed
@@ -100,18 +114,21 @@ public class RouteTemplate {
     public static RouteTemplate of(String routeString) {
         ArrayList<TemplateSegment> templateSegments = new ArrayList<>();
         String[] segments = RouterUtils.getValidSegments(routeString);
+        int parameterSegments = 0;
         for (int i = 0; i < segments.length; i++) {
             String segment = segments[i];
             if (isParameterSegment(segment)) {
                 templateSegments.add(new ParameterTemplateSegment(
                         getParameterName(segment)
                 ));
+
+                parameterSegments++;
             } else {
                 templateSegments.add(new ConstantTemplateSegment(segment));
             }
         }
 
-        return new RouteTemplate(templateSegments);
+        return new RouteTemplate(templateSegments, parameterSegments);
     }
 
     /**
