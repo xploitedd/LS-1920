@@ -3,6 +3,7 @@ package pt.isel.ls;
 import org.postgresql.ds.PGSimpleDataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import pt.isel.ls.app.AppShutdownHandler;
 import pt.isel.ls.app.ConsoleApplication;
 import pt.isel.ls.app.http.HttpPool;
 import pt.isel.ls.exceptions.AppException;
@@ -63,6 +64,7 @@ public class App {
         this.httpPool = new HttpPool();
 
         registerRoutes();
+        Runtime.getRuntime().addShutdownHook(new AppShutdownHandler(httpPool));
     }
 
     public static void main(String[] args) {
@@ -92,7 +94,7 @@ public class App {
      */
     private void registerRoutes() {
         // Register All Routes
-        router.registerRoute(new ExitHandler(httpPool));
+        router.registerRoute(new ExitHandler());
         router.registerRoute(new GetTimeHandler());
         router.registerRoute(new OptionHandler(router));
         router.registerRoute(new ListenHandler(router, httpPool));

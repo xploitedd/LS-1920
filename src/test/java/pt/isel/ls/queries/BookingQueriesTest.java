@@ -24,13 +24,10 @@ public class BookingQueriesTest {
 
     private static int userID;
     private static int roomID;
-    private static final LocalDateTime now = LocalDateTime.now();
-    private static final Timestamp begin = Timestamp.valueOf(LocalDateTime.of(
-            now.getYear(), now.getMonth(), now.getDayOfMonth(), now.getHour() + 1, 10
-    ));
-    private static final Timestamp end = Timestamp.valueOf(LocalDateTime.of(
-            now.getYear(), now.getMonth(), now.getDayOfMonth() + 1, now.getHour() + 1, 10
-    ));
+    private static final LocalDateTime beginLdt = LocalDateTime.now().plusHours(1).withMinute(10);
+    private static final Timestamp begin = Timestamp.valueOf(beginLdt);
+    private static final Timestamp end = Timestamp.valueOf(beginLdt.plusDays(1));
+
 
     @Before
     public void beforeEach() throws Throwable {
@@ -52,23 +49,14 @@ public class BookingQueriesTest {
         SqlHandler handler = new SqlHandler(conn);
         BookingQueries query = new BookingQueries(handler);
 
-        query.createNewBooking(roomID, userID, begin, end);
-
+        Booking booking = query.createNewBooking(roomID, userID, begin, end);
         PreparedStatement stmt = conn.prepareStatement(
-                "SELECT rid, uid, begin, \"end\" FROM booking"
-                        + " WHERE rid = ? AND uid = ? AND begin = ? AND \"end\" = ?"
+                "SELECT * FROM booking  WHERE bid = ?"
         );
-        stmt.setInt(1, roomID);
-        stmt.setInt(2, userID);
-        stmt.setTimestamp(3, begin);
-        stmt.setTimestamp(4, end);
-        ResultSet res = stmt.executeQuery();
 
+        stmt.setInt(1, booking.getBid());
+        ResultSet res = stmt.executeQuery();
         Assert.assertTrue(res.next());
-        Assert.assertEquals(roomID, res.getInt(1));
-        Assert.assertEquals(userID, res.getInt(2));
-        Assert.assertEquals(begin, res.getTimestamp(3));
-        Assert.assertEquals(end, res.getTimestamp(4));
         conn.close();
     }
 
@@ -87,13 +75,9 @@ public class BookingQueriesTest {
         stmt.setTimestamp(4, end);
         stmt.execute();
 
-        Booking test = query.getBooking(roomID,userID,begin,end);
+        Booking test = query.getBooking(roomID, userID, begin, end);
 
         Assert.assertNotNull(test);
-        Assert.assertEquals(roomID,test.getRid());
-        Assert.assertEquals(userID, test.getUid());
-        Assert.assertEquals(begin, test.getBegin());
-        Assert.assertEquals(end, test.getEnd());
         conn.close();
     }
 
@@ -127,10 +111,6 @@ public class BookingQueriesTest {
         Booking test = query.getBooking(res.getInt(1));
 
         Assert.assertNotNull(test);
-        Assert.assertEquals(roomID,test.getRid());
-        Assert.assertEquals(userID, test.getUid());
-        Assert.assertEquals(begin, test.getBegin());
-        Assert.assertEquals(end, test.getEnd());
         conn.close();
     }
 }

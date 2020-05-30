@@ -3,7 +3,6 @@ package pt.isel.ls.handlers.misc;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import pt.isel.ls.app.http.HttpPool;
 import pt.isel.ls.router.Router;
 import pt.isel.ls.router.request.RouteRequest;
 import pt.isel.ls.router.response.HandlerResponse;
@@ -16,7 +15,7 @@ public class ExitHandlerTest {
 
     @Before
     public void beforeEach() {
-        ExitHandler eh = new ExitHandler(new HttpPool());
+        ExitHandler eh = new ExitHandler();
         router = new Router();
         router.registerRoute(eh);
     }
