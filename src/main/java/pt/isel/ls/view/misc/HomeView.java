@@ -9,6 +9,8 @@ import pt.isel.ls.view.View;
 import pt.isel.ls.view.ViewHandler;
 
 import static pt.isel.ls.model.dsl.Dsl.a;
+import static pt.isel.ls.model.dsl.Dsl.div;
+import static pt.isel.ls.model.dsl.Dsl.h1;
 import static pt.isel.ls.model.dsl.Dsl.li;
 import static pt.isel.ls.model.dsl.Dsl.ul;
 
@@ -25,11 +27,14 @@ public class HomeView extends View {
         String search = handler.route(GetRoomSearchHandler.class);
         String labels = handler.route(GetLabelsHandler.class);
 
-        return ul(
-                li(a(time, "Time")),
-                li(a(users, "Users")),
-                li(a(search, "Search Rooms")),
-                li(a(labels, "Labels"))
+        return div(
+                h1("ISEL - LEIC - LS | Grupo 1 - 1920v"),
+                ul(
+                        li(a(time, "Time")),
+                        li(a(users, "Users")),
+                        li(a(search, "Search Rooms")),
+                        li(a(labels, "Labels"))
+                )
         );
     }
 }

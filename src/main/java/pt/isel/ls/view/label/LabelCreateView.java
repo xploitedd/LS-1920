@@ -2,34 +2,40 @@ package pt.isel.ls.view.label;
 
 import pt.isel.ls.handlers.label.PostLabelCreateHandler;
 import pt.isel.ls.model.dsl.Node;
+import pt.isel.ls.model.dsl.elements.Element;
+import pt.isel.ls.router.request.Method;
 import pt.isel.ls.view.View;
 import pt.isel.ls.view.ViewHandler;
+import pt.isel.ls.view.utils.form.HtmlFormBuilder;
+import pt.isel.ls.view.utils.form.InputType;
 
-import static pt.isel.ls.model.dsl.Dsl.button;
 import static pt.isel.ls.model.dsl.Dsl.div;
-import static pt.isel.ls.model.dsl.Dsl.form;
-import static pt.isel.ls.model.dsl.Dsl.input;
-import static pt.isel.ls.model.dsl.Dsl.label;
+import static pt.isel.ls.model.dsl.Dsl.h1;
 
 public class LabelCreateView extends View {
+
+    private final String error;
+
     public LabelCreateView() {
+        this(null);
+    }
+
+    public LabelCreateView(String error) {
         super("Create Label");
+        this.error = error;
     }
 
     @Override
     protected Node getHtmlBody(ViewHandler handler) {
-        return form(
-                "post",
-                handler.route(PostLabelCreateHandler.class),
-                div(
-                        label("name", "Label Name"),
-                        input("text","name")
-                                .attr("id","name")
-                ),
-                div(
-                        button("Create")
-                                .attr("type", "submit")
-                )
+        Element form = new HtmlFormBuilder(Method.POST, handler.route(PostLabelCreateHandler.class))
+                .withInput("name", "Label Name", InputType.TEXT, true)
+                .withError(error)
+                .build("Create Label");
+
+        return div(
+                h1("Create a new label"),
+                form
         );
     }
+
 }

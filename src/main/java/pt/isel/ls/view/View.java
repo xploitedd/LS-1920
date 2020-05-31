@@ -2,23 +2,29 @@ package pt.isel.ls.view;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 
 import pt.isel.ls.exceptions.AppException;
 import pt.isel.ls.handlers.misc.GetHomeHandler;
 import pt.isel.ls.model.dsl.Node;
 import pt.isel.ls.model.dsl.elements.Element;
+import pt.isel.ls.model.dsl.elements.NavElement;
+import pt.isel.ls.model.dsl.text.AnchorText;
 
 import static pt.isel.ls.model.dsl.Dsl.a;
 import static pt.isel.ls.model.dsl.Dsl.body;
-import static pt.isel.ls.model.dsl.Dsl.br;
-import static pt.isel.ls.model.dsl.Dsl.div;
 import static pt.isel.ls.model.dsl.Dsl.head;
 import static pt.isel.ls.model.dsl.Dsl.html;
+import static pt.isel.ls.model.dsl.Dsl.link;
+import static pt.isel.ls.model.dsl.Dsl.nav;
 import static pt.isel.ls.model.dsl.Dsl.p;
 import static pt.isel.ls.model.dsl.Dsl.title;
 
 public abstract class View {
 
+    private static final String CSS_HREF = "/assets/css/style.css";
+
+    private final ArrayList<AnchorText> navEntries = new ArrayList<>();
     protected final String title;
     private final boolean homeLink;
 
@@ -62,25 +68,37 @@ public abstract class View {
      */
     private void renderHtml(ViewHandler handler, PrintWriter writer) {
         try {
-            Element body;
-            if (homeLink) {
-                Node homeLink = a(handler.route(GetHomeHandler.class),
-                        "Go to home");
-                body = body(
-                        div(homeLink),
-                        br(),
-                        getHtmlBody(handler)
-                );
-            } else {
-                body = body(getHtmlBody(handler));
-            }
+            // we must get the body before the nav links
+            Node body = getHtmlBody(handler);
+            Element html = html(
+                    head(
+                            title(title),
+                            link("stylesheet", "text/css", CSS_HREF)
+                    ),
+                    body(
+                            getNav(handler),
+                            body
+                    )
+            );
 
-            Element html = html(head(title(title)), body);
             html.write(writer);
             writer.println();
         } catch (IOException e) {
             throw new AppException(e.getMessage());
         }
+    }
+
+    private NavElement getNav(ViewHandler handler) {
+        if (navEntries.size() != 0 || homeLink) {
+            navEntries.add(a(handler.route(GetHomeHandler.class), "Go to home"));
+            return nav(navEntries.toArray(Node[]::new));
+        }
+
+        return null;
+    }
+
+    protected void addNavEntry(AnchorText navEntry) {
+        navEntries.add(navEntry);
     }
 
     /**

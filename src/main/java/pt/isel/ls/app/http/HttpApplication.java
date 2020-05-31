@@ -36,6 +36,7 @@ public class HttpApplication extends Application {
             AppServlet appServlet = new AppServlet(router);
 
             handler.addServletWithMapping(new ServletHolder(appServlet), "/*");
+            handler.addServletWithMapping(new ServletHolder(new ResourceServlet()), "/assets/*");
 
             server.setHandler(handler);
             server.setErrorHandler(new HttpErrorHandler(router));

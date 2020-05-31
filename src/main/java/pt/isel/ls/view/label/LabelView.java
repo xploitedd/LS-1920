@@ -18,7 +18,6 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static pt.isel.ls.model.dsl.Dsl.a;
-import static pt.isel.ls.model.dsl.Dsl.br;
 import static pt.isel.ls.model.dsl.Dsl.div;
 
 public class LabelView extends View {
@@ -34,6 +33,7 @@ public class LabelView extends View {
 
     @Override
     protected Node getHtmlBody(ViewHandler handler) {
+        addNavEntry(a(handler.route(GetLabelsHandler.class), "Labels"));
         List<AnchorText> roomsLst = rooms
                 .map(r -> a(handler.route(GetRoomHandler.class, r.getRid()), r.getName()))
                 .collect(Collectors.toList());
@@ -44,11 +44,7 @@ public class LabelView extends View {
                 .withDetail("Rooms", roomsLst)
                 .build();
 
-        return div(
-                el,
-                br(),
-                a(handler.route(GetLabelsHandler.class), "Labels")
-        );
+        return div(el);
     }
 
     @Override

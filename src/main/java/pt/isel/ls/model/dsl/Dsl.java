@@ -6,6 +6,8 @@ import pt.isel.ls.model.dsl.elements.DivElement;
 import pt.isel.ls.model.dsl.elements.Element;
 import pt.isel.ls.model.dsl.elements.HeadElement;
 import pt.isel.ls.model.dsl.elements.HtmlElement;
+import pt.isel.ls.model.dsl.elements.LinkElement;
+import pt.isel.ls.model.dsl.elements.NavElement;
 import pt.isel.ls.model.dsl.elements.forms.FormElement;
 import pt.isel.ls.model.dsl.elements.forms.InputElement;
 import pt.isel.ls.model.dsl.elements.forms.SelectElement;
@@ -100,6 +102,10 @@ public class Dsl {
         return new InputElement(type, name);
     }
 
+    public static InputElement input(String type, String name, boolean required) {
+        return new InputElement(type, name, required);
+    }
+
     public static SelectElement select(String name, OptionText... options) {
         return new SelectElement(name, options);
     }
@@ -130,6 +136,14 @@ public class Dsl {
 
     public static Text text(Object text) {
         return new Text(text);
+    }
+
+    public static LinkElement link(String ref, String type, String href) {
+        return new LinkElement(ref, type, href);
+    }
+
+    public static NavElement nav(Node... children) {
+        return new NavElement(children);
     }
 
 }

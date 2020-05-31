@@ -1,9 +1,10 @@
 package pt.isel.ls.router;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Map;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -24,7 +25,7 @@ import pt.isel.ls.view.misc.ExceptionView;
  */
 public class Router implements Iterable<Router.Route> {
 
-    private final HashMap<Method, Map<Class<? extends RouteHandler>, Route>> methodRoutes = new HashMap<>();
+    private final HashMap<Method, List<Route>> methodRoutes = new HashMap<>();
 
     /**
      * Registers a new Route to this Router
@@ -38,14 +39,20 @@ public class Router implements Iterable<Router.Route> {
 
         Method method = handler.getMethod();
         Route route = new Route(clazz, handler.getTemplate(), handler, method);
-        Map<Class<? extends RouteHandler>, Route> routes = methodRoutes.get(method);
+        List<Route> routes = methodRoutes.get(method);
         if (routes == null) {
-            routes = new HashMap<>();
-            routes.put(clazz, route);
+            routes = new ArrayList<>();
+            routes.add(route);
             methodRoutes.put(method, routes);
         } else {
-            routes.put(clazz, route);
+            routes.add(route);
         }
+
+        routes.sort((a, b) -> {
+            int segCountA = a.getRouteTemplate().getParameterSegmentCount();
+            int segCountB = b.getRouteTemplate().getParameterSegmentCount();
+            return segCountA - segCountB;
+        });
     }
 
     /**
@@ -55,33 +62,15 @@ public class Router implements Iterable<Router.Route> {
      * if not found the default 404 handler
      */
     public Handler getHandler(RouteRequest request) {
-        Map<Class<? extends RouteHandler>, Route> routes = methodRoutes.get(request.getMethod());
+        List<Route> routes = methodRoutes.get(request.getMethod());
         if (routes != null) {
-            Route lastMatch = null;
-            for (Route r : routes.values()) {
+            for (Route r : routes) {
                 RouteTemplate template = r.getRouteTemplate();
                 Optional<HashMap<String, Parameter>> match = template.match(request.getPath());
-                // TODO: optimize this??????
                 if (match.isPresent()) {
                     request.setPathParameters(match.get());
-                    if (template.getParameterSegmentCount() == 0) {
-                        // if the template has no parameter segments then
-                        // it is the one that's going to be used, otherwise
-                        // continue searching for a better suited template
-                        lastMatch = r;
-                        break;
-                    } else if (lastMatch == null) {
-                        lastMatch = r;
-                    } else if (template.getParameterSegmentCount()
-                            < lastMatch.getRouteTemplate().getParameterSegmentCount()) {
-                        // prefer the templates which have a lower parameter segment count
-                        lastMatch = r;
-                    }
+                    return r.getHandler();
                 }
-            }
-
-            if (lastMatch != null) {
-                return lastMatch.getHandler();
             }
         }
 
@@ -112,25 +101,19 @@ public class Router implements Iterable<Router.Route> {
      * @return a route if the router has the specified class, otherwise null
      */
     public Route getRoute(Class<? extends RouteHandler> clazz) {
-        for (Map<Class<? extends RouteHandler>, Route> routes : methodRoutes.values()) {
-            Route route = routes.get(clazz);
-            if (route != null) {
-                return route;
-            }
-        }
-
-        return null;
+        return Route.getRouteFromHandler(clazz);
     }
 
     @Override
     public Iterator<Route> iterator() {
         return methodRoutes.values().stream()
-                .map(Map::values)
                 .flatMap(Collection::stream)
                 .iterator();
     }
 
     public static class Route {
+
+        private static final HashMap<Class<? extends RouteHandler>, Route> routeMap = new HashMap<>();
 
         private final Class<? extends RouteHandler> handlerClass;
         private final RouteTemplate routeTemplate;
@@ -153,6 +136,8 @@ public class Router implements Iterable<Router.Route> {
             this.routeTemplate = routeTemplate;
             this.handler = handler;
             this.method = method;
+
+            routeMap.put(handlerClass, this);
         }
 
         public Class<? extends RouteHandler> getHandlerClass() {
@@ -201,6 +186,10 @@ public class Router implements Iterable<Router.Route> {
         @Override
         public int hashCode() {
             return Objects.hash(routeTemplate, handler);
+        }
+
+        public static Route getRouteFromHandler(Class<? extends RouteHandler> handler) {
+            return routeMap.get(handler);
         }
 
     }

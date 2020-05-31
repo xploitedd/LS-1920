@@ -13,7 +13,6 @@ import pt.isel.ls.view.utils.table.StringTableBuilder;
 import java.io.PrintWriter;
 
 import static pt.isel.ls.model.dsl.Dsl.a;
-import static pt.isel.ls.model.dsl.Dsl.br;
 import static pt.isel.ls.model.dsl.Dsl.div;
 
 public class LabelsView extends View {
@@ -27,6 +26,7 @@ public class LabelsView extends View {
 
     @Override
     protected Node getHtmlBody(ViewHandler handler) {
+        addNavEntry(a(handler.route(GetLabelCreateHandler.class), "Create Label"));
         Element el = new HtmlTableBuilder<>(labels)
                 .withColumn("Id", Label::getLid)
                 .withColumn("Name", Label::getName)
@@ -36,12 +36,7 @@ public class LabelsView extends View {
                 ))
                 .build();
 
-        return div(
-                el,
-                br(),
-                a(handler.route(GetLabelCreateHandler.class), "Create Label")
-
-        );
+        return div(el);
     }
 
     @Override

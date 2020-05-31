@@ -7,6 +7,7 @@ import pt.isel.ls.router.request.Method;
 import pt.isel.ls.router.request.RouteRequest;
 import pt.isel.ls.router.response.HandlerResponse;
 import pt.isel.ls.sql.ConnectionProvider;
+import pt.isel.ls.view.label.LabelCreateView;
 
 public class PostLabelCreateHandler extends RouteHandler {
 
@@ -26,11 +27,8 @@ public class PostLabelCreateHandler extends RouteHandler {
             return new HandlerResponse()
                     .redirect(GetLabelHandler.class, newLabel.getLid());
         } catch (AppException e) {
-            return new HandlerResponse()
-                    .redirect(GetLabelCreateHandler.class)
-                    .getRedirect()
-                    .setError(e.getMessage())
-                    .getResponse();
+            return new HandlerResponse(new LabelCreateView(e.getMessage()))
+                    .setStatusCode(e.getStatusCode());
         }
     }
 }
