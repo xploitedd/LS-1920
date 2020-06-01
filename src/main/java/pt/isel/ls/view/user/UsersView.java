@@ -29,7 +29,7 @@ public class UsersView extends View {
         Element el = new HtmlTableBuilder<>(users)
                 .withColumn("Id", User::getUid)
                 .withColumn("Name", User::getName)
-                .withColumn("Capacity", User::getEmail)
+                .withColumn("Email", User::getEmail)
                 .withColumn("User Link", u -> a(
                         handler.route(GetUserHandler.class, u.getUid()),
                         "Show details"
@@ -44,7 +44,7 @@ public class UsersView extends View {
         writer.write(new StringTableBuilder<>(users)
                 .withColumn("Id", User::getUid)
                 .withColumn("Name", User::getName)
-                .withColumn("Capacity", User::getEmail)
+                .withColumn("Email", User::getEmail)
                 .build());
     }
 
