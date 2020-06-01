@@ -49,6 +49,25 @@ public class UserQueries extends DatabaseQueries {
     }
 
     /**
+     * Get User by email
+     * @param email email of the user
+     * @return an User
+     */
+    public User getUser(String email) {
+        Optional<User> user = handler
+                .createQuery("SELECT * FROM \"user\" WHERE email = ?;")
+                .bind(email)
+                .mapToClass(User.class)
+                .findFirst();
+
+        if (user.isEmpty()) {
+            throw new RouteException("A user with the specified email was not found!", StatusCode.NOT_FOUND);
+        }
+
+        return user.get();
+    }
+
+    /**
      * Get user by name and email
      * @param name name of the user
      * @param email email of the user

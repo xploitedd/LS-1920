@@ -2,9 +2,10 @@ package pt.isel.ls.view.utils.form;
 
 import pt.isel.ls.model.dsl.elements.Element;
 import pt.isel.ls.model.dsl.elements.forms.FormElement;
+import pt.isel.ls.model.dsl.text.forms.OptionText;
 import pt.isel.ls.router.request.Method;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 
 import static pt.isel.ls.model.dsl.Dsl.button;
 import static pt.isel.ls.model.dsl.Dsl.div;
@@ -12,12 +13,13 @@ import static pt.isel.ls.model.dsl.Dsl.form;
 import static pt.isel.ls.model.dsl.Dsl.input;
 import static pt.isel.ls.model.dsl.Dsl.label;
 import static pt.isel.ls.model.dsl.Dsl.p;
+import static pt.isel.ls.model.dsl.Dsl.select;
 
 public class HtmlFormBuilder {
 
     private static final String DEFAULT_SUBMIT_TEXT = "Submit";
 
-    private final HashMap<String, Element> contents = new HashMap<>();
+    private final LinkedHashMap<String, Element> contents = new LinkedHashMap<>();
     private final Method method;
     private final String action;
     private String error;
@@ -35,6 +37,32 @@ public class HtmlFormBuilder {
         contents.put(name, div(
                 label(name, desc),
                 input(type.getType(), name, required).attr("id", name)
+        ));
+
+        return this;
+    }
+
+    public HtmlFormBuilder withNumber(String name, String desc, int min, int step) {
+        return withNumber(name, desc, false, min, step);
+    }
+
+    public HtmlFormBuilder withNumber(String name, String desc, boolean required, int min, int step) {
+        contents.put(name, div(
+                label(name, desc),
+                input(InputType.NUMBER.getType(), name, required)
+                        .attr("id", name)
+                        .attr("min", String.valueOf(min))
+                        .attr("step", String.valueOf(step))
+        ));
+
+        return this;
+    }
+
+    public HtmlFormBuilder withOptions(String name, String desc, OptionText[] options, boolean multiple) {
+        contents.put(name, div(
+                label(name, desc),
+                select(name, multiple, options)
+                        .attr("id", name)
         ));
 
         return this;

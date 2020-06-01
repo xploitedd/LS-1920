@@ -5,7 +5,6 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 
 import pt.isel.ls.exceptions.AppException;
-import pt.isel.ls.handlers.misc.GetHomeHandler;
 import pt.isel.ls.model.dsl.Node;
 import pt.isel.ls.model.dsl.elements.Element;
 import pt.isel.ls.model.dsl.elements.NavElement;
@@ -22,11 +21,11 @@ import static pt.isel.ls.model.dsl.Dsl.title;
 
 public abstract class View {
 
+    private static final String HOME_LINK = "/";
     private static final String CSS_HREF = "/assets/css/style.css";
 
     private final ArrayList<AnchorText> navEntries = new ArrayList<>();
     protected final String title;
-    private final boolean homeLink;
 
     /**
      * Creates a new View
@@ -44,7 +43,10 @@ public abstract class View {
      */
     public View(String title, boolean homeLink) {
         this.title = title;
-        this.homeLink = homeLink;
+
+        if (homeLink) {
+            navEntries.add(a(HOME_LINK, "Go to home"));
+        }
     }
 
     /**
@@ -68,16 +70,15 @@ public abstract class View {
      */
     private void renderHtml(ViewHandler handler, PrintWriter writer) {
         try {
-            // we must get the body before the nav links
-            Node body = getHtmlBody(handler);
+            registerNavLinks(handler);
             Element html = html(
                     head(
                             title(title),
                             link("stylesheet", "text/css", CSS_HREF)
                     ),
                     body(
-                            getNav(handler),
-                            body
+                            getNav(),
+                            getHtmlBody(handler)
                     )
             );
 
@@ -88,17 +89,20 @@ public abstract class View {
         }
     }
 
-    private NavElement getNav(ViewHandler handler) {
-        if (navEntries.size() != 0 || homeLink) {
-            navEntries.add(a(handler.route(GetHomeHandler.class), "Go to home"));
+    private NavElement getNav() {
+        if (navEntries.size() != 0) {
             return nav(navEntries.toArray(Node[]::new));
         }
 
         return null;
     }
 
-    protected void addNavEntry(AnchorText navEntry) {
-        navEntries.add(navEntry);
+    protected void addNavEntry(String href, String name) {
+        navEntries.add(a(href, name));
+    }
+
+    protected void registerNavLinks(ViewHandler handler) {
+
     }
 
     /**

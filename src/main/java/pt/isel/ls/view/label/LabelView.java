@@ -33,7 +33,6 @@ public class LabelView extends View {
 
     @Override
     protected Node getHtmlBody(ViewHandler handler) {
-        addNavEntry(a(handler.route(GetLabelsHandler.class), "Labels"));
         List<AnchorText> roomsLst = rooms
                 .map(r -> a(handler.route(GetRoomHandler.class, r.getRid()), r.getName()))
                 .collect(Collectors.toList());
@@ -58,6 +57,11 @@ public class LabelView extends View {
                 .withDetail("Name", label.getName())
                 .withDetail("Rooms", roomsLst)
                 .build());
+    }
+
+    @Override
+    protected void registerNavLinks(ViewHandler handler) {
+        addNavEntry(handler.route(GetLabelsHandler.class), "Labels");
     }
 
 }

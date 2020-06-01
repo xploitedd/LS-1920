@@ -20,7 +20,6 @@ import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 import static pt.isel.ls.model.dsl.Dsl.a;
-import static pt.isel.ls.model.dsl.Dsl.br;
 import static pt.isel.ls.model.dsl.Dsl.div;
 
 public class RoomView extends View {
@@ -49,15 +48,7 @@ public class RoomView extends View {
                 .withDetail("Labels", labels)
                 .build();
 
-        return div(
-                details,
-                br(),
-                a(handler.route(GetRoomBookingsHandler.class, room.getRid()), "Check Room Bookings"),
-                br(),
-                a(handler.route(GetRoomBookingCreateHandler.class, room.getRid()), "Create Room Booking"),
-                br(),
-                a(handler.route(GetRoomsHandler.class), "Rooms")
-        );
+        return div(details);
     }
 
     @Override
@@ -74,6 +65,13 @@ public class RoomView extends View {
                 .withDetail("Description", room.getDescription())
                 .withDetail("Labels", labels)
                 .build());
+    }
+
+    @Override
+    protected void registerNavLinks(ViewHandler handler) {
+        addNavEntry(handler.route(GetRoomBookingsHandler.class, room.getRid()), "Check Room Bookings");
+        addNavEntry(handler.route(GetRoomBookingCreateHandler.class, room.getRid()), "Create Room Booking");
+        addNavEntry(handler.route(GetRoomsHandler.class), "Rooms");
     }
 
 }

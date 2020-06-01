@@ -26,7 +26,6 @@ public class LabelsView extends View {
 
     @Override
     protected Node getHtmlBody(ViewHandler handler) {
-        addNavEntry(a(handler.route(GetLabelCreateHandler.class), "Create Label"));
         Element el = new HtmlTableBuilder<>(labels)
                 .withColumn("Id", Label::getLid)
                 .withColumn("Name", Label::getName)
@@ -45,6 +44,11 @@ public class LabelsView extends View {
                 .withColumn("Id", Label::getLid)
                 .withColumn("Name", Label::getName)
                 .build());
+    }
+
+    @Override
+    protected void registerNavLinks(ViewHandler handler) {
+        addNavEntry(handler.route(GetLabelCreateHandler.class), "Create Label");
     }
 
 }

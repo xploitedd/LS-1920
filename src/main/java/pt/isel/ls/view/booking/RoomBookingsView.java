@@ -39,10 +39,7 @@ public class RoomBookingsView extends View {
                 ))
                 .build();
 
-        return div(
-                el,
-                a(handler.route(GetRoomHandler.class, roomId),"Room")
-        );
+        return div(el);
     }
 
     @Override
@@ -53,6 +50,11 @@ public class RoomBookingsView extends View {
                 .withColumn("Begin", Booking::getBegin)
                 .withColumn("End", Booking::getEnd)
                 .build());
+    }
+
+    @Override
+    protected void registerNavLinks(ViewHandler handler) {
+        addNavEntry(handler.route(GetRoomHandler.class, roomId),"Room");
     }
 
 }

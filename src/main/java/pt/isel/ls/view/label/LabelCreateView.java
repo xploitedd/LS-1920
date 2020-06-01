@@ -1,5 +1,6 @@
 package pt.isel.ls.view.label;
 
+import pt.isel.ls.handlers.label.GetLabelsHandler;
 import pt.isel.ls.handlers.label.PostLabelCreateHandler;
 import pt.isel.ls.model.dsl.Node;
 import pt.isel.ls.model.dsl.elements.Element;
@@ -36,6 +37,11 @@ public class LabelCreateView extends View {
                 h1("Create a new label"),
                 form
         );
+    }
+
+    @Override
+    protected void registerNavLinks(ViewHandler handler) {
+        addNavEntry(handler.route(GetLabelsHandler.class), "Labels");
     }
 
 }

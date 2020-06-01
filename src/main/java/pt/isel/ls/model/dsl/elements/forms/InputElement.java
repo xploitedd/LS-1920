@@ -11,7 +11,9 @@ public class InputElement extends Element {
     public InputElement(String type, String name, boolean required) {
         attr("type", type);
         attr("name", name);
-        attr("required", required ? "1" : "0");
+        if (required) {
+            attr("required", "1");
+        }
     }
 
 

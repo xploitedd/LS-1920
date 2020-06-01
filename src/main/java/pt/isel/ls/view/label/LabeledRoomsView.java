@@ -13,7 +13,6 @@ import pt.isel.ls.view.utils.table.StringTableBuilder;
 import java.io.PrintWriter;
 
 import static pt.isel.ls.model.dsl.Dsl.a;
-import static pt.isel.ls.model.dsl.Dsl.br;
 import static pt.isel.ls.model.dsl.Dsl.div;
 
 public class LabeledRoomsView extends View {
@@ -41,11 +40,7 @@ public class LabeledRoomsView extends View {
                 ))
                 .build();
 
-        return div(
-                el,
-                br(),
-                a(handler.route(GetLabelHandler.class, lid),"Label")
-        );
+        return div(el);
     }
 
     @Override
@@ -57,6 +52,11 @@ public class LabeledRoomsView extends View {
                 .withColumn("Location", Room::getLocation)
                 .withColumn("Description", Room::getDescription)
                 .build());
+    }
+
+    @Override
+    protected void registerNavLinks(ViewHandler handler) {
+        addNavEntry(handler.route(GetLabelHandler.class, lid),"Label");
     }
 
 }

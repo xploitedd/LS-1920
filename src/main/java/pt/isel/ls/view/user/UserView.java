@@ -18,7 +18,6 @@ import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 import static pt.isel.ls.model.dsl.Dsl.a;
-import static pt.isel.ls.model.dsl.Dsl.br;
 import static pt.isel.ls.model.dsl.Dsl.div;
 
 public class UserView extends View {
@@ -48,11 +47,7 @@ public class UserView extends View {
                 .withDetail("Bookings", bookingLst)
                 .build();
 
-        return div(
-                details,
-                br(),
-                a(handler.route(GetUsersHandler.class), "Users")
-        );
+        return div(details);
     }
 
     @Override
@@ -69,4 +64,8 @@ public class UserView extends View {
                 .build());
     }
 
+    @Override
+    protected void registerNavLinks(ViewHandler handler) {
+        addNavEntry(handler.route(GetUsersHandler.class), "Users");
+    }
 }

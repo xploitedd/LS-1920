@@ -14,7 +14,6 @@ import pt.isel.ls.view.utils.detail.StringDetailBuilder;
 import java.io.PrintWriter;
 
 import static pt.isel.ls.model.dsl.Dsl.a;
-import static pt.isel.ls.model.dsl.Dsl.br;
 import static pt.isel.ls.model.dsl.Dsl.div;
 
 public class RoomBookingView extends View {
@@ -39,13 +38,7 @@ public class RoomBookingView extends View {
                 .withDetail("End", booking.getEnd())
                 .build();
 
-        return div(
-                details,
-                br(),
-                a(handler.route(GetRoomBookingsHandler.class, booking.getRid()),"Room Bookings"),
-                br(),
-                a(handler.route(GetRoomHandler.class, booking.getRid()),"Room")
-        );
+        return div(details);
     }
 
     @Override
@@ -57,6 +50,12 @@ public class RoomBookingView extends View {
                 .withDetail("Begin", booking.getBegin())
                 .withDetail("End", booking.getEnd())
                 .build());
+    }
+
+    @Override
+    protected void registerNavLinks(ViewHandler handler) {
+        addNavEntry(handler.route(GetRoomHandler.class, booking.getRid()),"Room");
+        addNavEntry(handler.route(GetRoomBookingsHandler.class, booking.getRid()),"Room Bookings");
     }
 
 }

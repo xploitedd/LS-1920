@@ -13,7 +13,6 @@ import pt.isel.ls.view.utils.table.StringTableBuilder;
 import java.io.PrintWriter;
 
 import static pt.isel.ls.model.dsl.Dsl.a;
-import static pt.isel.ls.model.dsl.Dsl.br;
 import static pt.isel.ls.model.dsl.Dsl.div;
 
 public class UserBookingsView extends View {
@@ -40,11 +39,7 @@ public class UserBookingsView extends View {
                 ))
                 .build();
 
-        return div(
-                el,
-                br(),
-                a(handler.route(GetUserHandler.class, userId),"User")
-        );
+        return div(el);
     }
 
     @Override
@@ -55,6 +50,11 @@ public class UserBookingsView extends View {
                 .withColumn("Begin", Booking::getBegin)
                 .withColumn("End", Booking::getEnd)
                 .build());
+    }
+
+    @Override
+    protected void registerNavLinks(ViewHandler handler) {
+        addNavEntry(handler.route(GetUserHandler.class, userId),"User");
     }
 
 }

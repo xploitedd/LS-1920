@@ -13,7 +13,6 @@ import pt.isel.ls.view.utils.table.StringTableBuilder;
 import java.io.PrintWriter;
 
 import static pt.isel.ls.model.dsl.Dsl.a;
-import static pt.isel.ls.model.dsl.Dsl.br;
 import static pt.isel.ls.model.dsl.Dsl.div;
 
 public class UsersView extends View {
@@ -37,11 +36,7 @@ public class UsersView extends View {
                 ))
                 .build();
 
-        return div(
-                el,
-                br(),
-                a(handler.route(GetUserCreateHandler.class), "Create User")
-        );
+        return div(el);
     }
 
     @Override
@@ -51,6 +46,11 @@ public class UsersView extends View {
                 .withColumn("Name", User::getName)
                 .withColumn("Capacity", User::getEmail)
                 .build());
+    }
+
+    @Override
+    protected void registerNavLinks(ViewHandler handler) {
+        addNavEntry(handler.route(GetUserCreateHandler.class), "Create User");
     }
 
 }

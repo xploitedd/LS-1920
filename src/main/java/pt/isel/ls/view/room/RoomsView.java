@@ -14,7 +14,6 @@ import pt.isel.ls.view.utils.table.StringTableBuilder;
 import java.io.PrintWriter;
 
 import static pt.isel.ls.model.dsl.Dsl.a;
-import static pt.isel.ls.model.dsl.Dsl.br;
 import static pt.isel.ls.model.dsl.Dsl.div;
 
 public class RoomsView extends View {
@@ -40,13 +39,7 @@ public class RoomsView extends View {
                 ))
                 .build();
 
-        return div(
-                el,
-                br(),
-                a(handler.route(GetRoomCreateHandler.class), "Create Room"),
-                br(),
-                a(handler.route(GetRoomSearchHandler.class), "Search Rooms")
-        );
+        return div(el);
     }
 
     @Override
@@ -58,6 +51,12 @@ public class RoomsView extends View {
                 .withColumn("Location", Room::getLocation)
                 .withColumn("Description", Room::getDescription)
                 .build());
+    }
+
+    @Override
+    protected void registerNavLinks(ViewHandler handler) {
+        addNavEntry(handler.route(GetRoomCreateHandler.class), "Create Room");
+        addNavEntry(handler.route(GetRoomSearchHandler.class), "Search Rooms");
     }
 
 }
