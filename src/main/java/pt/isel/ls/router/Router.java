@@ -48,11 +48,14 @@ public class Router implements Iterable<Router.Route> {
             routes.add(route);
         }
 
-        routes.sort((a, b) -> {
-            int segCountA = a.getRouteTemplate().getParameterSegmentCount();
-            int segCountB = b.getRouteTemplate().getParameterSegmentCount();
-            return segCountA - segCountB;
-        });
+        // we only need to sort if a route with variable segments is inserted
+        if (route.getRouteTemplate().getParameterSegmentCount() != 0) {
+            routes.sort((a, b) -> {
+                int segCountA = a.getRouteTemplate().getParameterSegmentCount();
+                int segCountB = b.getRouteTemplate().getParameterSegmentCount();
+                return segCountA - segCountB;
+            });
+        }
     }
 
     /**
