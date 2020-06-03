@@ -37,7 +37,7 @@ public class HtmlFormBuilder {
         contents.put(name, div(
                 label(name, desc),
                 input(type.getType(), name, required).attr("id", name)
-        ));
+        ).attr("class", "form-input"));
 
         return this;
     }
@@ -53,7 +53,7 @@ public class HtmlFormBuilder {
                         .attr("id", name)
                         .attr("min", String.valueOf(min))
                         .attr("step", String.valueOf(step))
-        ));
+        ).attr("class", "form-input"));
 
         return this;
     }
@@ -63,7 +63,7 @@ public class HtmlFormBuilder {
                 label(name, desc),
                 select(name, multiple, options)
                         .attr("id", name)
-        ));
+        ).attr("class", "form-input"));
 
         return this;
     }
