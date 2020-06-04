@@ -32,21 +32,20 @@ public final class PostRoomHandler extends RouteHandler {
 
     @Override
     public HandlerResponse execute(RouteRequest request) {
-        Room inserted = createRoom(request);
-
-        return new HandlerResponse(new IdentifierView("room", inserted.getRid()));
-    }
-
-    Room createRoom(RouteRequest request) {
+        String name = request.getParameter("name").get(0).toString();
+        int capacity = request.getParameter("capacity").get(0).toInt();
+        String location = request.getParameter("location").get(0).toString();
         Optional<List<Parameter>> optLabels = request.getOptionalParameter("label");
         String desc = request.getOptionalParameter("description")
                 .map(l -> l.get(0).toString())
                 .orElse(null);
 
-        String name = request.getParameter("name").get(0).toString();
-        int capacity = request.getParameter("capacity").get(0).toInt();
-        String location = request.getParameter("location").get(0).toString();
+        Room inserted = createRoom(name, capacity, location, desc, optLabels);
 
+        return new HandlerResponse(new IdentifierView("room", inserted.getRid()));
+    }
+
+    Room createRoom(String name, int capacity, String location, String desc, Optional<List<Parameter>> optLabels) {
         if (capacity < MIN_CAPACITY) {
             throw new RouteException("Room capacity should be at least " + MIN_CAPACITY);
         }
