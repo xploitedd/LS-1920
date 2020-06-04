@@ -1,22 +1,20 @@
 package pt.isel.ls.router.request;
 
-import pt.isel.ls.exceptions.router.ParameterNotFoundException;
+import pt.isel.ls.exceptions.parameter.ParameterNotFoundException;
 import pt.isel.ls.exceptions.router.RouteParsingException;
 import pt.isel.ls.router.RouterUtils;
 import pt.isel.ls.exceptions.router.RouteException;
+import pt.isel.ls.router.request.parameter.Parameter;
+import pt.isel.ls.router.request.parameter.ParameterValueList;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Optional;
 
 public class RouteRequest {
 
-    public static final String ERR_KEY = "__ERROR";
-
     private final Method method;
     private final Path path;
-    private final HashMap<String, List<Parameter>> parameters;
+    private final HashMap<String, ParameterValueList> parameters;
     private final HashMap<HeaderType, String> headers;
 
     private HashMap<String, Parameter> pathParameters = new HashMap<>();
@@ -28,7 +26,7 @@ public class RouteRequest {
      * @param parameters parameters of the request
      */
     public RouteRequest(Method method, Path path,
-                         HashMap<String, List<Parameter>> parameters,
+                         HashMap<String, ParameterValueList> parameters,
                          HashMap<HeaderType, String> headers) {
 
         this.method = method;
@@ -60,26 +58,9 @@ public class RouteRequest {
      * @return parameter list
      * @throws ParameterNotFoundException in case the parameter does not exist
      */
-    public List<Parameter> getParameter(String parameterName) throws ParameterNotFoundException {
-        return getOptionalParameter(parameterName)
+    public ParameterValueList getParameter(String parameterName) throws ParameterNotFoundException {
+        return Optional.ofNullable(parameters.get(parameterName))
                 .orElseThrow(() -> new ParameterNotFoundException(parameterName));
-    }
-
-    /**
-     * Gets an optional parameter
-     * @param parameterName name of the parameter
-     * @return parameter list
-     */
-    public Optional<List<Parameter>> getOptionalParameter(String parameterName) {
-        return Optional.ofNullable(parameters.get(parameterName));
-    }
-
-    /**
-     * Gets any existing errors from redirects
-     * @return error list
-     */
-    public Optional<List<Parameter>> getErrors() {
-        return getOptionalParameter(ERR_KEY);
     }
 
     /**
@@ -126,7 +107,7 @@ public class RouteRequest {
                 throw new RouteException("Path not valid!");
             }
 
-            Optional<HashMap<String, List<Parameter>>> parameters = Optional.empty();
+            Optional<HashMap<String, ParameterValueList>> parameters = Optional.empty();
             Optional<HashMap<HeaderType, String>> headers = Optional.empty();
 
             // if headers are present
@@ -157,12 +138,11 @@ public class RouteRequest {
      * @param parameterSection parameter section to be parsed
      * @return parameter map
      */
-    private static HashMap<String, List<Parameter>> parseParameters(String parameterSection) {
-
-        HashMap<String, List<Parameter>> parameters = new HashMap<>();
+    private static HashMap<String, ParameterValueList> parseParameters(String parameterSection) {
+        HashMap<String, ParameterValueList> parameters = new HashMap<>();
         RouterUtils.forEachKeyValue(parameterSection, "&", "=", (key, value) -> {
-            List<Parameter> values = Optional.ofNullable(parameters.get(key))
-                    .orElse(new ArrayList<>());
+            ParameterValueList values = Optional.ofNullable(parameters.get(key))
+                    .orElse(new ParameterValueList(key));
 
             values.add(new Parameter(value));
             parameters.put(key, values);

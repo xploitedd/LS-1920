@@ -31,6 +31,7 @@ public class BookingQueries extends DatabaseQueries {
      * @return the booking that was created
      */
     public Booking createNewBooking(int rid, int uid, Timestamp begin, Timestamp end) {
+        // TODO: optimize this
         doBookingConstraintCheck(begin, end);
         // check overlapping bookings
         Interval i2 = new Interval(begin.getTime(), end.getTime());

@@ -1,9 +1,12 @@
 package pt.isel.ls.handlers.booking;
 
+import pt.isel.ls.exceptions.parameter.ValidatorException;
 import pt.isel.ls.handlers.RouteHandler;
 import pt.isel.ls.model.Booking;
 import pt.isel.ls.router.request.Method;
 import pt.isel.ls.router.request.RouteRequest;
+import pt.isel.ls.router.request.parameter.Validator;
+import pt.isel.ls.router.request.parameter.ValidatorResult;
 import pt.isel.ls.router.response.HandlerResponse;
 import pt.isel.ls.sql.ConnectionProvider;
 import pt.isel.ls.sql.queries.BookingQueries;
@@ -26,9 +29,14 @@ public final class PostBookingHandler extends RouteHandler {
     @Override
     public HandlerResponse execute(RouteRequest request) {
         int rid = request.getPathParameter("rid").toInt();
-        int uid = request.getParameter("uid").get(0).toInt();
-        long b = request.getParameter("begin").get(0).toTime();
-        int duration = request.getParameter("duration").get(0).toInt();
+        ValidatorResult res = getValidator().validate(request);
+        if (res.hasErrors()) {
+            throw new ValidatorException(res);
+        }
+
+        int uid = res.getParameterValue("uid");
+        long b = res.getParameterValue("begin");
+        int duration = res.getParameterValue("duration");
 
         Booking booking = createBooking(rid, uid, b, duration);
         return new HandlerResponse(new IdentifierView("booking", booking.getBid()));
@@ -42,4 +50,12 @@ public final class PostBookingHandler extends RouteHandler {
         return provider.execute(handler ->
                 new BookingQueries(handler).createNewBooking(rid, uid, b, e));
     }
+
+    Validator getValidator() {
+        return new Validator()
+                .addRule("uid", p -> p.getUnique().toInt())
+                .addRule("begin", p -> p.getUnique().toTime())
+                .addRule("duration", p -> p.getUnique().toInt());
+    }
+
 }

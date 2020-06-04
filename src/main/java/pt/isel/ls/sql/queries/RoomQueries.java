@@ -12,6 +12,8 @@ import pt.isel.ls.sql.api.SqlHandler;
 
 public class RoomQueries extends DatabaseQueries {
 
+    private static final int MIN_CAPACITY = 1;
+
     public RoomQueries(SqlHandler handler) {
         super(handler);
     }
@@ -27,6 +29,10 @@ public class RoomQueries extends DatabaseQueries {
      */
     public Room createNewRoom(String name, String location, int capacity,
                               String description, List<Label> labels) {
+
+        if (capacity < MIN_CAPACITY) {
+            throw new RouteException("Room capacity should be at least " + MIN_CAPACITY);
+        }
 
         // Inserts the new Room
         handler.createUpdate("INSERT INTO room (name, location, capacity) VALUES (?, ?, ?);")
@@ -95,6 +101,25 @@ public class RoomQueries extends DatabaseQueries {
         }
 
         return room.get();
+    }
+
+    /**
+     * Check if the name for the room is available
+     * @param name name of the room
+     */
+    public void checkNameAvailability(String name) {
+        Optional<Room> room = handler
+                .createQuery("SELECT room.rid, name, location, capacity, description "
+                        + "FROM room FULL JOIN description d "
+                        + "on room.rid = d.rid WHERE room.name = ?;")
+                .bind(name)
+                .mapToClass(Room.class)
+                .findFirst();
+
+        if (room.isPresent()) {
+            throw new RouteException("A room with the same name already exists!",
+                    StatusCode.BAD_REQUEST);
+        }
     }
 
     /**

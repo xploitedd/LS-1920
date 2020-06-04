@@ -1,10 +1,13 @@
 package pt.isel.ls.handlers.room;
 
+import pt.isel.ls.exceptions.parameter.ValidatorException;
 import pt.isel.ls.handlers.RouteHandler;
 import pt.isel.ls.model.Room;
 import pt.isel.ls.router.request.Method;
-import pt.isel.ls.router.request.Parameter;
+import pt.isel.ls.router.request.parameter.Parameter;
 import pt.isel.ls.router.request.RouteRequest;
+import pt.isel.ls.router.request.parameter.Validator;
+import pt.isel.ls.router.request.parameter.ValidatorResult;
 import pt.isel.ls.router.response.HandlerResponse;
 import pt.isel.ls.sql.ConnectionProvider;
 import pt.isel.ls.sql.api.SqlHandler;
@@ -34,29 +37,37 @@ public final class GetRoomsHandler extends RouteHandler {
 
     @Override
     public HandlerResponse execute(RouteRequest request) {
-        Optional<List<Parameter>> paramBegin = request.getOptionalParameter("begin");
-        Optional<List<Parameter>> paramDuration = request.getOptionalParameter("duration");
-        Optional<List<Parameter>> paramCapacity = request.getOptionalParameter("capacity");
-        Optional<List<Parameter>> paramLabel = request.getOptionalParameter("label");
+        Validator validator = new Validator()
+                .addRule("begin", p -> p.getUnique().toTime(), true)
+                .addRule("duration", p -> p.getUnique().toInt(), true)
+                .addRule("capacity", p -> p.getUnique().toInt(), true)
+                .addRule("label", p -> p.map(Parameter::toString), true);
+
+        ValidatorResult res = validator.validate(request);
+        if (res.hasErrors()) {
+            throw new ValidatorException(res);
+        }
+
+        Optional<Long> paramBegin = res.getOptionalParameter("begin");
+        Optional<Integer> paramDuration = res.getOptionalParameter("duration");
+        Optional<Integer> paramCapacity = res.getOptionalParameter("capacity");
+        Optional<List<String>> paramLabel = res.getOptionalParameter("label");
 
         Set<Room> rooms = provider.execute(handler -> {
             Stream<Room> str = new RoomQueries(handler).getRooms();
             if (paramCapacity.isPresent()) {
-                int minCapacity = paramCapacity.get().get(0).toInt();
+                int minCapacity = paramCapacity.get();
                 str = str.filter(room -> room.getCapacity() >= minCapacity);
             }
 
             Set<Room> ret = str.collect(Collectors.toSet());
             if (paramLabel.isPresent()) {
-                ret = filterByLabels(handler, ret, paramLabel.get()
-                        .stream()
-                        .map(Parameter::toString)
-                        .collect(Collectors.toList()));
+                ret = filterByLabels(handler, ret, paramLabel.get());
             }
 
             if (paramBegin.isPresent() && paramDuration.isPresent()) {
-                long begin = paramBegin.get().get(0).toTime();
-                long end = begin + Time.minutesToMillis(paramDuration.get().get(0).toTime());
+                long begin = paramBegin.get();
+                long end = begin + Time.minutesToMillis(paramDuration.get());
                 ret = filterByTime(handler, ret, begin, end);
             }
 

@@ -1,7 +1,6 @@
-package pt.isel.ls.router.request;
+package pt.isel.ls.router.request.parameter;
 
-import pt.isel.ls.exceptions.router.RouteException;
-import pt.isel.ls.router.StatusCode;
+import pt.isel.ls.exceptions.parameter.ValidatorException;
 
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
@@ -27,8 +26,7 @@ public class Parameter {
         try {
             return Integer.parseInt(value);
         } catch (NumberFormatException e) {
-            throw new RouteException("Invalid Parameter. Value: " + value,
-                    StatusCode.BAD_REQUEST);
+            throw new ValidatorException("Invalid Parameter Type");
         }
     }
 
@@ -40,8 +38,7 @@ public class Parameter {
         try {
             return Long.parseLong(value);
         } catch (NumberFormatException e) {
-            throw new RouteException("Invalid Parameter. Value: " + value,
-                    StatusCode.BAD_REQUEST);
+            throw new ValidatorException("Invalid Parameter Type");
         }
     }
 

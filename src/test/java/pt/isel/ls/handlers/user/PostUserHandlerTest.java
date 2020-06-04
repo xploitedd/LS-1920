@@ -4,6 +4,7 @@ import junit.framework.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import pt.isel.ls.DatasourceUtils;
+import pt.isel.ls.exceptions.parameter.ValidatorException;
 import pt.isel.ls.router.Router;
 import pt.isel.ls.router.request.RouteRequest;
 import pt.isel.ls.router.response.HandlerResponse;
@@ -40,7 +41,7 @@ public class PostUserHandlerTest {
         Assert.assertTrue(response.getView() instanceof IdentifierView);
     }
 
-    @Test(expected = RouteException.class)
+    @Test(expected = ValidatorException.class)
     public void createExistingUser() throws RouteException {
 
         RouteRequest request = RouteRequest.of(

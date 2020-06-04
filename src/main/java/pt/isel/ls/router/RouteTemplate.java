@@ -1,9 +1,9 @@
 package pt.isel.ls.router;
 
 import pt.isel.ls.exceptions.AppException;
-import pt.isel.ls.exceptions.router.NotEnoughParametersException;
-import pt.isel.ls.router.request.Parameter;
+import pt.isel.ls.exceptions.parameter.NotEnoughParametersException;
 import pt.isel.ls.router.request.Path;
+import pt.isel.ls.router.request.parameter.Parameter;
 
 import java.util.ArrayList;
 import java.util.HashMap;

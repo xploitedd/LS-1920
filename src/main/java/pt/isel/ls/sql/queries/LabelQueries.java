@@ -3,7 +3,6 @@ package pt.isel.ls.sql.queries;
 import java.util.Optional;
 import java.util.stream.Stream;
 
-import pt.isel.ls.exceptions.AppException;
 import pt.isel.ls.exceptions.router.RouteException;
 import pt.isel.ls.model.Label;
 import pt.isel.ls.router.StatusCode;
@@ -21,18 +20,11 @@ public class LabelQueries extends DatabaseQueries {
      * @return the created label
      */
     public Label createNewLabel(String labelName) {
-        try {
-            getLabel(labelName);
-        } catch (AppException e) {
-            handler.createUpdate("INSERT INTO label (name) VALUES (?);")
-                    .bind(labelName)
-                    .execute();
+        handler.createUpdate("INSERT INTO label (name) VALUES (?);")
+                .bind(labelName)
+                .execute();
 
-            return getLabel(labelName);
-        }
-
-        throw new RouteException("A label named " + labelName + " already exists!",
-                StatusCode.BAD_REQUEST);
+        return getLabel(labelName);
     }
 
     /**
@@ -78,6 +70,17 @@ public class LabelQueries extends DatabaseQueries {
     public Stream<Label> getLabels() {
         return handler.createQuery("SELECT * FROM label")
                 .mapToClass(Label.class);
+    }
+
+    public void checkLabelAvailability(String name) {
+        Optional<Label> label = handler.createQuery("SELECT * FROM label WHERE name = ?;")
+                .bind(name)
+                .mapToClass(Label.class)
+                .findFirst();
+
+        if (label.isPresent()) {
+            throw new RouteException("A label with the same name already exists!");
+        }
     }
 
 }

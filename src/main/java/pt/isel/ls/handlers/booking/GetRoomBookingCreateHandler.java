@@ -25,6 +25,6 @@ public class GetRoomBookingCreateHandler extends RouteHandler {
         int rid = request.getPathParameter("rid").toInt();
         Room room = provider.execute(handler -> new RoomQueries(handler).getRoom(rid));
 
-        return new HandlerResponse(new RoomBookingCreateView(room));
+        return new HandlerResponse(new RoomBookingCreateView(room, (String) null));
     }
 }

@@ -3,6 +3,7 @@ package pt.isel.ls.handlers.room;
 import org.junit.Before;
 import org.junit.Test;
 import pt.isel.ls.DatasourceUtils;
+import pt.isel.ls.exceptions.parameter.ValidatorException;
 import pt.isel.ls.router.Router;
 import pt.isel.ls.router.request.RouteRequest;
 import pt.isel.ls.exceptions.router.RouteException;
@@ -65,7 +66,7 @@ public class PostRoomHandlerTest {
         router.getHandler(request).execute(request);
     }
 
-    @Test(expected = RouteException.class)
+    @Test(expected = ValidatorException.class)
     public void createNewOverlappingRoom() throws RouteException {
 
         RouteRequest request1 = RouteRequest.of(

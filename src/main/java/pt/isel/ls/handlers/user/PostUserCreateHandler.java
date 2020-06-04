@@ -3,8 +3,10 @@ package pt.isel.ls.handlers.user;
 import pt.isel.ls.exceptions.AppException;
 import pt.isel.ls.handlers.RouteHandler;
 import pt.isel.ls.model.User;
+import pt.isel.ls.router.StatusCode;
 import pt.isel.ls.router.request.Method;
 import pt.isel.ls.router.request.RouteRequest;
+import pt.isel.ls.router.request.parameter.ValidatorResult;
 import pt.isel.ls.router.response.HandlerResponse;
 import pt.isel.ls.sql.ConnectionProvider;
 import pt.isel.ls.view.user.UserCreateView;
@@ -21,15 +23,22 @@ public class PostUserCreateHandler extends RouteHandler {
 
     @Override
     public HandlerResponse execute(RouteRequest request) {
-        String name = request.getParameter("name").get(0).toString();
-        String email = request.getParameter("email").get(0).toString();
+        PostUserHandler puh = new PostUserHandler(provider);
+        ValidatorResult res = puh.getValidator().validate(request);
+        if (res.hasErrors()) {
+            return new HandlerResponse(new UserCreateView(res.getErrors()))
+                    .setStatusCode(StatusCode.BAD_REQUEST);
+        }
+
+        String name = res.getParameterValue("name");
+        String email = res.getParameterValue("email");
 
         try {
             User newUser = new PostUserHandler(provider).createUser(name, email);
             return new HandlerResponse()
                     .redirect(GetUserHandler.class, newUser.getUid());
         } catch (AppException e) {
-            return new HandlerResponse(new UserCreateView(e.getMessage()))
+            return new HandlerResponse(new UserCreateView())
                     .setStatusCode(e.getStatusCode());
         }
     }

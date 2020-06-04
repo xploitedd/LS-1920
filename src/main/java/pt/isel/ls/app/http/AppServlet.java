@@ -7,9 +7,10 @@ import pt.isel.ls.router.Router;
 import pt.isel.ls.router.StatusCode;
 import pt.isel.ls.router.request.HeaderType;
 import pt.isel.ls.router.request.Method;
-import pt.isel.ls.router.request.Parameter;
+import pt.isel.ls.router.request.parameter.Parameter;
 import pt.isel.ls.router.request.Path;
 import pt.isel.ls.router.request.RouteRequest;
+import pt.isel.ls.router.request.parameter.ParameterValueList;
 import pt.isel.ls.router.response.HandlerResponse;
 import pt.isel.ls.router.response.Redirect;
 import pt.isel.ls.view.ViewHandler;
@@ -23,10 +24,8 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -143,16 +142,16 @@ public class AppServlet extends HttpServlet {
      * @param req request where the parameters are
      * @return a new HashMap with the non-empty parameters
      */
-    private static HashMap<String, List<Parameter>> processParameters(HttpServletRequest req) {
+    private static HashMap<String, ParameterValueList> processParameters(HttpServletRequest req) {
         Map<String, String[]> parameters = req.getParameterMap();
-        HashMap<String, List<Parameter>> parameterMap = new HashMap<>();
+        HashMap<String, ParameterValueList> parameterMap = new HashMap<>();
         for (String key : parameters.keySet()) {
             String[] values = parameters.get(key);
-            ArrayList<Parameter> list = null;
+            ParameterValueList list = null;
             for (String value : values) {
                 if (!value.isEmpty() && !value.isBlank()) {
                     if (list == null) {
-                        list = new ArrayList<>(values.length);
+                        list = new ParameterValueList(key);
                     }
 
                     list.add(new Parameter(value));

@@ -5,8 +5,11 @@ import pt.isel.ls.handlers.RouteHandler;
 import pt.isel.ls.model.Booking;
 import pt.isel.ls.model.Room;
 import pt.isel.ls.model.User;
+import pt.isel.ls.router.StatusCode;
 import pt.isel.ls.router.request.Method;
 import pt.isel.ls.router.request.RouteRequest;
+import pt.isel.ls.router.request.parameter.Validator;
+import pt.isel.ls.router.request.parameter.ValidatorResult;
 import pt.isel.ls.router.response.HandlerResponse;
 import pt.isel.ls.sql.ConnectionProvider;
 import pt.isel.ls.sql.queries.RoomQueries;
@@ -27,23 +30,39 @@ public class PostRoomBookingCreateHandler extends RouteHandler {
     @Override
     public HandlerResponse execute(RouteRequest request) {
         int rid = request.getPathParameter("rid").toInt();
-        String email = request.getParameter("email").get(0).toString();
-        long begin = request.getParameter("begin").get(0).toTime();
-        int duration = request.getParameter("duration").get(0).toInt();
+        Validator validator = new Validator()
+                .addRule("email", p -> {
+                    String email = p.getUnique().toString();
+                    return provider.execute(handler -> new UserQueries(handler)
+                            .getUserByEmail(email));
+                })
+                .addRule("begin", p -> p.getUnique().toTime())
+                .addRule("duration", p -> p.getUnique().toInt());
+
+        ValidatorResult res = validator.validate(request);
+        if (res.hasErrors()) {
+            return new HandlerResponse(new RoomBookingCreateView(getRoom(rid), res.getErrors()))
+                    .setStatusCode(StatusCode.BAD_REQUEST);
+        }
+
+        User user = res.getParameterValue("email");
+        long begin = res.getParameterValue("begin");
+        int duration = res.getParameterValue("duration");
 
         try {
-            User user = provider.execute(handler -> new UserQueries(handler)
-                    .getUser(email));
-
             Booking newBooking = new PostBookingHandler(provider)
                     .createBooking(rid, user.getUid(), begin, duration);
 
             return new HandlerResponse()
                     .redirect(GetRoomBookingHandler.class, rid, newBooking.getBid());
         } catch (AppException e) {
-            Room room = provider.execute(handler -> new RoomQueries(handler).getRoom(rid));
-            return new HandlerResponse(new RoomBookingCreateView(room, e.getMessage()))
+            return new HandlerResponse(new RoomBookingCreateView(getRoom(rid), e.getMessage()))
                     .setStatusCode(e.getStatusCode());
         }
     }
+
+    private Room getRoom(int rid) {
+        return provider.execute(handler -> new RoomQueries(handler).getRoom(rid));
+    }
+
 }

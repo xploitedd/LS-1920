@@ -7,6 +7,7 @@ import pt.isel.ls.model.dsl.Node;
 import pt.isel.ls.model.dsl.elements.Element;
 import pt.isel.ls.model.dsl.text.forms.OptionText;
 import pt.isel.ls.router.request.Method;
+import pt.isel.ls.router.request.parameter.ParameterErrors;
 import pt.isel.ls.view.View;
 import pt.isel.ls.view.ViewHandler;
 import pt.isel.ls.view.utils.form.HtmlFormBuilder;
@@ -21,16 +22,16 @@ import static pt.isel.ls.model.dsl.Dsl.option;
 public class RoomCreateView extends View {
 
     private final Iterable<Label> availableLabels;
-    private final String error;
+    private final ParameterErrors errors;
 
     public RoomCreateView(Iterable<Label> availableLabels) {
         this(availableLabels, null);
     }
 
-    public RoomCreateView(Iterable<Label> availableLabels, String error) {
+    public RoomCreateView(Iterable<Label> availableLabels, ParameterErrors errors) {
         super("Create Room");
         this.availableLabels = availableLabels;
-        this.error = error;
+        this.errors = errors;
     }
 
     @Override
@@ -41,7 +42,7 @@ public class RoomCreateView extends View {
                 .withNumber("capacity", "Capacity", true, 1, 1)
                 .withInput("description", "Description", InputType.TEXT)
                 .withOptions("label", "Labels", getOptions(), true)
-                .withError(error)
+                .withErrors(errors)
                 .build("Create Room");
 
         return div(

@@ -1,9 +1,12 @@
 package pt.isel.ls.view.utils.form;
 
+import pt.isel.ls.model.dsl.Dsl;
 import pt.isel.ls.model.dsl.elements.Element;
 import pt.isel.ls.model.dsl.elements.forms.FormElement;
+import pt.isel.ls.model.dsl.text.TextNode;
 import pt.isel.ls.model.dsl.text.forms.OptionText;
 import pt.isel.ls.router.request.Method;
+import pt.isel.ls.router.request.parameter.ParameterErrors;
 
 import java.util.LinkedHashMap;
 
@@ -12,7 +15,6 @@ import static pt.isel.ls.model.dsl.Dsl.div;
 import static pt.isel.ls.model.dsl.Dsl.form;
 import static pt.isel.ls.model.dsl.Dsl.input;
 import static pt.isel.ls.model.dsl.Dsl.label;
-import static pt.isel.ls.model.dsl.Dsl.p;
 import static pt.isel.ls.model.dsl.Dsl.select;
 
 public class HtmlFormBuilder {
@@ -22,7 +24,7 @@ public class HtmlFormBuilder {
     private final LinkedHashMap<String, Element> contents = new LinkedHashMap<>();
     private final Method method;
     private final String action;
-    private String error;
+    private ParameterErrors errors;
 
     public HtmlFormBuilder(Method method, String action) {
         this.method = method;
@@ -68,8 +70,8 @@ public class HtmlFormBuilder {
         return this;
     }
 
-    public HtmlFormBuilder withError(String error) {
-        this.error = error;
+    public HtmlFormBuilder withErrors(ParameterErrors errors) {
+        this.errors = errors;
         return this;
     }
 
@@ -85,9 +87,15 @@ public class HtmlFormBuilder {
         Element[] elements = contents.values().toArray(Element[]::new);
         FormElement form = form(method.name(), action, elements);
 
-        if (error != null) {
+        if (errors != null) {
+            TextNode[] err = errors.getErrors()
+                    .values()
+                    .stream()
+                    .map(Dsl::p)
+                    .toArray(TextNode[]::new);
+
             return div(
-                    p(error),
+                    div(err),
                     form
             );
         }

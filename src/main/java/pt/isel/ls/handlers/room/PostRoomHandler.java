@@ -1,12 +1,14 @@
 package pt.isel.ls.handlers.room;
 
-import pt.isel.ls.exceptions.router.RouteException;
+import pt.isel.ls.exceptions.parameter.ValidatorException;
 import pt.isel.ls.handlers.RouteHandler;
 import pt.isel.ls.model.Label;
 import pt.isel.ls.model.Room;
 import pt.isel.ls.router.request.Method;
-import pt.isel.ls.router.request.Parameter;
+import pt.isel.ls.router.request.parameter.Parameter;
 import pt.isel.ls.router.request.RouteRequest;
+import pt.isel.ls.router.request.parameter.Validator;
+import pt.isel.ls.router.request.parameter.ValidatorResult;
 import pt.isel.ls.router.response.HandlerResponse;
 import pt.isel.ls.sql.ConnectionProvider;
 import pt.isel.ls.sql.queries.LabelQueries;
@@ -19,8 +21,6 @@ import java.util.Optional;
 
 public final class PostRoomHandler extends RouteHandler {
 
-    private static final int MIN_CAPACITY = 2;
-
     public PostRoomHandler(ConnectionProvider provider) {
         super(
                 Method.POST,
@@ -32,35 +32,50 @@ public final class PostRoomHandler extends RouteHandler {
 
     @Override
     public HandlerResponse execute(RouteRequest request) {
-        String name = request.getParameter("name").get(0).toString();
-        int capacity = request.getParameter("capacity").get(0).toInt();
-        String location = request.getParameter("location").get(0).toString();
-        Optional<List<Parameter>> optLabels = request.getOptionalParameter("label");
-        String desc = request.getOptionalParameter("description")
-                .map(l -> l.get(0).toString())
-                .orElse(null);
+        ValidatorResult res = getValidator().validate(request);
+        if (res.hasErrors()) {
+            throw new ValidatorException(res);
+        }
 
-        Room inserted = createRoom(name, capacity, location, desc, optLabels);
+        String name = res.getParameterValue("name");
+        int capacity = res.getParameterValue("capacity");
+        String location = res.getParameterValue("location");
+        Optional<List<String>> optLabels = res.getOptionalParameter("label");
+        Optional<String> desc = res.getOptionalParameter("description");
 
+        Room inserted = createRoom(name, capacity, location, desc.orElse(null), optLabels.orElse(null));
         return new HandlerResponse(new IdentifierView("room", inserted.getRid()));
     }
 
-    Room createRoom(String name, int capacity, String location, String desc, Optional<List<Parameter>> optLabels) {
-        if (capacity < MIN_CAPACITY) {
-            throw new RouteException("Room capacity should be at least " + MIN_CAPACITY);
-        }
-
+    Room createRoom(String name, int capacity, String location, String desc, List<String> optLabels) {
         return provider.execute(handler -> {
             List<Label> labels = new LinkedList<>();
-            if (optLabels.isPresent()) {
+            if (optLabels != null) {
                 LabelQueries labelQueries = new LabelQueries(handler);
-                for (Parameter label : optLabels.get()) {
-                    labels.add(labelQueries.getLabel(label.toString()));
+                for (String label : optLabels) {
+                    labels.add(labelQueries.getLabel(label));
                 }
             }
 
             return new RoomQueries(handler).createNewRoom(name, location, capacity, desc, labels);
         });
+    }
+
+    Validator getValidator() {
+        return new Validator()
+                .addRule("name", p -> {
+                    String name = p.getUnique().toString();
+                    provider.execute(handler -> {
+                        new RoomQueries(handler).checkNameAvailability(name);
+                        return null;
+                    });
+
+                    return name;
+                })
+                .addRule("capacity", p -> p.getUnique().toInt())
+                .addRule("location", p -> p.getUnique().toString())
+                .addRule("label", p -> p.map(Parameter::toString), true)
+                .addRule("description", p -> p.getUnique().toString(), true);
     }
 
 }

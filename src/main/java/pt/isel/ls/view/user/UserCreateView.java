@@ -5,6 +5,7 @@ import pt.isel.ls.handlers.user.PostUserCreateHandler;
 import pt.isel.ls.model.dsl.Node;
 import pt.isel.ls.model.dsl.elements.Element;
 import pt.isel.ls.router.request.Method;
+import pt.isel.ls.router.request.parameter.ParameterErrors;
 import pt.isel.ls.view.View;
 import pt.isel.ls.view.ViewHandler;
 import pt.isel.ls.view.utils.form.HtmlFormBuilder;
@@ -15,15 +16,15 @@ import static pt.isel.ls.model.dsl.Dsl.h1;
 
 public class UserCreateView extends View {
 
-    private final String error;
+    private final ParameterErrors errors;
 
     public UserCreateView() {
         this(null);
     }
 
-    public UserCreateView(String error) {
+    public UserCreateView(ParameterErrors errors) {
         super("Create User");
-        this.error = error;
+        this.errors = errors;
     }
 
     @Override
@@ -31,7 +32,7 @@ public class UserCreateView extends View {
         Element el = new HtmlFormBuilder(Method.POST, handler.route(PostUserCreateHandler.class))
                 .withInput("name", "Name", InputType.TEXT, true)
                 .withInput("email", "Email", InputType.EMAIL, true)
-                .withError(error)
+                .withErrors(errors)
                 .build("Create User");
 
         return div(

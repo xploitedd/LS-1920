@@ -1,8 +1,7 @@
 package pt.isel.ls.router.response;
 
 import pt.isel.ls.handlers.RouteHandler;
-import pt.isel.ls.router.request.Parameter;
-import pt.isel.ls.router.request.RouteRequest;
+import pt.isel.ls.router.request.parameter.Parameter;
 
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
@@ -33,11 +32,6 @@ public class Redirect {
         list.add(new Parameter(value));
         // add in case it's a new list
         parameters.put(key, list);
-        return this;
-    }
-
-    public Redirect setError(String value) {
-        addParameter(RouteRequest.ERR_KEY, value);
         return this;
     }
 

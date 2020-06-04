@@ -1,9 +1,11 @@
 package pt.isel.ls.handlers.booking;
 
+import pt.isel.ls.exceptions.parameter.ValidatorException;
 import pt.isel.ls.handlers.RouteHandler;
 import pt.isel.ls.model.Booking;
 import pt.isel.ls.router.request.Method;
 import pt.isel.ls.router.request.RouteRequest;
+import pt.isel.ls.router.request.parameter.ValidatorResult;
 import pt.isel.ls.router.response.HandlerResponse;
 import pt.isel.ls.sql.ConnectionProvider;
 import pt.isel.ls.sql.queries.BookingQueries;
@@ -27,9 +29,16 @@ public final class PutBookingHandler extends RouteHandler {
     public HandlerResponse execute(RouteRequest request) {
         int rid = request.getPathParameter("rid").toInt();
         int bid = request.getPathParameter("bid").toInt();
-        int newUid = request.getParameter("uid").get(0).toInt();
-        long newBegin = request.getParameter("begin").get(0).toTime();
-        int duration = request.getParameter("duration").get(0).toInt();
+
+        PostBookingHandler pbh = new PostBookingHandler(provider);
+        ValidatorResult res = pbh.getValidator().validate(request);
+        if (res.hasErrors()) {
+            throw new ValidatorException(res);
+        }
+
+        int newUid = res.getParameterValue("uid");
+        long newBegin = res.getParameterValue("begin");
+        int duration = res.getParameterValue("duration");
 
         Timestamp newB = new Timestamp(newBegin);
         Timestamp newE = new Timestamp(newBegin + Time.minutesToMillis(duration));
