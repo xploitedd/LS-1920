@@ -22,15 +22,15 @@ public final class PostUserHandler extends RouteHandler {
 
     @Override
     public HandlerResponse execute(RouteRequest request) {
-        User user = createUser(request);
+        String name = request.getParameter("name").get(0).toString();
+        String email = request.getParameter("email").get(0).toString();
+
+        User user = createUser(name, email);
 
         return new HandlerResponse(new IdentifierView("user", user.getUid()));
     }
 
-    User createUser(RouteRequest request) {
-        String name = request.getParameter("name").get(0).toString();
-        String email = request.getParameter("email").get(0).toString();
-
+    User createUser(String name, String email) {
         return provider.execute(handler ->
                 new UserQueries(handler).createNewUser(name, email));
     }

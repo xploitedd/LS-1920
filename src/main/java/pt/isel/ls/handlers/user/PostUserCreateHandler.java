@@ -21,8 +21,11 @@ public class PostUserCreateHandler extends RouteHandler {
 
     @Override
     public HandlerResponse execute(RouteRequest request) {
+        String name = request.getParameter("name").get(0).toString();
+        String email = request.getParameter("email").get(0).toString();
+
         try {
-            User newUser = new PostUserHandler(provider).createUser(request);
+            User newUser = new PostUserHandler(provider).createUser(name, email);
             return new HandlerResponse()
                     .redirect(GetUserHandler.class, newUser.getUid());
         } catch (AppException e) {
