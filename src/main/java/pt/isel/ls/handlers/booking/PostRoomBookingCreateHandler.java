@@ -27,11 +27,11 @@ public class PostRoomBookingCreateHandler extends RouteHandler {
     @Override
     public HandlerResponse execute(RouteRequest request) {
         int rid = request.getPathParameter("rid").toInt();
-        try {
-            String email = request.getParameter("email").get(0).toString();
-            long begin = request.getParameter("begin").get(0).toTime();
-            int duration = request.getParameter("duration").get(0).toInt();
+        String email = request.getParameter("email").get(0).toString();
+        long begin = request.getParameter("begin").get(0).toTime();
+        int duration = request.getParameter("duration").get(0).toInt();
 
+        try {
             User user = provider.execute(handler -> new UserQueries(handler)
                     .getUser(email));
 

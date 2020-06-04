@@ -22,14 +22,13 @@ public final class PostLabelHandler extends RouteHandler {
 
     @Override
     public HandlerResponse execute(RouteRequest request) {
-        Label label = createLabel(request);
+        Label label = createLabel(request.getParameter("name").get(0).toString());
 
         return new HandlerResponse(new IdentifierView("label", label.getLid()));
     }
 
-    public Label createLabel(RouteRequest request) {
-        String labelName = request.getParameter("name").get(0).toString();
+    public Label createLabel(String name) {
         return provider.execute(handler ->
-                new LabelQueries(handler).createNewLabel(labelName));
+                new LabelQueries(handler).createNewLabel(name));
     }
 }

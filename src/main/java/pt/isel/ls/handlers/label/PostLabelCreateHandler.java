@@ -22,8 +22,9 @@ public class PostLabelCreateHandler extends RouteHandler {
 
     @Override
     public HandlerResponse execute(RouteRequest request) {
+        String name = request.getParameter("name").get(0).toString();
         try {
-            Label newLabel = new PostLabelHandler(provider).createLabel(request);
+            Label newLabel = new PostLabelHandler(provider).createLabel(name);
             return new HandlerResponse()
                     .redirect(GetLabelHandler.class, newLabel.getLid());
         } catch (AppException e) {
