@@ -130,3 +130,20 @@ li a {
     text-decoration: none;
     color: #000000;
 }
+
+.input-errors {
+    display: flex;
+    width: 100%;
+    flex-wrap: wrap;
+    align-items: center;
+    padding: 5px;
+    background-color: rgba(203,30,22,0.83);
+    border: 2px solid #b0221b;
+    margin-bottom: 5px;
+    border-radius: 3px;
+}
+
+.input-errors p {
+    margin: 0 !important;
+    color: #ffffff;
+}

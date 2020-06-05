@@ -8,9 +8,10 @@ import pt.isel.ls.model.User;
 import pt.isel.ls.router.StatusCode;
 import pt.isel.ls.router.request.Method;
 import pt.isel.ls.router.request.RouteRequest;
-import pt.isel.ls.router.request.parameter.Validator;
-import pt.isel.ls.router.request.parameter.ValidatorResult;
+import pt.isel.ls.router.request.validator.Validator;
+import pt.isel.ls.router.request.validator.ValidatorResult;
 import pt.isel.ls.router.response.HandlerResponse;
+import pt.isel.ls.router.response.error.HandlerError;
 import pt.isel.ls.sql.ConnectionProvider;
 import pt.isel.ls.sql.queries.RoomQueries;
 import pt.isel.ls.sql.queries.UserQueries;
@@ -31,13 +32,10 @@ public class PostRoomBookingCreateHandler extends RouteHandler {
     public HandlerResponse execute(RouteRequest request) {
         int rid = request.getPathParameter("rid").toInt();
         Validator validator = new Validator()
-                .addRule("email", p -> {
-                    String email = p.getUnique().toString();
-                    return provider.execute(handler -> new UserQueries(handler)
-                            .getUserByEmail(email));
-                })
-                .addRule("begin", p -> p.getUnique().toTime())
-                .addRule("duration", p -> p.getUnique().toInt());
+                .addMapping("email", p -> provider.execute(handler -> new UserQueries(handler)
+                        .getUserByEmail(p.getUnique().toString())))
+                .addMapping("begin", p -> p.getUnique().toTime())
+                .addMapping("duration", p -> p.getUnique().toInt());
 
         ValidatorResult res = validator.validate(request);
         if (res.hasErrors()) {
@@ -56,7 +54,8 @@ public class PostRoomBookingCreateHandler extends RouteHandler {
             return new HandlerResponse()
                     .redirect(GetRoomBookingHandler.class, rid, newBooking.getBid());
         } catch (AppException e) {
-            return new HandlerResponse(new RoomBookingCreateView(getRoom(rid), e.getMessage()))
+            HandlerError err = HandlerError.fromException(e);
+            return new HandlerResponse(new RoomBookingCreateView(getRoom(rid), err))
                     .setStatusCode(e.getStatusCode());
         }
     }

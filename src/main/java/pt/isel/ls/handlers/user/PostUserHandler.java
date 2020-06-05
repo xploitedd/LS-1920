@@ -5,8 +5,8 @@ import pt.isel.ls.handlers.RouteHandler;
 import pt.isel.ls.model.User;
 import pt.isel.ls.router.request.Method;
 import pt.isel.ls.router.request.RouteRequest;
-import pt.isel.ls.router.request.parameter.Validator;
-import pt.isel.ls.router.request.parameter.ValidatorResult;
+import pt.isel.ls.router.request.validator.Validator;
+import pt.isel.ls.router.request.validator.ValidatorResult;
 import pt.isel.ls.router.response.HandlerResponse;
 import pt.isel.ls.sql.ConnectionProvider;
 import pt.isel.ls.sql.queries.UserQueries;
@@ -44,16 +44,12 @@ public final class PostUserHandler extends RouteHandler {
 
     Validator getValidator() {
         return new Validator()
-                .addRule("name", p -> p.getUnique().toString())
-                .addRule("email", p -> {
-                    String email = p.getUnique().toString();
-                    provider.execute(handler -> {
-                        new UserQueries(handler).checkEmailAvailability(email);
-                        return null;
-                    });
-
-                    return email;
-                });
+                .addMapping("name", p -> p.getUnique().toString())
+                .addMapping("email", p -> p.getUnique().toString())
+                .addFilter("email", email -> provider.execute(handler -> {
+                    new UserQueries(handler).checkEmailAvailability(email);
+                    return null;
+                }), String.class);
     }
 
 }

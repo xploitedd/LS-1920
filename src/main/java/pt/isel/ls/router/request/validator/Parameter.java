@@ -1,4 +1,4 @@
-package pt.isel.ls.router.request.parameter;
+package pt.isel.ls.router.request.validator;
 
 import pt.isel.ls.exceptions.parameter.ValidatorException;
 

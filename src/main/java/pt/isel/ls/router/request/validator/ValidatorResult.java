@@ -1,8 +1,9 @@
-package pt.isel.ls.router.request.parameter;
+package pt.isel.ls.router.request.validator;
 
 import pt.isel.ls.exceptions.AppException;
 import pt.isel.ls.exceptions.parameter.ParameterNotFoundException;
 import pt.isel.ls.router.StatusCode;
+import pt.isel.ls.router.response.error.ParameterError;
 
 import java.util.HashMap;
 import java.util.Optional;
@@ -10,9 +11,9 @@ import java.util.Optional;
 public class ValidatorResult {
 
     private final HashMap<String, Object> parameterResults;
-    private final ParameterErrors errors;
+    private final ParameterError errors;
 
-    public ValidatorResult(HashMap<String, Object> parameterResults, ParameterErrors errors) {
+    public ValidatorResult(HashMap<String, Object> parameterResults, ParameterError errors) {
         this.parameterResults = parameterResults;
         this.errors = errors;
     }
@@ -21,19 +22,8 @@ public class ValidatorResult {
         return errors.getErrors().size() > 0;
     }
 
-    public ParameterErrors getErrors() {
+    public ParameterError getErrors() {
         return errors;
-    }
-
-    public String getErrorString() {
-        StringBuilder sb = new StringBuilder();
-        for (String parameter : errors.getErrors().keySet()) {
-            String error = errors.getErrors().get(parameter);
-            sb.append(parameter).append(": ").append(error).append(", ");
-        }
-
-        // substring to remove the last ", "
-        return sb.substring(0, sb.length() - 2);
     }
 
     @SuppressWarnings("unchecked")

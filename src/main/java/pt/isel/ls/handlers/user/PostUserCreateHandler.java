@@ -6,8 +6,9 @@ import pt.isel.ls.model.User;
 import pt.isel.ls.router.StatusCode;
 import pt.isel.ls.router.request.Method;
 import pt.isel.ls.router.request.RouteRequest;
-import pt.isel.ls.router.request.parameter.ValidatorResult;
+import pt.isel.ls.router.request.validator.ValidatorResult;
 import pt.isel.ls.router.response.HandlerResponse;
+import pt.isel.ls.router.response.error.HandlerError;
 import pt.isel.ls.sql.ConnectionProvider;
 import pt.isel.ls.view.user.UserCreateView;
 
@@ -38,7 +39,8 @@ public class PostUserCreateHandler extends RouteHandler {
             return new HandlerResponse()
                     .redirect(GetUserHandler.class, newUser.getUid());
         } catch (AppException e) {
-            return new HandlerResponse(new UserCreateView())
+            HandlerError err = HandlerError.fromException(e);
+            return new HandlerResponse(new UserCreateView(err))
                     .setStatusCode(e.getStatusCode());
         }
     }

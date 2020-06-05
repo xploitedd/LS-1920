@@ -1,7 +1,7 @@
 package pt.isel.ls.router.response;
 
 import pt.isel.ls.handlers.RouteHandler;
-import pt.isel.ls.router.request.parameter.Parameter;
+import pt.isel.ls.router.request.validator.Parameter;
 
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;

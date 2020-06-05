@@ -5,8 +5,8 @@ import pt.isel.ls.handlers.RouteHandler;
 import pt.isel.ls.model.Booking;
 import pt.isel.ls.router.request.Method;
 import pt.isel.ls.router.request.RouteRequest;
-import pt.isel.ls.router.request.parameter.Validator;
-import pt.isel.ls.router.request.parameter.ValidatorResult;
+import pt.isel.ls.router.request.validator.Validator;
+import pt.isel.ls.router.request.validator.ValidatorResult;
 import pt.isel.ls.router.response.HandlerResponse;
 import pt.isel.ls.sql.ConnectionProvider;
 import pt.isel.ls.sql.queries.BookingQueries;
@@ -53,9 +53,9 @@ public final class PostBookingHandler extends RouteHandler {
 
     Validator getValidator() {
         return new Validator()
-                .addRule("uid", p -> p.getUnique().toInt())
-                .addRule("begin", p -> p.getUnique().toTime())
-                .addRule("duration", p -> p.getUnique().toInt());
+                .addMapping("uid", p -> p.getUnique().toInt())
+                .addMapping("begin", p -> p.getUnique().toTime())
+                .addMapping("duration", p -> p.getUnique().toInt());
     }
 
 }

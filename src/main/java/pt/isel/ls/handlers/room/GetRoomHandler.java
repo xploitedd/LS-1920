@@ -4,7 +4,7 @@ import pt.isel.ls.handlers.RouteHandler;
 import pt.isel.ls.model.Label;
 import pt.isel.ls.model.Room;
 import pt.isel.ls.router.request.Method;
-import pt.isel.ls.router.request.parameter.Parameter;
+import pt.isel.ls.router.request.validator.Parameter;
 import pt.isel.ls.router.request.RouteRequest;
 import pt.isel.ls.router.response.HandlerResponse;
 import pt.isel.ls.sql.ConnectionProvider;
@@ -31,7 +31,6 @@ public final class GetRoomHandler extends RouteHandler {
 
         int rid = paramRid.toInt();
         Room room = provider.execute(handler -> new RoomQueries(handler).getRoom(rid));
-
         Iterable<Label> labels = provider.execute(handler -> new RoomLabelQueries(handler)
                 .getRoomLabels(rid)
                 .collect(Collectors.toList()));

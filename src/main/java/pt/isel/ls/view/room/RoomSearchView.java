@@ -9,6 +9,8 @@ import pt.isel.ls.router.request.Method;
 import pt.isel.ls.view.View;
 import pt.isel.ls.view.ViewHandler;
 import pt.isel.ls.view.utils.form.HtmlFormBuilder;
+import pt.isel.ls.view.utils.form.HtmlFormInput;
+import pt.isel.ls.view.utils.form.HtmlFormSelect;
 import pt.isel.ls.view.utils.form.InputType;
 
 import java.util.stream.StreamSupport;
@@ -29,10 +31,14 @@ public class RoomSearchView extends View {
     @Override
     protected Node getHtmlBody(ViewHandler handler) {
         Element el = new HtmlFormBuilder(Method.GET, handler.route(GetRoomsHandler.class))
-                .withInput("begin", "Available From", InputType.DATETIME)
-                .withNumber("duration", "Available For", 10, 10)
-                .withNumber("capacity", "With capacity", 0, 1)
-                .withOptions("label", "With labels", getOptions(), true)
+                .withInput(new HtmlFormInput("begin", "Available From", InputType.DATETIME, false))
+                .withInput(new HtmlFormInput("duration", "Available For", InputType.NUMBER, false)
+                        .withAttr("min", "10")
+                        .withAttr("step", "10"))
+                .withInput(new HtmlFormInput("capacity", "With capacity", InputType.NUMBER, false)
+                        .withAttr("min", "1")
+                        .withAttr("step", "1"))
+                .withInput(new HtmlFormSelect("label", "With labels", getOptions(), true))
                 .build("Search");
 
         return div(

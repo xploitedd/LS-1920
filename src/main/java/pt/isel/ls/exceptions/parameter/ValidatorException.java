@@ -1,6 +1,6 @@
 package pt.isel.ls.exceptions.parameter;
 
-import pt.isel.ls.router.request.parameter.ValidatorResult;
+import pt.isel.ls.router.request.validator.ValidatorResult;
 
 public class ValidatorException extends ParameterException {
 
@@ -9,7 +9,7 @@ public class ValidatorException extends ParameterException {
     }
 
     public ValidatorException(ValidatorResult result) {
-        super(result.getErrorString());
+        super(result.getErrors().toString());
     }
 
 }

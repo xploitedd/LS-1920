@@ -4,8 +4,8 @@ import pt.isel.ls.exceptions.parameter.ParameterNotFoundException;
 import pt.isel.ls.exceptions.router.RouteParsingException;
 import pt.isel.ls.router.RouterUtils;
 import pt.isel.ls.exceptions.router.RouteException;
-import pt.isel.ls.router.request.parameter.Parameter;
-import pt.isel.ls.router.request.parameter.ParameterValueList;
+import pt.isel.ls.router.request.validator.Parameter;
+import pt.isel.ls.router.request.validator.ParameterValueList;
 
 import java.util.HashMap;
 import java.util.Optional;

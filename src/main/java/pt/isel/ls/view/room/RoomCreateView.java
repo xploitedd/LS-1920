@@ -3,52 +3,53 @@ package pt.isel.ls.view.room;
 import pt.isel.ls.handlers.room.GetRoomsHandler;
 import pt.isel.ls.handlers.room.PostRoomCreateHandler;
 import pt.isel.ls.model.Label;
-import pt.isel.ls.model.dsl.Node;
-import pt.isel.ls.model.dsl.elements.Element;
+import pt.isel.ls.model.dsl.elements.forms.FormElement;
 import pt.isel.ls.model.dsl.text.forms.OptionText;
 import pt.isel.ls.router.request.Method;
-import pt.isel.ls.router.request.parameter.ParameterErrors;
-import pt.isel.ls.view.View;
+import pt.isel.ls.router.response.error.HandlerError;
+import pt.isel.ls.router.response.error.ParameterError;
+import pt.isel.ls.view.FormView;
 import pt.isel.ls.view.ViewHandler;
 import pt.isel.ls.view.utils.form.HtmlFormBuilder;
+import pt.isel.ls.view.utils.form.HtmlFormInput;
+import pt.isel.ls.view.utils.form.HtmlFormSelect;
 import pt.isel.ls.view.utils.form.InputType;
 
 import java.util.stream.StreamSupport;
 
-import static pt.isel.ls.model.dsl.Dsl.div;
-import static pt.isel.ls.model.dsl.Dsl.h1;
 import static pt.isel.ls.model.dsl.Dsl.option;
 
-public class RoomCreateView extends View {
+public class RoomCreateView extends FormView {
 
     private final Iterable<Label> availableLabels;
-    private final ParameterErrors errors;
 
     public RoomCreateView(Iterable<Label> availableLabels) {
-        this(availableLabels, null);
+        super("Create a new room");
+        this.availableLabels = availableLabels;
     }
 
-    public RoomCreateView(Iterable<Label> availableLabels, ParameterErrors errors) {
-        super("Create Room");
+    public RoomCreateView(Iterable<Label> availableLabels, ParameterError errors) {
+        super("Create a new room", errors);
         this.availableLabels = availableLabels;
-        this.errors = errors;
+    }
+
+    public RoomCreateView(Iterable<Label> availableLabels, HandlerError errors) {
+        super("Create a new room", errors);
+        this.availableLabels = availableLabels;
     }
 
     @Override
-    protected Node getHtmlBody(ViewHandler handler) {
-        Element el = new HtmlFormBuilder(Method.POST, handler.route(PostRoomCreateHandler.class))
-                .withInput("name", "Room Name", InputType.TEXT, true)
-                .withInput("location", "Location", InputType.TEXT, true)
-                .withNumber("capacity", "Capacity", true, 1, 1)
-                .withInput("description", "Description", InputType.TEXT)
-                .withOptions("label", "Labels", getOptions(), true)
-                .withErrors(errors)
+    protected FormElement getForm(ViewHandler handler) {
+        return new HtmlFormBuilder(Method.POST, handler.route(PostRoomCreateHandler.class))
+                .withInput(new HtmlFormInput("name", "Room Name", InputType.TEXT, true))
+                .withInput(new HtmlFormInput("location", "Location", InputType.TEXT, true))
+                .withInput(new HtmlFormInput("capacity", "Capacity", InputType.NUMBER, true)
+                        .withAttr("min", "1")
+                        .withAttr("step", "1"))
+                .withInput(new HtmlFormInput("description", "Description", InputType.TEXT, false))
+                .withInput(new HtmlFormSelect("label", "Labels", getOptions(), true))
+                .withErrors(parameterErrors)
                 .build("Create Room");
-
-        return div(
-                h1("Create a new room"),
-                el
-        );
     }
 
     @Override
@@ -61,4 +62,5 @@ public class RoomCreateView extends View {
                 .map(label -> option(label.getName(), label.getName()))
                 .toArray(OptionText[]::new);
     }
+
 }

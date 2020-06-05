@@ -13,7 +13,7 @@ import pt.isel.ls.exceptions.router.RouteNotFoundException;
 import pt.isel.ls.handlers.Handler;
 import pt.isel.ls.handlers.RouteHandler;
 import pt.isel.ls.router.request.Method;
-import pt.isel.ls.router.request.parameter.Parameter;
+import pt.isel.ls.router.request.validator.Parameter;
 import pt.isel.ls.router.request.RouteRequest;
 import pt.isel.ls.router.response.HandlerResponse;
 import pt.isel.ls.view.misc.ExceptionView;

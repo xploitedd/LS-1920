@@ -5,10 +5,10 @@ import pt.isel.ls.handlers.RouteHandler;
 import pt.isel.ls.model.Label;
 import pt.isel.ls.model.Room;
 import pt.isel.ls.router.request.Method;
-import pt.isel.ls.router.request.parameter.Parameter;
+import pt.isel.ls.router.request.validator.Parameter;
 import pt.isel.ls.router.request.RouteRequest;
-import pt.isel.ls.router.request.parameter.Validator;
-import pt.isel.ls.router.request.parameter.ValidatorResult;
+import pt.isel.ls.router.request.validator.Validator;
+import pt.isel.ls.router.request.validator.ValidatorResult;
 import pt.isel.ls.router.response.HandlerResponse;
 import pt.isel.ls.sql.ConnectionProvider;
 import pt.isel.ls.sql.queries.LabelQueries;
@@ -63,19 +63,15 @@ public final class PostRoomHandler extends RouteHandler {
 
     Validator getValidator() {
         return new Validator()
-                .addRule("name", p -> {
-                    String name = p.getUnique().toString();
-                    provider.execute(handler -> {
-                        new RoomQueries(handler).checkNameAvailability(name);
-                        return null;
-                    });
-
-                    return name;
-                })
-                .addRule("capacity", p -> p.getUnique().toInt())
-                .addRule("location", p -> p.getUnique().toString())
-                .addRule("label", p -> p.map(Parameter::toString), true)
-                .addRule("description", p -> p.getUnique().toString(), true);
+                .addMapping("name", p -> p.getUnique().toString())
+                .addFilter("name", name -> provider.execute(handler -> {
+                    new RoomQueries(handler).checkNameAvailability(name);
+                    return null;
+                }), String.class)
+                .addMapping("capacity", p -> p.getUnique().toInt())
+                .addMapping("location", p -> p.getUnique().toString())
+                .addMapping("label", p -> p.map(Parameter::toString), true)
+                .addMapping("description", p -> p.getUnique().toString(), true);
     }
 
 }

@@ -7,8 +7,9 @@ import pt.isel.ls.model.Room;
 import pt.isel.ls.router.StatusCode;
 import pt.isel.ls.router.request.Method;
 import pt.isel.ls.router.request.RouteRequest;
-import pt.isel.ls.router.request.parameter.ValidatorResult;
+import pt.isel.ls.router.request.validator.ValidatorResult;
 import pt.isel.ls.router.response.HandlerResponse;
+import pt.isel.ls.router.response.error.HandlerError;
 import pt.isel.ls.sql.ConnectionProvider;
 import pt.isel.ls.sql.queries.LabelQueries;
 import pt.isel.ls.view.room.RoomCreateView;
@@ -38,20 +39,21 @@ public class PostRoomCreateHandler extends RouteHandler {
                     .setStatusCode(StatusCode.BAD_REQUEST);
         }
 
-        try {
-            String name = res.getParameterValue("name");
-            int capacity = res.getParameterValue("capacity");
-            String location = res.getParameterValue("location");
-            Optional<List<String>> optLabels = res.getOptionalParameter("label");
-            Optional<String> desc = res.getOptionalParameter("description");
+        String name = res.getParameterValue("name");
+        int capacity = res.getParameterValue("capacity");
+        String location = res.getParameterValue("location");
+        Optional<List<String>> optLabels = res.getOptionalParameter("label");
+        Optional<String> desc = res.getOptionalParameter("description");
 
+        try {
             Room newRoom = new PostRoomHandler(provider)
                     .createRoom(name, capacity, location, desc.orElse(null), optLabels.orElse(null));
 
             return new HandlerResponse()
                     .redirect(GetRoomHandler.class, newRoom.getRid());
         } catch (AppException e) {
-            return new HandlerResponse(new RoomCreateView(getAvailableLabels()))
+            HandlerError err = HandlerError.fromException(e);
+            return new HandlerResponse(new RoomCreateView(getAvailableLabels(), err))
                     .setStatusCode(e.getStatusCode());
         }
     }

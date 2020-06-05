@@ -5,8 +5,8 @@ import pt.isel.ls.handlers.RouteHandler;
 import pt.isel.ls.model.Label;
 import pt.isel.ls.router.request.Method;
 import pt.isel.ls.router.request.RouteRequest;
-import pt.isel.ls.router.request.parameter.Validator;
-import pt.isel.ls.router.request.parameter.ValidatorResult;
+import pt.isel.ls.router.request.validator.Validator;
+import pt.isel.ls.router.request.validator.ValidatorResult;
 import pt.isel.ls.router.response.HandlerResponse;
 import pt.isel.ls.sql.ConnectionProvider;
 import pt.isel.ls.sql.queries.LabelQueries;
@@ -41,15 +41,11 @@ public final class PostLabelHandler extends RouteHandler {
 
     Validator getValidator() {
         return new Validator()
-                .addRule("name", p -> {
-                    String labelName = p.getUnique().toString();
-                    provider.execute(handler -> {
-                        new LabelQueries(handler).checkLabelAvailability(labelName);
-                        return null;
-                    });
-
-                    return labelName;
-                });
+                .addMapping("name", p -> p.getUnique().toString())
+                .addFilter("name", name -> provider.execute(handler -> {
+                    new LabelQueries(handler).checkLabelAvailability(name);
+                    return null;
+                }), String.class);
     }
 
 }

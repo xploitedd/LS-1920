@@ -4,10 +4,10 @@ import pt.isel.ls.exceptions.parameter.ValidatorException;
 import pt.isel.ls.handlers.RouteHandler;
 import pt.isel.ls.model.Room;
 import pt.isel.ls.router.request.Method;
-import pt.isel.ls.router.request.parameter.Parameter;
+import pt.isel.ls.router.request.validator.Parameter;
 import pt.isel.ls.router.request.RouteRequest;
-import pt.isel.ls.router.request.parameter.Validator;
-import pt.isel.ls.router.request.parameter.ValidatorResult;
+import pt.isel.ls.router.request.validator.Validator;
+import pt.isel.ls.router.request.validator.ValidatorResult;
 import pt.isel.ls.router.response.HandlerResponse;
 import pt.isel.ls.sql.ConnectionProvider;
 import pt.isel.ls.sql.api.SqlHandler;
@@ -38,10 +38,10 @@ public final class GetRoomsHandler extends RouteHandler {
     @Override
     public HandlerResponse execute(RouteRequest request) {
         Validator validator = new Validator()
-                .addRule("begin", p -> p.getUnique().toTime(), true)
-                .addRule("duration", p -> p.getUnique().toInt(), true)
-                .addRule("capacity", p -> p.getUnique().toInt(), true)
-                .addRule("label", p -> p.map(Parameter::toString), true);
+                .addMapping("begin", p -> p.getUnique().toTime(), true)
+                .addMapping("duration", p -> p.getUnique().toInt(), true)
+                .addMapping("capacity", p -> p.getUnique().toInt(), true)
+                .addMapping("label", p -> p.map(Parameter::toString), true);
 
         ValidatorResult res = validator.validate(request);
         if (res.hasErrors()) {

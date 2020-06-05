@@ -7,8 +7,8 @@ import pt.isel.ls.handlers.RouteHandler;
 import pt.isel.ls.router.Router;
 import pt.isel.ls.router.request.Method;
 import pt.isel.ls.router.request.RouteRequest;
-import pt.isel.ls.router.request.parameter.Validator;
-import pt.isel.ls.router.request.parameter.ValidatorResult;
+import pt.isel.ls.router.request.validator.Validator;
+import pt.isel.ls.router.request.validator.ValidatorResult;
 import pt.isel.ls.router.response.HandlerResponse;
 import pt.isel.ls.view.MessageView;
 
@@ -33,7 +33,7 @@ public class ListenHandler extends RouteHandler {
     @Override
     public HandlerResponse execute(RouteRequest request) {
         Validator validator = new Validator()
-                .addRule("port", p -> p.getUnique().toInt(), true);
+                .addMapping("port", p -> p.getUnique().toInt(), true);
 
         ValidatorResult res = validator.validate(request);
         if (res.hasErrors()) {
