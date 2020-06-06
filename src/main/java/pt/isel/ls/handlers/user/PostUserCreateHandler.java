@@ -27,7 +27,7 @@ public class PostUserCreateHandler extends RouteHandler {
         PostUserHandler puh = new PostUserHandler(provider);
         ValidatorResult res = puh.getValidator().validate(request);
         if (res.hasErrors()) {
-            return new HandlerResponse(new UserCreateView(res.getErrors()))
+            return new HandlerResponse(new UserCreateView(res.getErrors(), request))
                     .setStatusCode(StatusCode.BAD_REQUEST);
         }
 

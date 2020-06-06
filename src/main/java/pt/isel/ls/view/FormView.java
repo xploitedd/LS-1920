@@ -2,6 +2,7 @@ package pt.isel.ls.view;
 
 import pt.isel.ls.model.dsl.Node;
 import pt.isel.ls.model.dsl.elements.forms.FormElement;
+import pt.isel.ls.router.request.RouteRequest;
 import pt.isel.ls.router.response.error.HandlerError;
 import pt.isel.ls.router.response.error.ParameterError;
 
@@ -14,6 +15,7 @@ public abstract class FormView extends View {
 
     private HandlerError handlerErrors;
     protected ParameterError parameterErrors;
+    protected RouteRequest request;
 
     public FormView(String title) {
         super(title);
@@ -24,9 +26,10 @@ public abstract class FormView extends View {
         this.handlerErrors = handlerErrors;
     }
 
-    public FormView(String title, ParameterError parameterErrors) {
+    public FormView(String title, ParameterError parameterErrors, RouteRequest request) {
         super(title);
         this.parameterErrors = parameterErrors;
+        this.request = request;
     }
 
     protected abstract FormElement getForm(ViewHandler handler);

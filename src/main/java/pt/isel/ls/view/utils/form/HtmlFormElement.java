@@ -14,7 +14,7 @@ public abstract class HtmlFormElement {
     private final LinkedList<String> errors = new LinkedList<>();
     private final String name;
     private final LabelText label;
-    private final Element input;
+    protected final Element input;
 
     public HtmlFormElement(String name, String description, Element input) {
         this.name = name;
@@ -34,6 +34,10 @@ public abstract class HtmlFormElement {
     public HtmlFormElement withError(String error) {
         errors.add(error);
         return this;
+    }
+
+    public HtmlFormElement setValue(String value) {
+        return withAttr("value", value);
     }
 
     public Node getContainer() {

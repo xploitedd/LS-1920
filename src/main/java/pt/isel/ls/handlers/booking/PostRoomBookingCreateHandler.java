@@ -39,7 +39,7 @@ public class PostRoomBookingCreateHandler extends RouteHandler {
 
         ValidatorResult res = validator.validate(request);
         if (res.hasErrors()) {
-            return new HandlerResponse(new RoomBookingCreateView(getRoom(rid), res.getErrors()))
+            return new HandlerResponse(new RoomBookingCreateView(getRoom(rid), res.getErrors(), request))
                     .setStatusCode(StatusCode.BAD_REQUEST);
         }
 

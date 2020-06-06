@@ -35,7 +35,7 @@ public class PostRoomCreateHandler extends RouteHandler {
         ValidatorResult res = prh.getValidator().validate(request);
 
         if (res.hasErrors()) {
-            return new HandlerResponse(new RoomCreateView(getAvailableLabels(), res.getErrors()))
+            return new HandlerResponse(new RoomCreateView(getAvailableLabels(), res.getErrors(), request))
                     .setStatusCode(StatusCode.BAD_REQUEST);
         }
 

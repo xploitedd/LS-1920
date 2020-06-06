@@ -2,11 +2,12 @@ package pt.isel.ls.model.dsl;
 
 import java.io.IOException;
 import java.io.Writer;
-import java.util.HashSet;
+import java.util.HashMap;
+import java.util.Map;
 
 public abstract class Node {
 
-    private final HashSet<Attribute> attributes = new HashSet<>();
+    private final HashMap<String, String> attributes = new HashMap<>();
 
     /**
      * Get the HTML name of this node
@@ -36,8 +37,14 @@ public abstract class Node {
      */
     protected String getOpeningTag() {
         StringBuilder sb = new StringBuilder();
-        for (Attribute a : attributes) {
-            sb.append(" ").append(a);
+        for (Map.Entry<String, String> entry : attributes.entrySet()) {
+            String key = entry.getKey();
+            String value = entry.getValue();
+            sb.append(" ")
+                    .append(key)
+                    .append("=\"")
+                    .append(value)
+                    .append("\"");
         }
 
         return "<" + getNodeName() + sb.toString() + (canHaveChildren() ? ">" : "");
@@ -59,8 +66,12 @@ public abstract class Node {
      */
     @SuppressWarnings("unchecked")
     public <T extends Node> T attr(String name, String value) {
-        attributes.add(new Attribute(name, value));
+        attributes.put(name, value);
         return (T) this;
+    }
+
+    public String getAttr(String name) {
+        return attributes.get(name);
     }
 
 }

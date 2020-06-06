@@ -20,4 +20,8 @@ public class SelectElement extends Element {
         return "select";
     }
 
+    public OptionText[] getOptions() {
+        return (OptionText[]) children;
+    }
+
 }

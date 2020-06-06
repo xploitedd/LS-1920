@@ -28,7 +28,7 @@ public class PostLabelCreateHandler extends RouteHandler {
         PostLabelHandler plh = new PostLabelHandler(provider);
         ValidatorResult res = plh.getValidator().validate(request);
         if (res.hasErrors()) {
-            return new HandlerResponse(new LabelCreateView(res.getErrors()))
+            return new HandlerResponse(new LabelCreateView(res.getErrors(), request))
                     .setStatusCode(StatusCode.BAD_REQUEST);
         }
 
