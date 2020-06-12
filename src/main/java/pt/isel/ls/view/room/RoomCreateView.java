@@ -45,7 +45,7 @@ public class RoomCreateView extends FormView {
                 .withInput(new HtmlFormInput("name", "Room Name", InputType.TEXT, true))
                 .withInput(new HtmlFormInput("location", "Location", InputType.TEXT, true))
                 .withInput(new HtmlFormInput("capacity", "Capacity", InputType.NUMBER, true)
-                        .withAttr("min", "1")
+                        .withAttr("min", "2")
                         .withAttr("step", "1"))
                 .withInput(new HtmlFormInput("description", "Description", InputType.TEXT, false))
                 .withInput(new HtmlFormSelect("label", "Labels", getOptions(), true))

@@ -39,7 +39,7 @@ public class RoomBookingCreateView extends FormView {
         return new HtmlFormBuilder(
                 Method.POST,
                 handler.route(PostRoomBookingCreateHandler.class, room.getRid()))
-                .withInput(new HtmlFormInput("email", "User Email", InputType.EMAIL, true))
+                .withInput(new HtmlFormInput("uid", "User Id", InputType.NUMBER, true))
                 .withInput(new HtmlFormInput("begin", "Begin", InputType.DATETIME, true))
                 .withInput(new HtmlFormInput("duration", "Duration", InputType.NUMBER, true)
                         .withAttr("min", "10")

@@ -4,11 +4,11 @@ import pt.isel.ls.handlers.RouteHandler;
 import pt.isel.ls.router.request.Method;
 import pt.isel.ls.router.request.RouteRequest;
 import pt.isel.ls.router.response.HandlerResponse;
-import pt.isel.ls.sql.ConnectionProvider;
 import pt.isel.ls.view.user.UserCreateView;
 
 public class GetUserCreateHandler extends RouteHandler {
-    public GetUserCreateHandler(ConnectionProvider provider) {
+
+    public GetUserCreateHandler() {
         super(
                 Method.GET,
                 "/users/create",
@@ -19,4 +19,5 @@ public class GetUserCreateHandler extends RouteHandler {
     public HandlerResponse execute(RouteRequest request) {
         return new HandlerResponse(new UserCreateView());
     }
+
 }

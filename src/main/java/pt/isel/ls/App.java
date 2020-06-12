@@ -120,7 +120,7 @@ public class App {
         router.registerRoute(new DeleteBookingHandler(connProvider));
 
         // User Handlers
-        router.registerRoute(new GetUserCreateHandler(connProvider));
+        router.registerRoute(new GetUserCreateHandler());
         router.registerRoute(new PostUserCreateHandler(connProvider));
         router.registerRoute(new PostUserHandler(connProvider));
         router.registerRoute(new GetUsersHandler(connProvider));

@@ -57,7 +57,7 @@ public class PostRoomHandlerTest {
         router.getHandler(request).execute(request);
     }
 
-    @Test(expected = RouteException.class)
+    @Test(expected = ValidatorException.class)
     public void createNewInvalidRoom() throws RouteException {
 
         RouteRequest request = RouteRequest.of(

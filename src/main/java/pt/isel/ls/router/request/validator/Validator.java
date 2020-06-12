@@ -12,11 +12,17 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.Predicate;
 
 public class Validator {
 
     private final HashMap<String, ValidatorInfo<?>> mappings = new HashMap<>();
     private final HashMap<String, LinkedList<Consumer<Object>>> filters = new HashMap<>();
+    private final RouteRequest request;
+
+    public Validator(RouteRequest request) {
+        this.request = request;
+    }
 
     public <T> Validator addMapping(String parameterName, ValidatorFunction<T> mapper) {
         return addMapping(parameterName, mapper, false);
@@ -28,23 +34,29 @@ public class Validator {
         return this;
     }
 
+    public <T> Validator addFilter(String parameterName, Predicate<T> filter, Class<T> clazz) {
+        return addFilter(parameterName, filter, clazz, parameterName + " is invalid!");
+    }
+
+
     @SuppressWarnings("unchecked")
-    public <T> Validator addFilter(String parameterName, Consumer<T> filter, Class<T> clazz) {
+    public <T> Validator addFilter(String parameterName, Predicate<T> filter, Class<T> clazz, String errorMessage) {
         LinkedList<Consumer<Object>> list = filters.computeIfAbsent(parameterName, k -> new LinkedList<>());
         Consumer<T> np = test -> {
-            Class<?> other = test.getClass();
-            if (!other.equals(clazz)) {
-                throw new ValidatorException("Error testing a filter of a parameter!");
+            if (test.getClass() != clazz) {
+                throw new ValidatorException("Error validating field!");
             }
 
-            filter.accept(test);
+            if (!filter.test(test)) {
+                throw new ValidatorException(errorMessage);
+            }
         };
 
         list.add((Consumer<Object>) np);
         return this;
     }
 
-    public ValidatorResult validate(RouteRequest request) {
+    public ValidatorResult validate() {
         HashMap<String, Object> results = new HashMap<>();
         ParameterError errors = new ParameterError();
 

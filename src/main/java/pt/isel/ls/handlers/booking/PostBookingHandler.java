@@ -2,11 +2,10 @@ package pt.isel.ls.handlers.booking;
 
 import pt.isel.ls.exceptions.parameter.ValidatorException;
 import pt.isel.ls.handlers.RouteHandler;
+import pt.isel.ls.handlers.validators.CreateBookingValidator;
 import pt.isel.ls.model.Booking;
 import pt.isel.ls.router.request.Method;
 import pt.isel.ls.router.request.RouteRequest;
-import pt.isel.ls.router.request.validator.Validator;
-import pt.isel.ls.router.request.validator.ValidatorResult;
 import pt.isel.ls.router.response.HandlerResponse;
 import pt.isel.ls.sql.ConnectionProvider;
 import pt.isel.ls.sql.queries.BookingQueries;
@@ -29,14 +28,14 @@ public final class PostBookingHandler extends RouteHandler {
     @Override
     public HandlerResponse execute(RouteRequest request) {
         int rid = request.getPathParameter("rid").toInt();
-        ValidatorResult res = getValidator().validate(request);
-        if (res.hasErrors()) {
-            throw new ValidatorException(res);
+        CreateBookingValidator validator = new CreateBookingValidator(request);
+        if (validator.hasErrors()) {
+            throw new ValidatorException(validator.getResult());
         }
 
-        int uid = res.getParameterValue("uid");
-        long b = res.getParameterValue("begin");
-        int duration = res.getParameterValue("duration");
+        int uid = validator.getUserId();
+        long b = validator.getBegin();
+        int duration = validator.getDuration();
 
         Booking booking = createBooking(rid, uid, b, duration);
         return new HandlerResponse(new IdentifierView("booking", booking.getBid()));
@@ -49,13 +48,6 @@ public final class PostBookingHandler extends RouteHandler {
 
         return provider.execute(handler ->
                 new BookingQueries(handler).createNewBooking(rid, uid, b, e));
-    }
-
-    Validator getValidator() {
-        return new Validator()
-                .addMapping("uid", p -> p.getUnique().toInt())
-                .addMapping("begin", p -> p.getUnique().toTime())
-                .addMapping("duration", p -> p.getUnique().toInt());
     }
 
 }

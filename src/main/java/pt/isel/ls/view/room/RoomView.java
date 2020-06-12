@@ -3,6 +3,7 @@ package pt.isel.ls.view.room;
 import pt.isel.ls.handlers.booking.GetRoomBookingCreateHandler;
 import pt.isel.ls.handlers.booking.GetRoomBookingsHandler;
 import pt.isel.ls.handlers.label.GetLabelHandler;
+import pt.isel.ls.handlers.room.GetRoomSearchHandler;
 import pt.isel.ls.handlers.room.GetRoomsHandler;
 import pt.isel.ls.model.Label;
 import pt.isel.ls.model.Room;
@@ -71,6 +72,7 @@ public class RoomView extends View {
     protected void registerNavLinks(ViewHandler handler) {
         addNavEntry(handler.route(GetRoomBookingsHandler.class, room.getRid()), "Check Room Bookings");
         addNavEntry(handler.route(GetRoomBookingCreateHandler.class, room.getRid()), "Create Room Booking");
+        addNavEntry(handler.route(GetRoomSearchHandler.class), "Search Rooms");
         addNavEntry(handler.route(GetRoomsHandler.class), "Rooms");
     }
 

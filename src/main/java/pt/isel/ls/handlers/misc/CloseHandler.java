@@ -3,10 +3,9 @@ package pt.isel.ls.handlers.misc;
 import pt.isel.ls.app.http.HttpPool;
 import pt.isel.ls.exceptions.parameter.ValidatorException;
 import pt.isel.ls.handlers.RouteHandler;
+import pt.isel.ls.handlers.validators.CloseValidator;
 import pt.isel.ls.router.request.Method;
 import pt.isel.ls.router.request.RouteRequest;
-import pt.isel.ls.router.request.validator.Validator;
-import pt.isel.ls.router.request.validator.ValidatorResult;
 import pt.isel.ls.router.response.HandlerResponse;
 import pt.isel.ls.view.MessageView;
 
@@ -26,15 +25,12 @@ public class CloseHandler extends RouteHandler {
 
     @Override
     public HandlerResponse execute(RouteRequest request) {
-        Validator validator = new Validator()
-                .addMapping("port", p -> p.getUnique().toInt());
-
-        ValidatorResult res = validator.validate(request);
-        if (res.hasErrors()) {
-            throw new ValidatorException(res);
+        CloseValidator validator = new CloseValidator(request);
+        if (validator.hasErrors()) {
+            throw new ValidatorException(validator.getResult());
         }
 
-        int port = res.getParameterValue("port");
+        int port = validator.getPort();
         httpPool.terminate(port);
         return new HandlerResponse(new MessageView("HTTP Server on port " + port + " terminated!"));
     }
