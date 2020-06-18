@@ -29,7 +29,7 @@ public final class DeleteBookingHandler extends RouteHandler {
                 .deleteBooking(rid, bid));
 
         if (deleted == 0) {
-            throw new RouteException("No booking with rid=" + rid + " and bid=" + bid + " found");
+            throw new RouteException("No booking with room id " + rid + " and booking id " + bid + " found");
         }
 
         return new HandlerResponse(new IdentifierView("deleted", "booking", bid));

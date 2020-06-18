@@ -38,7 +38,7 @@ public class ConsoleApplication extends Application {
     @Override
     public void run() {
         LOGGER.info("Console Interactive Mode started!");
-        for ( ; ; ) {
+        for (;;) {
             String input = SCANNER.nextLine();
             processInput(input);
         }
