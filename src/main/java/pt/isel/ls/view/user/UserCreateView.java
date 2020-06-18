@@ -4,9 +4,8 @@ import pt.isel.ls.handlers.user.GetUsersHandler;
 import pt.isel.ls.handlers.user.PostUserCreateHandler;
 import pt.isel.ls.model.dsl.elements.forms.FormElement;
 import pt.isel.ls.router.request.Method;
-import pt.isel.ls.router.request.RouteRequest;
-import pt.isel.ls.router.response.error.HandlerError;
-import pt.isel.ls.router.response.error.ParameterError;
+import pt.isel.ls.router.response.error.HandlerErrors;
+import pt.isel.ls.router.response.error.ParameterErrors;
 import pt.isel.ls.view.FormView;
 import pt.isel.ls.view.ViewHandler;
 import pt.isel.ls.view.utils.form.HtmlFormBuilder;
@@ -19,11 +18,11 @@ public class UserCreateView extends FormView {
         super("Create a new user");
     }
 
-    public UserCreateView(ParameterError errors, RouteRequest request) {
-        super("Create a new user", errors, request);
+    public UserCreateView(ParameterErrors errors) {
+        super("Create a new user", errors);
     }
 
-    public UserCreateView(HandlerError errors) {
+    public UserCreateView(HandlerErrors errors) {
         super("Create a new user", errors);
     }
 
@@ -32,7 +31,7 @@ public class UserCreateView extends FormView {
         return new HtmlFormBuilder(Method.POST, handler.route(PostUserCreateHandler.class))
                 .withInput(new HtmlFormInput("name", "Name", InputType.TEXT, true))
                 .withInput(new HtmlFormInput("email", "Email", InputType.EMAIL, true))
-                .withErrors(parameterErrors, request)
+                .withErrors(parameterErrors)
                 .build("Create User");
     }
 

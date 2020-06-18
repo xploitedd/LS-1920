@@ -8,7 +8,7 @@ import pt.isel.ls.router.StatusCode;
 import pt.isel.ls.router.request.Method;
 import pt.isel.ls.router.request.RouteRequest;
 import pt.isel.ls.router.response.HandlerResponse;
-import pt.isel.ls.router.response.error.HandlerError;
+import pt.isel.ls.router.response.error.HandlerErrors;
 import pt.isel.ls.sql.ConnectionProvider;
 import pt.isel.ls.view.label.LabelCreateView;
 
@@ -28,7 +28,7 @@ public class PostLabelCreateHandler extends RouteHandler {
         CreateLabelValidator validator = new CreateLabelValidator(request, provider);
         if (validator.hasErrors()) {
             return new HandlerResponse(
-                    new LabelCreateView(validator.getResult().getErrors(), request)
+                    new LabelCreateView(validator.getResult().getErrors())
             ).setStatusCode(StatusCode.BAD_REQUEST);
         }
 
@@ -38,7 +38,7 @@ public class PostLabelCreateHandler extends RouteHandler {
             return new HandlerResponse()
                     .redirect(GetLabelHandler.class, newLabel.getLid());
         } catch (AppException e) {
-            HandlerError err = HandlerError.fromException(e);
+            HandlerErrors err = HandlerErrors.fromException(e);
             return new HandlerResponse(new LabelCreateView(err))
                     .setStatusCode(e.getStatusCode());
         }

@@ -6,7 +6,7 @@ import pt.isel.ls.model.dsl.elements.forms.FormElement;
 import pt.isel.ls.router.request.Method;
 import pt.isel.ls.router.request.RouteRequest;
 import pt.isel.ls.router.request.validator.Parameter;
-import pt.isel.ls.router.response.error.ParameterError;
+import pt.isel.ls.router.response.error.ParameterErrors;
 
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -35,7 +35,7 @@ public class HtmlFormBuilder {
         return this;
     }
 
-    public HtmlFormBuilder withErrors(ParameterError errors, RouteRequest request) {
+    public HtmlFormBuilder withErrors(ParameterErrors errors) {
         if (errors != null) {
             HashSet<String> failedInputs = new HashSet<>();
             for (Map.Entry<String, String> err : errors.getErrors()) {
@@ -47,6 +47,7 @@ public class HtmlFormBuilder {
                 }
             }
 
+            RouteRequest request = errors.getRequest();
             for (Map.Entry<String, HtmlFormElement> entry : inputs.entrySet()) {
                 String input = entry.getKey();
                 if (!failedInputs.contains(input)) {

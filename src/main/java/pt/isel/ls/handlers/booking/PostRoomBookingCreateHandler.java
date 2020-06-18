@@ -9,7 +9,7 @@ import pt.isel.ls.router.StatusCode;
 import pt.isel.ls.router.request.Method;
 import pt.isel.ls.router.request.RouteRequest;
 import pt.isel.ls.router.response.HandlerResponse;
-import pt.isel.ls.router.response.error.HandlerError;
+import pt.isel.ls.router.response.error.HandlerErrors;
 import pt.isel.ls.sql.ConnectionProvider;
 import pt.isel.ls.sql.queries.RoomQueries;
 import pt.isel.ls.view.booking.RoomBookingCreateView;
@@ -31,7 +31,7 @@ public class PostRoomBookingCreateHandler extends RouteHandler {
         CreateBookingValidator validator = new CreateBookingValidator(request);
         if (validator.hasErrors()) {
             return new HandlerResponse(
-                    new RoomBookingCreateView(getRoom(rid), validator.getResult().getErrors(), request)
+                    new RoomBookingCreateView(getRoom(rid), validator.getResult().getErrors())
             ).setStatusCode(StatusCode.BAD_REQUEST);
         }
 
@@ -46,7 +46,7 @@ public class PostRoomBookingCreateHandler extends RouteHandler {
             return new HandlerResponse()
                     .redirect(GetRoomBookingHandler.class, rid, newBooking.getBid());
         } catch (AppException e) {
-            HandlerError err = HandlerError.fromException(e);
+            HandlerErrors err = HandlerErrors.fromException(e);
             return new HandlerResponse(new RoomBookingCreateView(getRoom(rid), err))
                     .setStatusCode(e.getStatusCode());
         }

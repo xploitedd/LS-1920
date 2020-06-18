@@ -6,9 +6,8 @@ import pt.isel.ls.model.Label;
 import pt.isel.ls.model.dsl.elements.forms.FormElement;
 import pt.isel.ls.model.dsl.text.forms.OptionText;
 import pt.isel.ls.router.request.Method;
-import pt.isel.ls.router.request.RouteRequest;
-import pt.isel.ls.router.response.error.HandlerError;
-import pt.isel.ls.router.response.error.ParameterError;
+import pt.isel.ls.router.response.error.HandlerErrors;
+import pt.isel.ls.router.response.error.ParameterErrors;
 import pt.isel.ls.view.FormView;
 import pt.isel.ls.view.ViewHandler;
 import pt.isel.ls.view.utils.form.HtmlFormBuilder;
@@ -29,12 +28,12 @@ public class RoomCreateView extends FormView {
         this.availableLabels = availableLabels;
     }
 
-    public RoomCreateView(Iterable<Label> availableLabels, ParameterError errors, RouteRequest request) {
-        super("Create a new room", errors, request);
+    public RoomCreateView(Iterable<Label> availableLabels, ParameterErrors errors) {
+        super("Create a new room", errors);
         this.availableLabels = availableLabels;
     }
 
-    public RoomCreateView(Iterable<Label> availableLabels, HandlerError errors) {
+    public RoomCreateView(Iterable<Label> availableLabels, HandlerErrors errors) {
         super("Create a new room", errors);
         this.availableLabels = availableLabels;
     }
@@ -49,7 +48,7 @@ public class RoomCreateView extends FormView {
                         .withAttr("step", "1"))
                 .withInput(new HtmlFormInput("description", "Description", InputType.TEXT, false))
                 .withInput(new HtmlFormSelect("label", "Labels", getOptions(), true))
-                .withErrors(parameterErrors, request)
+                .withErrors(parameterErrors)
                 .build("Create Room");
     }
 

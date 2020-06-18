@@ -4,7 +4,7 @@ import pt.isel.ls.exceptions.AppException;
 import pt.isel.ls.exceptions.parameter.ParameterNotFoundException;
 import pt.isel.ls.exceptions.parameter.ValidatorException;
 import pt.isel.ls.router.request.RouteRequest;
-import pt.isel.ls.router.response.error.ParameterError;
+import pt.isel.ls.router.response.error.ParameterErrors;
 
 import java.util.AbstractMap;
 import java.util.HashMap;
@@ -58,17 +58,21 @@ public class Validator {
 
     public ValidatorResult validate() {
         HashMap<String, Object> results = new HashMap<>();
-        ParameterError errors = new ParameterError();
+        ParameterErrors errors = new ParameterErrors(request);
 
         for (String parameter : mappings.keySet()) {
             ValidatorInfo<?> info = mappings.get(parameter);
             List<Consumer<Object>> filter = filters.get(parameter);
             try {
+                // this try checks whether this parameter was found
                 try {
                     Object res = info.func.apply(request.getParameter(parameter));
+
                     boolean passedFilters = true;
                     if (filter != null) {
                         for (Consumer<Object> pred : filter) {
+                            // we want to check all of the consumers, even if
+                            // one of them is invalid...
                             try {
                                 pred.accept(res);
                             } catch (AppException e) {

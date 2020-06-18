@@ -6,9 +6,8 @@ import pt.isel.ls.handlers.room.GetRoomHandler;
 import pt.isel.ls.model.Room;
 import pt.isel.ls.model.dsl.elements.forms.FormElement;
 import pt.isel.ls.router.request.Method;
-import pt.isel.ls.router.request.RouteRequest;
-import pt.isel.ls.router.response.error.HandlerError;
-import pt.isel.ls.router.response.error.ParameterError;
+import pt.isel.ls.router.response.error.HandlerErrors;
+import pt.isel.ls.router.response.error.ParameterErrors;
 import pt.isel.ls.view.FormView;
 import pt.isel.ls.view.ViewHandler;
 import pt.isel.ls.view.utils.form.HtmlFormBuilder;
@@ -24,12 +23,12 @@ public class RoomBookingCreateView extends FormView {
         this.room = room;
     }
 
-    public RoomBookingCreateView(Room room, ParameterError error, RouteRequest request) {
-        super(String.format("Create booking in \"%s\" room", room.getName()), error, request);
+    public RoomBookingCreateView(Room room, ParameterErrors error) {
+        super(String.format("Create booking in \"%s\" room", room.getName()), error);
         this.room = room;
     }
 
-    public RoomBookingCreateView(Room room, HandlerError error) {
+    public RoomBookingCreateView(Room room, HandlerErrors error) {
         super(String.format("Create booking in \"%s\" room", room.getName()), error);
         this.room = room;
     }
@@ -44,7 +43,7 @@ public class RoomBookingCreateView extends FormView {
                 .withInput(new HtmlFormInput("duration", "Duration", InputType.NUMBER, true)
                         .withAttr("min", "10")
                         .withAttr("step", "10"))
-                .withErrors(parameterErrors, request)
+                .withErrors(parameterErrors)
                 .build("Create Booking");
     }
 

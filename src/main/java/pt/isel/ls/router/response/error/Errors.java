@@ -8,7 +8,7 @@ import java.util.List;
 
 import static pt.isel.ls.model.dsl.Dsl.div;
 
-public class Error<T> {
+public class Errors<T> {
 
     protected final LinkedList<T> errors = new LinkedList<>();
 
