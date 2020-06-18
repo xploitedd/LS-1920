@@ -22,13 +22,12 @@ da nova entidade
 O modelo conceptual apresenta ainda as seguintes restrições:
 
 * ROOM:
-    - o valor capacity não pode ser inferior a 1 
+    - o valor capacity não pode ser inferior a 2
 * BOOKING:
     - begin e end têm minutos múltiplos de 10
-    - o tempo entre begin e end tem de ser superior a 10 minutos
+    - o tempo entre begin e end tem de ser superior ou igual a 10 minutos
     - o tempo de início deve ser superior ao atual
 
- 
 ### Modelação física ###
 
 O modelo físico da base de dados está presente em [ResetTables.sql](../src/main/resources/sql/ResetTables.sql) (apaga as tabelas para recriar se já estiverem lá) e [CreateTables.sql](../src/main/resources/sql/CreateTables.sql) (não faz nada se as tabelas já existirem).
@@ -91,8 +90,8 @@ que estes devem implementar a interface `RouteHandler`.
 A interface `RouteHandler` contém um único método `execute` resposável
 por executar o pedido e responder através de um `HandlerResponse`.
 
-Cada *handler* devolve um `HandlerResponse` que, nesta fase do trabalho,
-contém uma `View`.
+Cada *handler* devolve um `HandlerResponse` que, contém uma `View` e, adicionalmente,
+um pedido de redirecionamento que será mais tarde interpretado pelo servidor **HTTP**.
 
 Os parâmetros dos comandos são passados através da classe `RouteRequest`
 que para além da informação sobre o request, como o `Path`, contém métodos
@@ -112,7 +111,31 @@ por `&`), percorrendo de seguida
 cada uma destas secções e adicionado a um `HashMap` a chave e o valor correspondente
 a cada sub-secção *key-value* (que estão separados por `=`). O `HashMap` é posteriormente devolvido ao método
 que chamou `parseParameters`. Caso ocorra alguma exceção durante este processamento
-será lançada uma exceção `RouteException`.
+será lançada uma exceção `RouteParsingException`.
+
+##### Validação
+
+A classe responsável por executar a validação de parâmetros é a classe `Validator` que se encontra dentro
+do *package* `pt.isel.ls.router.request.validator`. Esta classe oferece a vantagem do programador poder
+verificar uma série de restrições sob os parâmetros recebidos no *request*, contudo, caso não seja feito
+um correto uso do `Validator`, poderá ser lançada uma `RuntimeException` a qualquer momento do uso.
+Este problema acontece devido à funcionalidade de *type erasure* presente na **JVM** que não permite que
+os tipos genéricos sejam usados no código em *runtime*.
+
+O método responsável por verificar todos os parâmetros e compilar todos os erros existentes numa lista
+é o método `validate`, que necessitará de percorrer todos os parâmetros e executar primeiramente o *mapping*
+que foi atribuído pelo programador ao parâmetro e, de seguida, executará todos os filtros passados para o
+parâmetro em avaliação. Devido à necessidade de compilar primeiro todos os erros e apenas depois devolver
+o controlo do programa é necessário recorrer ao intensivo uso de blocos *try-catch* de modo a que o método
+continue, mesmo que encontre um erro.
+
+De modo a usar os parâmetros de *request* num *handler* é necessário o uso de um **Validator**, que irá
+verificar se cada parâmetro segue um conjunto de restrições fornecidas antes da validação. 
+
+Para cada *handler* que necessita de validação existe a classe `AbstractValidator` presente em
+`pt.isel.ls.handlers.validators` que uma classe poderá extender de modo a criar um novo validador.
+Esta nova classe foi criada com o único propósito de organizar o código do validador, visto que um validador
+pode posteriormente ser partilhado por várias classes. 
 
 ##### Resolução de Headers
 
@@ -276,6 +299,21 @@ uma *API* fluente de utilização fácil para o programador das *views*.
 Para que a aplicação possa mostrar uma determinada `View` ao utilizador é necessário existir um `ViewHandler`.
 Este `ViewHandler` é responsável por implementar uma camada de abstração entre a aplicação e a visualização,
 passando a informação necessária.
+
+#### Erros nos formulários
+
+Todas as *views* que contém formulários devem extender da classe abstracta `FormView` que permite agilizar
+o processo de criação de formulários, sendo que esta classe possui três constructores diferentes:
+
+- Um constructor que apenas receberá o título do formulário, ou seja, não existem nenhuns erros a apresentar
+- Um constructor que receberá o título e uma lista de erros globais, que serão apresentados por cima do formulário
+- Um constructor que receberá uma lista com os erros que ocorreram em parâmetros, sendo cada erro apresentado por
+cima do `input` associado.
+
+Os erros são compilados pelo validador (no caso de serem erros derivados de parâmetros) ou pelo *handler*
+no caso de serem erros gerais à execução do formulário, e passados à `View` pelo constructor da mesma. Os
+erros derivados de parâmetros necessitaram de ainda incluir o `request` de modo a poder auto-preencher os
+parâmetros que não estavam errados.
 
 ## Avaliação crítica
 
