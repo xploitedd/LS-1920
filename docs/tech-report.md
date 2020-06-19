@@ -36,6 +36,10 @@ O modelo físico da base de dados está presente em [ResetTables.sql](../src/mai
 
 ### Processamento de comandos
 
+![alt text](./Resources/request_lifecycle.svg "Lifecycle de um pedido")
+
+*Representação gráfica do processamento de um pedido pela aplicação*
+
 ##### Interface com o utilizador (via Consola)
 
 Para o processamento dos comandos via consola existe a partir da fase 3 a classe `ConsoleApplication`, que
