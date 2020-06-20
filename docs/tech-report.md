@@ -330,10 +330,9 @@ informação sobre a `Route` ao `Router` (e.g *path*, *method*, *description*, .
 Na fase 3 foram feitas melhorias significativas no código, principalmente no código de interrogações
 à base de dados e nas *views*. Simplificou-se a utilização de exceções na aplicação, dado que `AppException`
 passa a ser uma `RuntimeException`, não sendo obrigatória a criação de blocos de `try-catch` em expressões
-*lamba*, por exemplo.
+*lambda*, por exemplo.
 
-Os objetivos para a próxima fase são:
-
-- Optimizar o código e realizar análises de complexidade em partes críticas.
-    - Nomeadamente, optimizar `StringTableBuilder`
-- Incluir imagens demonstrativas no relatório.
+Durante a fase 4 do trabalho foram feitas melhorias no código das fases anteriores, bem como foram
+implementados todos os requisitos explícitos no enunciado desta fase, como por exemplo, as novas páginas
+com formulários. De modo a implementar estes novos requisitos houve a necessidade de adicionar ao *servlet*
+a funcionalidade de redirecionamento.
