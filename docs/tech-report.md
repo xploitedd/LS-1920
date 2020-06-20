@@ -121,8 +121,8 @@ será lançada uma exceção `RouteParsingException`.
 
 A classe responsável por executar a validação de parâmetros é a classe `Validator` que se encontra dentro
 do *package* `pt.isel.ls.router.request.validator`. Esta classe oferece a vantagem do programador poder
-verificar uma série de restrições sob os parâmetros recebidos no *request*, contudo, caso não seja feito
-um correto uso do `Validator`, poderá ser lançada uma `RuntimeException` a qualquer momento do uso.
+verificar uma série de restrições sob os parâmetros recebidos no *request*, contudo, caso o `Validator` 
+seja utilizado incorrectamente, poderá ser lançada uma `RuntimeException` a qualquer momento do uso.
 Este problema acontece devido à funcionalidade de *type erasure* presente na **JVM** que não permite que
 os tipos genéricos sejam usados no código em *runtime*.
 
@@ -184,8 +184,8 @@ por avaliar se um determinado `Path` observa este *template* (método `match`).
 
 Para transformar uma `String` num novo *template* é necessário primeiramente
 dividir a *string* em vários segmentos (secções do `Path` delimitadas por `/`).
-Com todos os segmentos é decidido se o segmento é constante `ConstantTemplateSegment` (o nome do segmento
-deve corresponder sempre, e.g `users`) ou se este é variável `VariableTemplateSegment` (o nome do segmento pode variar
+Com todos os segmentos é decidido se o segmento é constante, `ConstantTemplateSegment` (o nome do segmento
+deve corresponder sempre, e.g `users`) ou se este é variável, `VariableTemplateSegment` (o nome do segmento pode variar
 consoante o pedido, e.g `{uid}`). Foi removida a opção de poder conter segmentos variáveis opcionais pois tal
 aumentava a complexidade do código presente nos *handlers*.
 
@@ -292,7 +292,7 @@ de uma forma semelhante ao que faria se especificasse esta árvore num ficheiro 
 ### Views
 
 Na aplicação existem diversas *views* que representam diferentes respostas ao utilizador. Estas `Views`
-representam, até à fase 3, apresentações textuais e no formato **HTML**. Cada `View` recebe através
+representam apresentações textuais e no formato **HTML**. Cada `View` recebe através
 de parâmetros do constructor os dados necessários a apresentar na mesma.
 
 Para apresentar os dados podem ser usadas as classes `HtmlTableBuilder`, no caso de pretender uma tabela
@@ -309,9 +309,9 @@ passando a informação necessária.
 Todas as *views* que contém formulários devem extender da classe abstracta `FormView` que permite agilizar
 o processo de criação de formulários, sendo que esta classe possui três constructores diferentes:
 
-- Um constructor que apenas receberá o título do formulário, ou seja, não existem nenhuns erros a apresentar
-- Um constructor que receberá o título e uma lista de erros globais, que serão apresentados por cima do formulário
-- Um constructor que receberá uma lista com os erros que ocorreram em parâmetros, sendo cada erro apresentado por
+- Um constructor que apenas recebe o título do formulário, ou seja, não existem nenhuns erros a apresentar
+- Um constructor que recebe o título e uma lista de erros globais, que serão apresentados por cima do formulário
+- Um constructor que recebe uma lista com os erros que ocorreram em parâmetros, sendo cada erro apresentado por
 cima do `input` associado.
 
 Os erros são compilados pelo validador (no caso de serem erros derivados de parâmetros) ou pelo *handler*
