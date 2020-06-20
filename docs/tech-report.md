@@ -46,7 +46,7 @@ Para o processamento dos comandos via consola existe a partir da fase 3 a classe
 junta as funcionalidades das classes `ConsoleApplication` e `AppProcessor` da fase 2, e que extende a classe
 `Application`.
 
-A classe `ConsoleApplication` tem como objetivo aguardar que o utilizado especifique comandos na janela
+A classe `ConsoleApplication` tem como objetivo aguardar que o utilizador especifique comandos na janela
 de consola, e quando existir um comando, este será processado através do método `ConsoleApplication#processInput`.
 
 ##### Interface com o utilizador (via HTTP)
@@ -91,7 +91,7 @@ de erro ao utilizador.
 
 Todos os *handlers* encontram-se no *package* `pt.isel.ls.handlers` sendo
 que estes devem implementar a interface `RouteHandler`.
-A interface `RouteHandler` contém um único método `execute` resposável
+A interface `RouteHandler` contém um único método `execute` responsável
 por executar o pedido e responder através de um `HandlerResponse`.
 
 Cada *handler* devolve um `HandlerResponse` que, contém uma `View` e, adicionalmente,
@@ -112,7 +112,7 @@ Para processar os parâmetros do *request* é usado o método `RouteRequest.pars
 que recebe a secção de parâmetros da `String` de *request*. Este método começa
 por separar todos os parâmetros em secções *key-value* (secções separadas
 por `&`), percorrendo de seguida
-cada uma destas secções e adicionado a um `HashMap` a chave e o valor correspondente
+cada uma destas secções e adicionando a um `HashMap` a chave e o valor correspondente
 a cada sub-secção *key-value* (que estão separados por `=`). O `HashMap` é posteriormente devolvido ao método
 que chamou `parseParameters`. Caso ocorra alguma exceção durante este processamento
 será lançada uma exceção `RouteParsingException`.
@@ -229,7 +229,7 @@ Para realizar o acesso a dados (obter e inserir informação na fonte de dados) 
 de dados, isto é, para cada relação da base de dados deve existir uma classe de *queries* que
 operará sob esta relação.
 
-Todas as classes de *queries* deve extender a classe abstrata `DatabaseQueries`. Esta classe abstrata
+Todas as classes de *queries* devem extender a classe abstrata `DatabaseQueries`. Esta classe abstrata
 obriga a que cada momento de criação de uma nova classe deste tipo tenha de receber pelo constructor
 uma instância de `SqlHandler` (que será obtida através do uso do `ConnectionProvider` nos *handlers*).
 
